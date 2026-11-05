@@ -11,3 +11,65 @@ main{padding-top:84px;margin-left:254px;outline:none}.page-container{max-width:1
 @media(max-width:640px){.topbar{height:67px;padding:0 16px;gap:10px}.brand{font-size:12px;gap:8px;letter-spacing:-.2px}.brand small{font-size:7px;letter-spacing:.6px;margin-top:3px}.brand-symbol{width:29px;height:29px;font-size:25px;line-height:27px;border-radius:8px}.brand-symbol span{font-size:12px;right:3px;top:3px}.header-actions{gap:11px}.header-actions .quiet{font-size:10px;padding:6px 8px;gap:5px}.github-link{font-size:10px}.sidebar{position:static;top:auto;width:auto;margin-top:67px;border-right:0;border-bottom:1px solid var(--line);padding:15px 19px 0;display:block;overflow:visible}.sidebar-heading{padding:0;display:flex;gap:12px;align-items:center;flex-wrap:wrap}.sidebar-heading>.eyebrow,.sidebar-heading strong{display:none}.stage-label{font-size:10px;gap:10px}.stage-label span{font-size:10px}.lesson-list{display:flex;overflow-x:auto;gap:8px;margin-top:12px;padding-bottom:13px}.lesson-link{min-width:185px;padding:10px 12px;gap:9px}.lesson-link b{font-size:10px}.lesson-link small{font-size:8px;margin-top:5px}.lesson-number{font-size:10px}.stage-exam,.sidebar-bottom{display:none}main{padding-top:0;margin-left:0}.page-container{padding:21px 19px 0}.breadcrumb{font-size:10px;gap:10px}.version{font-size:8px}.hero{padding:30px 0 26px;gap:25px}.hero-copy .eyebrow{font-size:8px;letter-spacing:1.1px}.hero-copy h1{font-size:34px;line-height:1.5;letter-spacing:-1px;margin-top:12px;max-width:340px}.hero-copy h1 br{display:block}.hero-copy p{font-size:11px;line-height:1.9}.hero-copy p br{display:block}.lesson-meta{font-size:9px;gap:18px}.boundary-map{padding:17px 18px 11px}.map-step b{font-size:12px}.map-step small{font-size:9px}.map-tag{font-size:7px}.tabs-wrap{top:67px;margin-bottom:20px}.tabs{gap:23px}.tabs button{font-size:11px;padding:13px 0}.tabs button b{font-size:8px;min-width:15px}.paper{padding:21px 18px;border-radius:8px}.article-body{font-size:12px;line-height:1.95}.article-body h2{font-size:17px;scroll-margin-top:135px}.article-body h3{font-size:14px}.section-kicker{font-size:8px;padding-bottom:15px}.tag{font-size:9px}pre{font-size:10px}.code-block pre{padding:12px}.code-block{margin:17px 0}table{font-size:10px;min-width:350px}.completion-row{gap:16px}.completion-row .button{width:100%;font-size:11px}.completion-row label{font-size:10px}.panel-heading{margin:26px 0 19px;display:block}.panel-heading h2{font-size:23px;margin:9px 0}.panel-heading p{font-size:11px}.panel-heading>.button{margin-top:15px;font-size:11px}.notice{font-size:10px;padding:11px 13px}.experiment,.checkpoint,.quiz-question{padding:21px 17px;border-radius:8px}.experiment h3,.checkpoint h3{font-size:16px;margin-top:10px}.experiment p,.checkpoint>p{font-size:11px}.experiment .field-label{font-size:10px}.experiment .field-label small{display:block;margin:2px 0 0}.code-editor{font-size:10px;padding:15px 12px;min-height:250px}.editor-header{font-size:8px;padding:9px 12px}.editor-header span:first-child:before{margin-right:8px;letter-spacing:1px}.editor-toolbar{padding:9px;gap:6px;flex-wrap:wrap}.editor-toolbar .button{padding:6px 8px;font-size:9px}.editor-toolbar .run-state{font-size:9px}.output{font-size:10px}.expected{font-size:10px}.hint{font-size:10px}.hint p{font-size:10px}.next-row{flex-wrap:wrap}.next-row p{font-size:10px}.next-row .button{font-size:11px}.quiz-question legend{font-size:12px}.quiz-option{font-size:11px;padding:10px;gap:8px}.quiz-explanation{font-size:10px}.quiz-actions{flex-wrap:wrap;gap:15px}.quiz-actions .button{font-size:11px}.quiz-result{padding:20px}.quiz-result h3{font-size:19px}.quiz-result p{font-size:11px}.exam-note h3{font-size:12px}.exam-note p,.exam-note a{font-size:10px}.record-tools h3{font-size:14px}.record-tools p{font-size:10px}.record-buttons .button{font-size:10px}.page-footer{font-size:8px;padding-top:21px;margin-top:24px}.toast{font-size:11px;min-width:220px}textarea{font-size:11px} .answer-label{font-size:10px}}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
 @media print{body{background:white;color:#111}.topbar,.sidebar,.hero,.breadcrumb,.tabs-wrap,.page-footer,.personal-notes,.record-tools,.panel-heading,.toast,.skip-link{display:none!important}main{margin:0;padding:0}.page-container{max-width:none;padding:0}.tab-panel{display:none!important}#panel-notes{display:block!important}.paper{border:0;padding:0}.article-body{font-size:11pt;color:#222}.article-body h2{break-after:avoid}.table-wrap,pre{overflow:visible;white-space:pre-wrap}table{min-width:0}.code-block,tr{break-inside:avoid}}
+
+/* Course catalog: keep lesson discovery separate from a learner's certification. */
+.sidebar {padding-top:23px}
+.sidebar-heading strong {margin-bottom:13px}
+.course-search {margin:18px 11px 8px}
+.course-search label {display:block;font-size:10px;color:var(--muted);margin-bottom:6px}
+.course-search input {width:100%;min-width:0;border:1px solid var(--line);background:#fff;border-radius:6px;padding:8px 10px;font-size:11px;color:var(--ink)}
+#search-status {font-size:10px;color:var(--green)}
+.map-button {margin:2px 11px 13px;padding:0;background:none;border:0;color:var(--green);font-size:10px;text-align:left}
+.sidebar .lesson-list {min-height:100px;overflow-y:auto;display:block;flex:1;margin-top:0;padding-right:3px;scrollbar-width:thin}
+.stage-group {margin-bottom:7px}
+.stage-group > summary {cursor:pointer;font-size:11px;font-weight:600;padding:10px 8px;border-radius:5px;list-style:none}
+.stage-group > summary:before {content:"›";margin-right:7px;color:#8ba18e}
+.stage-group[open] > summary:before {content:"⌄"}
+.stage-group > summary > span {font:10px var(--mono);margin-right:5px;color:var(--green)}
+.stage-group > summary > small {font-size:9px;color:var(--muted);font-weight:400;margin-left:6px}
+.stage-lessons {display:grid;gap:4px;padding:1px 0 9px}
+.stage-lessons .lesson-link {width:100%;border:0;background:none;text-align:left;font-family:var(--sans)}
+.stage-lessons .lesson-link.current {background:var(--pale)}
+.stage-lessons .lesson-link b {font-size:11px;line-height:1.7}
+.stage-lessons .lesson-link small {font-size:9px;line-height:1.5}
+.stage-exam {margin:13px 10px 14px;padding:12px 0}
+.sidebar-bottom {flex-shrink:0}
+.sidebar-bottom .microcopy {margin-top:10px}
+.tabs {gap:23px}
+.tabs button {font-size:11px}
+.map-step b {max-width:210px}
+.hero-copy h1 {text-wrap:balance}
+.course-pager {display:flex;justify-content:space-between;align-items:center;gap:15px;border-top:1px solid var(--line);padding:25px 0 0;margin-top:30px}
+.course-pager > span {color:var(--muted);font:11px var(--mono)}
+.paste-import {border:1px solid var(--line);border-radius:8px;background:#fff;padding:18px 20px}
+.paste-import summary {font-size:12px;cursor:pointer;color:var(--green)}
+.paste-import label {display:block;margin:15px 0 8px;font-size:11px;color:var(--muted)}
+.paste-import .button {margin-top:12px}
+#knowledge-map table {min-width:650px}
+@media(max-width:900px) {
+  .tabs {gap:20px}
+  .tabs button {font-size:10px}
+  .map-step b {max-width:none}
+  .stage-group > summary {padding-left:3px;font-size:10px}
+  .stage-group > summary > small {display:none}
+}
+@media(max-width:640px) {
+  .sidebar {padding:13px 19px 15px}
+  .course-search {margin:12px 0 5px}
+  .course-search label {display:none}
+  .course-search input {font-size:11px;padding:9px 11px}
+  .map-button {margin:3px 0 12px;font-size:10px}
+  .sidebar .lesson-list {display:block;max-height:220px;min-height:0;padding:0}
+  .stage-group > summary {padding:8px 5px;font-size:11px}
+  .stage-group > summary > small {display:inline}
+  .stage-lessons {grid-template-columns:repeat(2,minmax(0,1fr));gap:4px}
+  .stage-lessons .lesson-link {min-width:0;padding:9px 10px}
+  .stage-lessons .lesson-link b {font-size:10px}
+  .stage-lessons .lesson-link small {font-size:8px}
+  .hero-copy h1 {font-size:30px;max-width:none}
+  .tabs {gap:20px}
+  .course-pager .button {font-size:10px;padding:9px 12px}
+  .course-pager > span {font-size:9px}
+  .paste-import {padding:15px}
+}
+@media print {.course-pager,.paste-import {display:none!important}}

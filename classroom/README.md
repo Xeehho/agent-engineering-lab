@@ -1,6 +1,6 @@
 # 单文件互动课堂
 
-第一课的讲义、4 个本地实验、5 道随堂题、6 道公开自测和速记，统一在 [public/learn.html](../public/learn.html)。
+八阶段 31 课的讲义、34 个本地机制实验、95 道开放题、96 道公开自测、速记与个人笔记，统一在 [public/learn.html](../public/learn.html)。[知识体系](../course/knowledge-map.md) · [全部课程](../course/README.md)。
 
 ## 打开
 
@@ -15,7 +15,9 @@
 
 开放题只显示“已填写 · 待评阅”，不会按关键词自动判为掌握。自测会评分并给解析，但不计入正式阶段考试。正式新题仍在作业 commit 提交后生成。网页不修改 learning/progress.json，也不发模型请求。
 
-浏览器 localStorage 保存草稿、代码修改、实验预测/观察、笔记和最近自测。不同来源和浏览器不互通；清缓存或隐私模式可能丢失，请使用“备份 JSON”。导入先校验版本和字段，再确认覆盖。保存记录可以编辑，不是防作弊或教师验证证据。
+浏览器 localStorage 按课隔离草稿、代码修改、实验预测/观察、笔记和最近自测；相同的 C1/Q1 不会跨课混用。课程搜索、深链接和上一/下一课均可自由使用，不需要先答题解锁。知识地图将能力映射到项目证据。
+
+不同来源和浏览器不互通；清缓存或隐私模式可能丢失，请使用“备份全部课程 JSON”。兼容旧版第一课存储和 JSON 备份；旧记录保持原键，首次载入迁移，不删除。导入先校验版本和字段，再确认替换全课程记录；可选择文件或粘贴 JSON。重置只清当前课。记录可编辑，不是防作弊或教师验证证据。
 
 “导出作答 Markdown”包含个人答案、实验记录与笔记。发到教学聊天后由老师评阅，不自动上传、提交或入库。打印仅包含课程速记。
 
@@ -26,14 +28,14 @@ powershell -NoProfile -File scripts/run.ps1 classroom:build
 powershell -NoProfile -File scripts/run.ps1 check
 ~~~
 
-- 讲义与速记来自 course/stage-01/ 的 Markdown；不要手工修改生成后的 HTML。
-- classroom/content.mjs：公开实验、随堂题与自测；新题或知识点同时更新对应 Markdown。
+- 第一课讲义与速记来自原 Markdown，互动题来自 classroom/content.mjs。
+- 后续教材源是 course/content/ 与 course/curriculum.mjs，统一生成对应讲义/速记/题目/实验、阶段计划、考试蓝图和提交模板。
 - classroom/core.mjs：进度格式、评分与导出。
 - classroom/app.js、classroom.css、index.template.html：交互、样式与页面结构。
-- scripts/build-classroom.mjs：生成全部内嵌的 public/learn.html；--check 检测教材与生成文件是否同步。
+- scripts/build-classroom.mjs、scripts/course-materials.mjs：生成全部内嵌的 public/learn.html 和配套资料；--check 检测所有生成文件是否同步。
 - tests/classroom.test.mjs：评分、导入边界、进度、导出、转义、产物同步与真实演示执行。浏览器另验运行、超时、错误、保存/恢复、导出/导入、键盘与窄屏。
 - Vite 构建把 public/learn.html 原样复制到 dist/learn.html。
 
 代码实验在独立 Worker 中执行，限制三秒，日志数量与长度有上限；通过 CSP 禁用网络连接，不读取页面答案或本地存储。它是本机课堂运行器，不是面向恶意代码的安全服务。TypeScript 题只供阅读，运行实验明确使用等价 JavaScript。
 
-交互参考 [learn-py.org](https://learn-py.org/) 的课程导航与读、练、测流程；教材、示例与视觉设计由本项目编写，没有复用第三方课程正文、图片或源码。后续课还未编写，不将课程目录标为已完成。仓库保持既有可见性，未新增发行许可证。
+交互参考 [learn-py.org](https://learn-py.org/) 的课程导航与读、练、测流程；教材、示例与视觉设计由本项目编写，没有复用第三方课程正文、图片或源码。教材已准备不等于学习者已经掌握。仓库保持既有可见性，未新增发行许可证。

@@ -5,8 +5,9 @@ import { execFileSync } from "node:child_process";
 import { Worker } from "node:worker_threads";
 import vm from "node:vm";
 import { experiments, checkpoints, quiz } from "../classroom/content.mjs";
-import { emptyState, normalizeState, gradeQuiz, summarizeProgress, exportAnswers, classroomWorker } from "../classroom/core.mjs";
+import { emptyState, normalizeState, emptyBook, normalizeBook, gradeQuiz, summarizeProgress, exportAnswers, classroomWorker } from "../classroom/core.mjs";
 import { renderMarkdown } from "../classroom/markdown.mjs";
+import { lessons, stages } from "../course/curriculum.mjs";
 
 test("self-test grades actual choices and does not award unanswered points", () => {
   assert.equal(gradeQuiz({}, quiz).correct, 0);
@@ -113,4 +114,76 @@ test("all four editable demos execute the actual runner protocol", async () => {
   assert.match(output[1], /null => object/);
   assert.match(output[2], /status: 503[\s\S]*ok: false/);
   assert.match(output[3], /请增加深色模式[\s\S]*订单页白屏/);
+});
+
+test("all 31 lessons have distinct complete content, valid quizzes and stage coverage", () => {
+  assert.equal(lessons.length, 31);
+  assert.equal(stages.length, 8);
+  assert.equal(new Set(lessons.map(item => item.id)).size, lessons.length);
+  assert.equal(lessons.reduce((sum,item) => sum + item.quiz.length,0), 96);
+  for (const item of lessons) {
+    assert.ok(stages.some(stage => stage.id === item.stage), item.id);
+    assert.ok(item.experiments.length >= 1, item.id);
+    assert.ok(item.checkpoints.length >= 3, item.id);
+    assert.ok(item.quiz.length >= 3, item.id);
+    assert.equal(new Set(item.quiz.map(question => question.id)).size, item.quiz.length);
+    for (const question of item.quiz) {
+      assert.equal(question.options.length, 4);
+      assert.equal(new Set(question.options).size, 4, item.id + " unique options");
+      assert.ok(question.answer >= 0 && question.answer < 4);
+      assert.ok(question.explanation.length > 8);
+    }
+    if (item.id !== "S1-L01") {
+      assert.equal(item.sections.length, 3);
+      assert.ok(item.sections.every(section => section[1].length > 85), item.id + " substantive sections");
+      assert.ok(item.sources.length > 0);
+      assert.ok(item.project.length > 25);
+    }
+  }
+});
+
+test("multi-lesson backup isolates identical question IDs and restores migrated legacy records", () => {
+  const first = emptyState("S1-L01");
+  first.drafts.C1 = "第一课回答";
+  const second = emptyState("S2-L01");
+  second.drafts.C1 = "工具课回答"; second.answers.Q1 = 2;
+  const book = emptyBook(lessons);
+  book.currentLesson = second.course;
+  book.lessons[first.course] = first; book.lessons[second.course] = second;
+  const restored = normalizeBook(JSON.parse(JSON.stringify(book)), lessons);
+  assert.equal(restored.lessons["S1-L01"].drafts.C1, "第一课回答");
+  assert.equal(restored.lessons["S2-L01"].drafts.C1, "工具课回答");
+  assert.equal(restored.currentLesson, "S2-L01");
+  assert.ok(exportAnswers(second, lessons[6].experiments, lessons[6].checkpoints, lessons[6].quiz).startsWith("# S2-L01"));
+  const migrated = normalizeBook(first, lessons);
+  assert.equal(migrated.lessons["S1-L01"].drafts.C1, first.drafts.C1);
+  assert.equal(migrated.schemaVersion, 2);
+  assert.equal(migrated.lessons["S2-L01"], undefined);
+  assert.throws(() => normalizeBook({schemaVersion:9}, lessons));
+  assert.throws(() => normalizeBook({...book,lessons:{"S2-L01":first}}, lessons));
+});
+
+test("all course demonstrations really run without network, keys or external dependencies", async () => {
+  for (const item of lessons) {
+    for (const demo of item.experiments) {
+      const output = await runDemo(demo.code);
+      assert.ok(output.trim().length > 0, item.id + ":" + demo.id);
+      assert.ok(!/\b(fetch|XMLHttpRequest)\s*\(/.test(demo.code), item.id);
+    }
+  }
+});
+
+test("generated lesson and project materials expose sources and preserve formal exam boundary", async () => {
+  for (const stage of stages) {
+    const blueprint = await readFile(new URL("../assessments/stage-" + stage.id + "/exam-blueprint.md", import.meta.url), "utf8");
+    assert.ok(blueprint.includes("30") && blueprint.includes("50") && blueprint.includes("20"));
+  }
+  for (const item of lessons.slice(1)) {
+    const lecture = await readFile(new URL("../" + item.lecturePath, import.meta.url), "utf8");
+    assert.ok(lecture.includes(item.project));
+    assert.ok(lecture.includes("不代表学习者"));
+    assert.ok(lecture.includes(item.sources[0][1]));
+    const checkpoint = await readFile(new URL("../" + item.checkpointPath, import.meta.url), "utf8");
+    assert.ok(checkpoint.includes(item.checkpoints[0].text));
+  }
 });

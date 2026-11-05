@@ -2,8 +2,11 @@
   "use strict";
   // __CORE__
   const material = /*__CONTENT__*/;
-  const { experiments, checkpoints, quiz } = material;
-  const storageKey = "agent-engineering-lab:classroom:S1-L01:v1";
+  const catalog = material.lessons;
+  const storageKey = "agent-engineering-lab:classroom:book:v2";
+  let book = emptyBook(catalog);
+  let current = catalog[0];
+  let experiments = current.experiments, checkpoints = current.checkpoints, quiz = current.quiz;
   const byId = id => document.getElementById(id);
   let state = emptyState();
   let storageAvailable = true;
@@ -22,15 +25,17 @@
     toastTimer = setTimeout(() => { byId("toast").hidden = true; }, 4200);
   }
   try {
-    const saved = localStorage.getItem(storageKey);
-    if (saved) state = normalizeState(JSON.parse(saved), experiments, checkpoints, quiz);
+    const saved = localStorage.getItem(storageKey) || localStorage.getItem("agent-engineering-lab:classroom:S1-L01:v1");
+    if (saved) book = normalizeBook(JSON.parse(saved), catalog);
   } catch {
     storageAvailable = false;
     toast("本机记录不可读取。仍可学习，请及时导出备份。");
   }
   function persist() {
+    book.lessons[current.id] = state;
+    book.currentLesson = current.id;
     try {
-      localStorage.setItem(storageKey, JSON.stringify(state));
+      localStorage.setItem(storageKey, JSON.stringify(book));
       storageAvailable = true;
     } catch { storageAvailable = false; }
     byId("save-status").textContent = storageAvailable ? "已保存到本机" : "无法自动保存，请导出备份";
@@ -45,6 +50,12 @@
     byId("quiz-count").textContent = "已选 " + progress.grade.answered + " / " + quiz.length;
     for (const item of checkpoints)
       byId("draft-status-" + item.id).textContent = state.drafts[item.id]?.trim() ? "已填写 · 待评阅" : "待作答";
+    for (const button of document.querySelectorAll("[data-lesson]")) {
+      const item = catalog.find(item => item.id === button.dataset.lesson);
+      const saved = book.lessons[item.id];
+      button.querySelector("small").textContent = item.id + " · " +
+        (saved ? summarizeProgress(saved, item.experiments, item.checkpoints, item.quiz).completed + "/4 活动" : "教材已备");
+    }
   }
   function selectTab(name, focus = false) {
     if (!tabs.includes(name)) name = "lecture";
@@ -59,7 +70,91 @@
       document.querySelector(".tabs-wrap").scrollIntoView({ block: "start" });
     }
     persist();
+    const hash = "#" + current.id + "/" + name;
+    if (location.hash !== hash) history.replaceState(null, "", hash);
   }
+  function selectLesson(id, tab, focus = false) {
+    const next = catalog.find(item => item.id === id);
+    if (!next) return;
+    stopWorkers();
+    if (current) book.lessons[current.id] = state;
+    current = next;
+    byId("lesson-search").value = "";
+    byId("search-status").textContent = "";
+    document.querySelectorAll("[data-lesson],.stage-group").forEach(node => { node.hidden = false; });
+    experiments = current.experiments; checkpoints = current.checkpoints; quiz = current.quiz;
+    state = book.lessons[current.id] || emptyState(current.id);
+    if (tab && tabs.includes(tab)) state.tab = tab;
+    document.title = current.id + " · " + current.title + " | Agent Engineering Lab";
+    const stage = material.stages.find(stage => stage.id === current.stage);
+    byId("stage-crumb").textContent = "阶段 " + current.stage + " · " + stage.title;
+    byId("lesson-crumb").textContent = current.id;
+    byId("lesson-version").textContent = current.id;
+    byId("lesson-badge").textContent = current.id + " · BUILD YOUR JUDGMENT";
+    byId("lesson-title").textContent = current.title;
+    byId("lesson-summary").textContent = current.summary;
+    byId("lesson-duration").textContent = "◷ " + current.duration;
+    byId("lab-meta").textContent = experiments.length + " 个实验";
+    byId("practice-meta").textContent = checkpoints.length + " 道随堂题";
+    byId("lab-description").textContent = experiments.length + " 个可编辑 JavaScript 实验。只教机制，不代替真实服务、协议、Python 或生产验证。";
+    byId("quiz-description").textContent = quiz.length + " 道公开单选题。提交后显示解析，可修改后重测。";
+    byId("progress-lab").textContent = "运行 " + experiments.length + " 个实验";
+    byId("progress-practice").textContent = "填写 " + checkpoints.length + " 道随堂题";
+    byId("tab-lab").querySelector("b").textContent = experiments.length;
+    byId("tab-practice").querySelector("b").textContent = checkpoints.length;
+    // Only compiler-generated trusted teaching HTML is rendered here; answers always use textContent/value.
+    byId("lecture-content").innerHTML = current.lectureHtml;
+    byId("notes-content").innerHTML = current.notesHtml;
+    byId("lecture-toc").innerHTML = '<span class="eyebrow">本课目录</span>' + current.tocHtml;
+    byId("mission-text").textContent = current.project;
+    byId("exam-link").href = "https://github.com/Xeehho/agent-engineering-lab/blob/main/assessments/stage-" + current.stage + "/exam-blueprint.md";
+    const maps = document.querySelectorAll(".map-step");
+    maps.forEach((node, index) => {
+      node.querySelector("b").textContent = current.goals[index];
+      node.querySelector("small").textContent = ["理解机制", "识别失败边界", "用证据验证"][index];
+      node.querySelector(".map-tag").textContent = ["LEARN", "VERIFY", "APPLY"][index];
+    });
+    document.querySelector(".boundary-map").setAttribute("aria-label", "本课三个学习目标");
+    document.querySelector(".map-label").innerHTML = '<span class="terminal-dot"></span> concept → boundary → evidence <span>' + current.stage + "</span>";
+    document.querySelector(".boundary-map > p").textContent = "教材可提前阅读，掌握程度由本人作答与项目证据判断。";
+    const position = catalog.indexOf(current);
+    byId("lesson-position").textContent = (position + 1) + " / " + catalog.length + " · " + current.id;
+    byId("previous-lesson").disabled = position === 0;
+    byId("next-lesson").disabled = position === catalog.length - 1;
+    document.querySelectorAll("[data-lesson]").forEach(button => {
+      const selected = button.dataset.lesson === current.id;
+      button.classList.toggle("current", selected);
+      if (selected) button.setAttribute("aria-current", "page"); else button.removeAttribute("aria-current");
+    });
+    document.querySelectorAll(".stage-group").forEach(group => { group.open = group.dataset.stage === current.stage; });
+    restoreControls();
+    if (focus) {
+      byId("lesson-title").tabIndex = -1; byId("lesson-title").focus({preventScroll:true});
+      window.scrollTo({top:0,behavior:"auto"});
+    }
+  }
+  document.querySelectorAll("[data-lesson]").forEach(button =>
+    button.addEventListener("click", () => selectLesson(button.dataset.lesson, "lecture", true)));
+  byId("previous-lesson").addEventListener("click", () => selectLesson(catalog[catalog.indexOf(current) - 1]?.id, "lecture", true));
+  byId("next-lesson").addEventListener("click", () => selectLesson(catalog[catalog.indexOf(current) + 1]?.id, "lecture", true));
+  byId("lesson-search").addEventListener("input", event => {
+    const query = event.target.value.trim().toLowerCase();
+    let matches = 0;
+    document.querySelectorAll("[data-lesson]").forEach(button => {
+      const item = catalog.find(item => item.id === button.dataset.lesson);
+      const match = !query || [item.id,item.title,item.summary,...item.goals].join(" ").toLowerCase().includes(query);
+      button.hidden = !match; if (match) matches++;
+    });
+    document.querySelectorAll(".stage-group").forEach(group => {
+      group.hidden = !Array.from(group.querySelectorAll("[data-lesson]")).some(button => !button.hidden);
+      group.open = Boolean(query) || group.dataset.stage === current.stage;
+    });
+    byId("search-status").textContent = query ? matches + " 课匹配" : "";
+  });
+  window.addEventListener("hashchange", () => {
+    const [id, tab] = location.hash.slice(1).split("/");
+    if (catalog.some(item => item.id === id)) selectLesson(id, tab);
+  });
   document.querySelectorAll("[data-tab]").forEach(button => {
     button.addEventListener("click", () => selectTab(button.dataset.tab));
     button.addEventListener("keydown", event => {
@@ -288,12 +383,12 @@
     toast("已生成下载文件，请在浏览器下载列表中查看。");
   }
   function downloadAnswers() {
-    download("S1-L01-课堂作答.md", exportAnswers(state, experiments, checkpoints, quiz), "text/markdown;charset=utf-8");
+    download(current.id + "-课堂作答.md", exportAnswers(state, experiments, checkpoints, quiz), "text/markdown;charset=utf-8");
   }
   ["export-top", "export-answers", "export-notes"].forEach(id =>
     byId(id).addEventListener("click", downloadAnswers));
   byId("backup").addEventListener("click", () =>
-    download("S1-L01-progress.json", JSON.stringify(state, null, 2), "application/json;charset=utf-8"));
+    download("agent-engineering-lab-progress.json", JSON.stringify(book, null, 2), "application/json;charset=utf-8"));
   byId("personal-notes").addEventListener("input", event => {
     state.personalNotes = event.target.value; persist();
   });
@@ -325,20 +420,36 @@
     byId("personal-notes").value = state.personalNotes;
     selectTab(state.tab);
   }
+  async function importBackup(text) {
+    if (new Blob([text]).size > 10000000) throw new Error("备份过大，上限 10 MB。");
+    const imported = normalizeBook(JSON.parse(text), catalog);
+    if (!await askConfirmation("导入学习记录？", "将以备份替换当前浏览器的课程记录。建议先备份；第一课旧版文件也可导入，分数不作为老师认证。")) return;
+    stopWorkers(); book = imported;
+    // Do not write the pre-import active lesson back into the imported book.
+    current = null; state = emptyState(imported.currentLesson);
+    selectLesson(imported.currentLesson);
+    byId("import-text").value = "";
+    toast("课程记录已导入；运行输出需重新执行。");
+  }
   byId("import-file").addEventListener("change", async event => {
     const file = event.target.files[0]; event.target.value = "";
     if (!file) return;
     try {
-      if (file.size > 500000) throw new Error("进度文件过大，上限为 500 KB。");
-      const imported = normalizeState(JSON.parse(await file.text()), experiments, checkpoints, quiz);
-      if (!await askConfirmation("导入学习记录？", "将替换当前浏览器的答案、笔记与活动记录。建议先备份当前记录。导入内容不会作为老师已验证的成绩。")) return;
-      stopWorkers(); state = imported; restoreControls(); toast("进度已导入本机；运行输出需重新执行查看。");
+      if (file.size > 10000000) throw new Error("进度文件过大，上限为 10 MB。");
+      await importBackup(await file.text());
     } catch (error) { toast("导入失败：" + error.message); }
   });
+  byId("import-text-button").addEventListener("click", async () => {
+    try { await importBackup(byId("import-text").value); }
+    catch (error) { toast("导入失败：" + error.message); }
+  });
   byId("reset-progress").addEventListener("click", async () => {
-    if (!await askConfirmation("清空本机学习记录？", "将清空当前浏览器中本课的答案、代码修改、笔记和活动记录。请先备份；这不会修改仓库或老师的评阅记录。")) return;
-    stopWorkers(); state = emptyState(); restoreControls(); toast("本机学习记录已清空。");
+    if (!await askConfirmation("清空当前课记录？", "仅清空 " + current.id + " 在当前浏览器的答案、代码修改、笔记与活动记录，其他课保留。请先备份。")) return;
+    stopWorkers(); state = emptyState(current.id); restoreControls(); toast("当前课记录已清空。");
   });
   window.addEventListener("pagehide", stopWorkers);
-  restoreControls();
+  const [requestedLesson, requestedTab] = location.hash.slice(1).split("/");
+  const startId = catalog.some(item => item.id === requestedLesson) ? requestedLesson : book.currentLesson;
+  current = null; // Initial selection must not overwrite a migrated first-lesson record.
+  selectLesson(startId, requestedTab);
 })();

@@ -1,13 +1,13 @@
-export const tabs = ["lecture", "lab", "practice", "quiz", "notes"];
-export function emptyState() {
-  return { schemaVersion: 1, course: "S1-L01", tab: "lecture", read: false,
+export const tabs = ["lecture", "lab", "practice", "quiz", "notes", "roadmap"];
+export function emptyState(course = "S1-L01") {
+  return { schemaVersion: 1, course, tab: "lecture", read: false,
     drafts: {}, codes: {}, predictions: {}, observations: {}, ran: [],
     answers: {}, submitted: false, personalNotes: "" };
 }
-export function normalizeState(value, experiments, checkpoints, quiz) {
-  if (!value || value.schemaVersion !== 1 || value.course !== "S1-L01")
-    throw new Error("这不是 S1-L01 的有效进度文件。");
-  const state = emptyState();
+export function normalizeState(value, experiments, checkpoints, quiz, course = "S1-L01") {
+  if (!value || value.schemaVersion !== 1 || value.course !== course)
+    throw new Error("进度文件与课程编号或版本不匹配。");
+  const state = emptyState(course);
   state.tab = tabs.includes(value.tab) ? value.tab : "lecture";
   state.read = value.read === true;
   state.submitted = value.submitted === true;
@@ -47,7 +47,7 @@ export function summarizeProgress(state, experiments, checkpoints, quiz) {
   return { drafted, grade, parts, completed: parts.filter(Boolean).length };
 }
 export function exportAnswers(state, experiments, checkpoints, quiz) {
-  const lines = ["# S1-L01 课堂作答", "", "这些内容为个人课堂练习，待老师评阅；不是正式阶段考试。", "",
+  const lines = ["# " + state.course + " 课堂作答", "", "这些内容为个人课堂练习，待老师评阅；不是正式阶段考试。", "",
     "AI 协助范围（请补充）：", "", "## 随堂题"];
   for (const item of checkpoints)
     lines.push("", "### " + item.id + " " + item.title, "", state.drafts[item.id] || "（未作答）");
@@ -67,6 +67,30 @@ export function exportAnswers(state, experiments, checkpoints, quiz) {
   return lines.join("\n");
 }
 
+export function emptyBook(catalog) {
+  return { schemaVersion: 2, course: "agent-engineering-lab",
+    currentLesson: catalog[0].id, lessons: {} };
+}
+export function normalizeBook(value, catalog) {
+  const book = emptyBook(catalog);
+  // Import/migrate an original single-lesson backup without losing its answers.
+  if (value?.schemaVersion === 1) {
+    const item = catalog.find(item => item.id === value.course);
+    if (!item) throw new Error("找不到备份中的课程。");
+    book.currentLesson = item.id;
+    book.lessons[item.id] = normalizeState(value, item.experiments, item.checkpoints, item.quiz, item.id);
+    return book;
+  }
+  if (!value || value.schemaVersion !== 2 || value.course !== book.course || !value.lessons || typeof value.lessons !== "object")
+    throw new Error("不是有效的课程备份。");
+  if (catalog.some(item => item.id === value.currentLesson)) book.currentLesson = value.currentLesson;
+  for (const item of catalog) {
+    if (!Object.hasOwn(value.lessons, item.id)) continue;
+    book.lessons[item.id] = normalizeState(value.lessons[item.id], item.experiments, item.checkpoints, item.quiz, item.id);
+  }
+  return book;
+}
+
 // Executed only in a dedicated Worker. No DOM or persistent storage is exposed.
 // CSP blocks network access; this is a local learning runner, not a hostile-code security boundary.
 export function classroomWorker() {
@@ -81,7 +105,7 @@ export function classroomWorker() {
     const output = (...values) => {
       if (lines++ < 80) send({ type: "log", text: values.map(format).join(" ") });
     };
-    self.console = { log: output, info: output, warn: output, error: output, debug: output };
+    self.console = { log: output, info: output, warn: output, error: output, debug: output, table: output };
     try {
       const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
       await new AsyncFunction(event.data)();

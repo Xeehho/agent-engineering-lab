@@ -2,12 +2,14 @@
 
 从AI Coding交付，进阶到能设计、验证、排错的AI应用工程。课程针对有前端经验、长期使用AI写代码的学习者，按能力验收推进。
 
-**当前状态：第一课已开讲，第一阶段作业待提交，尚未考试。**
+**当前状态：八阶段 31 课教材已准备；个人学习仍在第一阶段，作业待提交，尚未考试。**
 本仓库的Mock不会理解工单内容。绿色CI只证明骨架正常，不能证明模型效果、作业完成或考试通过。
 
 ## 从这里开始
 
-**[打开单文件互动课堂](public/learn.html)**：下载 HTML 后直接用浏览器打开，或启动项目访问 http://127.0.0.1:5173/learn.html 。讲义、4 个可运行实验、5 道随堂题、6 道公开自测和笔记集中在一页，支持本机自动保存及导出作答。[使用与维护说明](classroom/README.md)。
+**[打开单文件互动课堂](public/learn.html)**：下载 HTML 后直接用浏览器打开，或启动项目访问 http://127.0.0.1:5173/learn.html 。八阶段 31 课、34 个机制实验、95 道开放题、96 道公开自测与笔记集中在一页；支持搜索、逐课记录、旧版迁移和全课程备份。[使用与维护说明](classroom/README.md)。
+
+[知识体系与学习投入](course/knowledge-map.md) · [全部课程](course/README.md) · [求职作品与面试训练](docs/career/job-readiness.md)。React/TypeScript 为主线，补 Python、模型机制、工具、MCP、SQL/状态、RAG、多角色、评测、观测与部署。
 
 聊天中继续由老师讲解、追问和评阅，配套资料保存在[课堂目录](course/README.md)。当前课：[完整讲义](course/stage-01/lessons/01-success-contracts.md) · [速记](course/stage-01/notes/01-quick-reference.md) · [随堂题](course/stage-01/exercises/01-checkpoint.md) · [离线实验](examples/lesson-01/README.md)。
 
