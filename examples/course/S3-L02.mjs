@@ -1,7 +1,26 @@
 // S3-L02 local teaching demo. No model API calls; not a complete homework solution.
 import assert from "node:assert/strict";
 {
-console.log("实验 1：协议错误与工具失败");
+console.log("实验 1：先连接，再发现，最后分清错误");
+let connected = false;
+function connect() {
+  connected = true;
+}
+function call(ticketId) {
+  if (!connected) throw new Error("连接尚未建立");
+  if (ticketId !== "T-42") {
+    return { isError: true, content: [{ text: "工单不存在" }] };
+  }
+  return { isError: false, content: [{ text: "订单页白屏" }] };
+}
+assert.throws(() => call("T-42"), /连接/);
+connect();
+console.log(call("missing").isError, call("T-42").content[0].text);
+
+}
+
+{
+console.log("实验 2：协议错误与工具失败");
 // 对应本课锁定的高层 SDK 错误包装，用纯数据观察三个结果层级。
 function simulateCall(message) {
   if (message.method !== "tools/call") {

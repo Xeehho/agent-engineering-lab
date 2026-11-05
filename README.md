@@ -2,18 +2,18 @@
 
 从AI Coding交付，进阶到能设计、验证、排错的AI应用工程。课程针对有前端经验、长期使用AI写代码的学习者，按能力验收推进。
 
-**默认在网站里学：31课讲解、34个可编辑网页实验、随堂题、自测与笔记，无需启动项目、安装依赖或提供 Key。真实组件实操与完整项目另作进阶。**
+**默认在网站里学：31课入门与进阶讲解、65个可编辑网页实验（31入门+34进阶）、31份脑图与3张工程架构图、随堂题、自测与笔记，无需启动项目、安装依赖或提供 Key。真实组件实操与完整项目另作进阶。**
 
-本轮重新梳理全部课程：补充术语、输入输出、函数阅读顺序、执行追踪和渐进练习；代码改为独立文件、明确变量名、中文注释和分段逻辑。网页完整本地代码默认折叠，可选下载。实际执行与推演边界逐课标明。
+每课从具体问题和概念定义开始，解释名字与字段的来源，再用最小代码、预期输出和逐步追踪连接机制。先完成1个入门实验、3道开放题和2道自测，再按需展开完整进阶。脑图标注先修和后续课程，工程架构提供请求、知识管道与质量交付三个视角。
 
 选做实操：Node.js 24 下执行 npm ci，再运行 npm run tutorial -- S3-L01。Python 课需 .venv 与 examples/tutorial-requirements.txt。教材源在 course/tutorials/，代码在 code/，阅读拆解在 walkthrough/；网页实验源在 course/browser-demos/。构建统一同步讲义、脚本与单页课堂。个人作业和考试状态保持真实提交记录。
 本仓库的Mock不会理解工单内容。绿色CI只证明骨架正常，不能证明模型效果、作业完成或考试通过。
 
 ## 从这里开始
 
-**[课程首页](http://127.0.0.1:5173/)**：启动项目后先看课程体系、学习成果、前置条件与准备自查；有开发者 Xeehho 的介绍及 GitHub Star 入口。[项目实验台](http://127.0.0.1:5173/lab.html)与课堂各有独立入口。
+**[课程首页](https://agent-engineering-lab.vercel.app/)**：直接在线查看课程体系、学习成果、前置条件与准备自查；有开发者 Xeehho 的介绍及 GitHub Star 入口。[项目实验台](https://agent-engineering-lab.vercel.app/lab.html)与课堂各有独立入口。
 
-**[打开单文件互动课堂](public/learn.html)**：下载 HTML 后直接用浏览器打开，或启动项目访问 http://127.0.0.1:5173/learn.html 。八阶段 31 课、34 个机制实验、95 道开放题、96 道公开自测与笔记集中在一页；支持搜索、逐课记录、旧版迁移和全课程备份。[使用与维护说明](classroom/README.md)。
+**[在线互动课堂](https://agent-engineering-lab.vercel.app/learn.html)**（[单文件离线版](public/learn.html)）：下载 HTML 后直接用浏览器打开，或启动项目访问 http://127.0.0.1:5173/learn.html 。八阶段31课、65个实验、188道开放题（93入门+95进阶）、158道公开自测（62入门+96进阶）与笔记集中在一页；支持搜索、逐课记录、旧版迁移和全课程备份。[使用与维护说明](classroom/README.md)。
 
 [知识体系与学习投入](course/knowledge-map.md) · [全部课程](course/README.md) · [求职作品与面试训练](docs/career/job-readiness.md)。React/TypeScript 为主线，补 Python、模型机制、工具、MCP、SQL/状态、RAG、多角色、评测、观测与部署。
 
@@ -67,7 +67,7 @@ powershell -NoProfile -File scripts/run.ps1 practice:stage1
 
 ## 课程与老师
 
-[阶段路线](course/roadmap.md) · [AI协作与考试制度](course/learning-contract.md) · [当前进度](learning/progress.json) · [回到新聊天继续学习](course/continue-with-teacher.md)
+[阶段路线](course/roadmap.md) · [AI协作与考试制度](course/learning-contract.md) · [进度模板](learning/progress.example.json) · [回到新聊天继续学习](course/continue-with-teacher.md)
 
 你的老师会根据诊断、当前提交和实际表现调整速度。你可以跳过已经用证据证明掌握的内容；每阶段仍需要作业评阅和变式考试。AI使用范围会与个人掌握程度分别记录。
 
@@ -80,3 +80,9 @@ powershell -NoProfile -File scripts/run.ps1 practice:stage1
 ## 工程范围
 
 默认离线Mock；没有真实模型验证、后端生产运行、部署或岗位录用结论。仓库不含作业答案和提前固定的正式考卷。所有任务均使用样例数据。
+
+## 架构与开放许可
+
+[请求主线](course/maps/architecture-request.md) · [知识管道](course/maps/architecture-knowledge.md) · [质量交付闭环](course/maps/architecture-quality.md) · [Agent循环脑图](course/maps/S2-L02.svg)。图可在网页内查看、关联跳课并下载SVG与Markdown。
+
+软件代码MIT；原创讲义、练习和脑图CC BY 4.0。混合文件与第三方范围见[LICENSING.md](LICENSING.md)、[NOTICE](NOTICE.md)。[贡献指南](CONTRIBUTING.md) · [安全问题](SECURITY.md)。个人进度、作答和成绩保存在本地私有目录，公共仓库只提供空模板。

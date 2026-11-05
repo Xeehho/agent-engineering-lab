@@ -1,7 +1,22 @@
 // S1-L04 local teaching demo. No model API calls; not a complete homework solution.
 import assert from "node:assert/strict";
 {
-console.log("实验 1：让证据来自实际执行");
+console.log("实验 1：测试通过，到底证明了什么");
+const evidence = [
+  { kind: "controlled", passed: true },
+  { kind: "real", passed: false },
+];
+function canClaimReal(rows) {
+  return rows.some((row) => row.kind === "real" && row.passed);
+}
+console.log("本地检查通过：", evidence[0].passed);
+console.log("可声称真实接通：", canClaimReal(evidence));
+assert.equal(canClaimReal(evidence), false);
+
+}
+
+{
+console.log("实验 2：让证据来自实际执行");
 // 直接在网页运行。assert 是课堂提供的检查工具，失败会中断本次实验。
 
 // 被测逻辑：从外部 JSON 文本读取非负整数，不负责工单业务。

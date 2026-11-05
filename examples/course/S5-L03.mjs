@@ -1,7 +1,19 @@
 // S5-L03 local teaching demo. No model API calls; not a complete homework solution.
 import assert from "node:assert/strict";
 {
-console.log("实验 1：真实引文也会配上错误结论");
+console.log("实验 1：有引用链接，不等于引用支持答案");
+const facts = [{ id: "doc-1", supportedClaim: "审核需要三天" }];
+const answer = { claim: "退款三天到账", evidenceId: "doc-1" };
+const evidence = facts.find((item) => item.id === answer.evidenceId);
+const supported = evidence?.supportedClaim === answer.claim;
+console.log("引用存在：", Boolean(evidence), "主张受支持：", supported);
+console.log(supported ? answer.claim : "资料不足，不能确定到账时间");
+assert.equal(supported, false);
+
+}
+
+{
+console.log("实验 2：真实引文也会配上错误结论");
 // 直接在网页运行。assert 是课堂提供的检查工具，失败会中断本次实验。
 // 把排序与引用检查分开，最后用反例证明真实引文不等于结论受支持。
 const fixtureChunks = [

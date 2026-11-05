@@ -1,7 +1,18 @@
 // S5-L04 local teaching demo. No model API calls; not a complete homework solution.
 import assert from "node:assert/strict";
 {
-console.log("实验 1：逐条计算评测分母");
+console.log("实验 1：先找出哪一层失误，再优化 RAG");
+const relevant = new Set(["doc-1", "doc-2"]);
+const retrieved = new Set(["doc-1", "doc-3", "doc-1"]);
+const hits = [...relevant].filter((id) => retrieved.has(id)).length;
+const recall = hits / relevant.size;
+console.log("相关资料找回：", hits + "/" + relevant.size, "召回率：", recall);
+assert.equal(recall, 0.5);
+
+}
+
+{
+console.log("实验 2：逐条计算评测分母");
 // 直接在网页运行。assert 是课堂提供的检查工具，失败会中断本次实验。
 
 // 标注与运行分开保存，评分不能根据输出临时改变答案。

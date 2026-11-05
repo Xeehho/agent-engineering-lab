@@ -8,6 +8,8 @@ import { experiments, checkpoints, quiz } from "../classroom/content.mjs";
 import { emptyState, normalizeState, emptyBook, normalizeBook, gradeQuiz, summarizeProgress, exportAnswers, classroomWorker } from "../classroom/core.mjs";
 import { renderMarkdown } from "../classroom/markdown.mjs";
 import { lessons, stages } from "../course/curriculum.mjs";
+import { lessonMaps } from "../course/knowledge-graphs.mjs";
+import { architectureViews,components } from "../course/architecture.mjs";
 
 test("self-test grades actual choices and does not award unanswered points", () => {
   assert.equal(gradeQuiz({}, quiz).correct, 0);
@@ -120,7 +122,7 @@ test("all 31 lesson overviews have distinct topics, valid quizzes and stage cove
   assert.equal(lessons.length, 31);
   assert.equal(stages.length, 8);
   assert.equal(new Set(lessons.map(item => item.id)).size, lessons.length);
-  assert.equal(lessons.reduce((sum,item) => sum + item.quiz.length,0), 96);
+  assert.equal(lessons.reduce((sum,item) => sum + item.quiz.length,0), 158);
   for (const item of lessons) {
     assert.ok(stages.some(stage => stage.id === item.stage), item.id);
     assert.ok(item.experiments.length >= 1, item.id);
@@ -200,12 +202,39 @@ test("teaching code has file labels, copy controls, optional local blocks and co
       assert.equal(headings.get(anchor[1]),anchor[2],item.id+" matching heading");
     }
     if (item.id==="S1-L01") continue;
-    assert.ok(item.lectureHtml.includes('class="optional-code"'));
-    assert.ok(!item.lectureHtml.includes('class="optional-code" open'));
+    assert.ok(item.advancedLectureHtml.includes('class="optional-code"'));
+    assert.ok(!item.advancedLectureHtml.includes('class="optional-code" open'));
     assert.ok(item.lectureHtml.includes('class="copy-code"'));
-    assert.ok(item.lectureHtml.includes("代码阅读"));
-    assert.ok(item.lectureHtml.includes("网页主线"));
+    assert.ok(item.advancedLectureHtml.includes("代码阅读"));
+    assert.ok(item.lectureHtml.includes("名字与字段") || item.lectureHtml.includes("名字与字段从哪里来"));
     assert.ok(item.experiments[0].challenge);
+  }
+});
+
+test("entry experiments are required without discarding old optional code or learner records",()=>{
+  for(const lesson of lessons) {
+    const core=lesson.experiments.filter(e=>e.level!=="advanced");
+    assert.equal(core.length,1,lesson.id);
+    assert.equal(core[0].id,"start");
+    const old=lesson.experiments.find(e=>e.level==="advanced");
+    const state=normalizeState({...emptyState(lesson.id),codes:{[old.id]:"我的旧代码"},ran:["start"]},lesson.experiments,lesson.checkpoints,lesson.quiz,lesson.id);
+    assert.equal(state.codes[old.id],"我的旧代码");
+    assert.equal(summarizeProgress(state,lesson.experiments,lesson.checkpoints,lesson.quiz).parts[1],true);
+  }
+});
+
+test("mind maps link known lessons and architecture edges/steps reference existing components",()=>{
+  for(const lesson of lessons) {
+    const map=lessonMaps[lesson.id];
+    assert.equal(map.branches.length,4);
+    assert.ok(map.branches.every(branch=>branch.points.length===2));
+    for(const id of [...map.prerequisites,...map.next]) assert.ok(lessons.some(item=>item.id===id));
+    for(const id of map.components) assert.ok(components[id]);
+  }
+  for(const view of architectureViews) {
+    const ids=new Set(view.nodes.map(n=>n.id));
+    for(const [from,to,label] of view.edges) {assert.ok(ids.has(from));assert.ok(ids.has(to));assert.ok(label);}
+    for(const [id,text] of view.steps) {assert.ok(ids.has(id));assert.ok(text);}
   }
 });
 

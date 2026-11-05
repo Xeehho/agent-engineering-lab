@@ -3,9 +3,11 @@ export const courseOverview = {
   "stats": {
     "stages": 8,
     "lessons": 31,
-    "experiments": 34,
-    "checkpoints": 95,
-    "quizzes": 96,
+    "experiments": 65,
+    "coreExperiments": 31,
+    "maps": 31,
+    "checkpoints": 188,
+    "quizzes": 158,
     "detailed": 31,
     "brief": 0
   },

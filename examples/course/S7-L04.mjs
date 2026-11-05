@@ -1,7 +1,21 @@
 // S7-L04 local teaching demo. No model API calls; not a complete homework solution.
 import assert from "node:assert/strict";
 {
-console.log("实验 1：从响应结构得到内部结果");
+console.log("实验 1：把服务商响应转换成应用自己的结果");
+function normalize(response) {
+  if (response.stop === "truncated") throw new Error("内容不完整");
+  if (response.stop !== "complete") throw new Error("未知结束原因");
+  if (typeof response.outputText !== "string") throw new Error("缺少文本");
+  return { type: "final", text: response.outputText };
+}
+const fakeProvider = { stop: "complete", outputText: "回复草稿" };
+console.log(normalize(fakeProvider).text);
+assert.throws(() => normalize({ stop: "truncated", outputText: "半句" }), /不完整/);
+
+}
+
+{
+console.log("实验 2：从响应结构得到内部结果");
 // 只解析响应夹具，不发网络请求。unknown usage 保持 null。
 function normalizeTextResponse(body) {
   if (!body || body.status !== "completed" || !Array.isArray(body.output)) {

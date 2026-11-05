@@ -1,7 +1,26 @@
 // S8-L02 local teaching demo. No model API calls; not a complete homework solution.
 import assert from "node:assert/strict";
 {
-console.log("实验 1：修复旧结果覆盖");
+console.log("实验 1：从症状提出可证伪的排错假设");
+const events = [
+  { name: "model:start", at: 0 },
+  { name: "model:end", at: 20 },
+  { name: "tool:start", at: 21 },
+  { name: "tool:end", at: 921 },
+];
+function duration(prefix) {
+  return (
+    events.find((event) => event.name === prefix + ":end").at -
+    events.find((event) => event.name === prefix + ":start").at
+  );
+}
+console.log("模型：", duration("model"), "工具：", duration("tool"));
+assert.ok(duration("tool") > duration("model"));
+
+}
+
+{
+console.log("实验 2：修复旧结果覆盖");
 // 直接在网页运行。assert 是课堂提供的检查工具，失败会中断本次实验。
 // 先复现无保护 reducer，再用任务ID、版本和终态三个条件拒绝错误事件。
 const initialState = { runId: "new", version: 0, status: "running", text: "" };

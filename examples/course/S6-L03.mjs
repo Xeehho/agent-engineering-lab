@@ -1,7 +1,22 @@
 // S6-L03 local teaching demo. No model API calls; not a complete homework solution.
 import assert from "node:assert/strict";
 {
-console.log("实验 1：配对看收益与退步");
+console.log("实验 1：同一批任务，连失败成本一起比较");
+const runs = [
+  { ok: true, cost: 2 },
+  { ok: false, cost: 5 },
+  { ok: true, cost: 2 },
+];
+const successes = runs.filter((run) => run.ok).length;
+const totalCost = runs.reduce((sum, run) => sum + run.cost, 0);
+console.log("成功：", successes + "/" + runs.length);
+console.log("总成本：", totalCost, "每次成功成本：", totalCost / successes);
+assert.equal(totalCost, 9);
+
+}
+
+{
+console.log("实验 2：配对看收益与退步");
 // 直接在网页运行。assert 是课堂提供的检查工具，失败会中断本次实验。
 
 // 所有费用和耗时均为合成单位，完整保留失败任务。

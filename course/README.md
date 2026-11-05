@@ -57,6 +57,6 @@
 
 ## 维护
 
-course/content/ 与 course/curriculum.mjs 提供元数据，tutorials/ 提供讲义，tutorials/code/ 提供实操，tutorials/walkthrough/ 提供函数拆解，browser-demos/ 提供网页实验。先 npm run teaching:format，再 npm run classroom:build 生成配套文件。第一课讲义和速记仍是源文件。
+course/content/ 与 course/curriculum.mjs 提供元数据，tutorials/ 提供讲义，tutorials/code/ 提供实操，tutorials/walkthrough/ 提供函数拆解，browser-demos/ 提供网页实验。先 npm run teaching:format，再 npm run classroom:build 生成配套文件。入门源在beginners/（讲义、code/与assessment.mjs）；脑图源为knowledge-graphs.mjs，总架构源为architecture.mjs。第一课原完整讲义源已移至tutorials/S1-L01-advanced.md，生成讲义、速记、SVG与HTML不要手改。
 
 [资料沉淀约定](TEACHING.md) · [贡献约定](../CONTRIBUTING.md) · [继续找老师](continue-with-teacher.md)

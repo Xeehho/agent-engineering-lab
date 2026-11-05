@@ -18,6 +18,8 @@
   let storageAvailable = true;
   let toastTimer;
   const activeWorkers = new Map();
+  let architecture = material.architecture[0];
+  let scenarioIndex = 0;
   const textElement = (tag, text, className) => {
     const element = document.createElement(tag);
     if (text !== undefined) element.textContent = text;
@@ -30,6 +32,97 @@
     byId("toast").hidden = false;
     toastTimer = setTimeout(() => { byId("toast").hidden = true; }, 4200);
   }
+  function lessonButtons(ids, container) {
+    for (const id of ids) {
+      const lesson = catalog.find(item=>item.id===id);
+      const button=textElement("button",id+" · "+lesson.title,"button lesson-jump");
+      button.type="button";
+      button.dataset.openLesson=id;
+      container.append(button);
+    }
+  }
+  function mapTree(map) {
+    const tree=textElement("div",undefined,"map-branches");
+    for(const branch of map.branches) {
+      const card=textElement("section");
+      card.append(textElement("h3",branch.title));
+      const list=document.createElement("ul");
+      branch.points.forEach(point=>list.append(textElement("li",point)));
+      card.append(list);tree.append(card);
+    }
+    return tree;
+  }
+  function renderLearningMaps() {
+    const map=current.mindmap;
+    byId("inline-mindmap").replaceChildren(textElement("p",map.question,"map-root"),mapTree(map));
+    byId("mindmap-visual").innerHTML=map.svg;
+    byId("mindmap-tree").replaceChildren(textElement("p",map.question,"map-root"),mapTree(map));
+    const relations=byId("lesson-relations");relations.replaceChildren();
+    for(const [title,ids,fallback] of [["开始前，先能解释",map.prerequisites,"能阅读JavaScript函数、对象、数组和if判断即可；第一次出现的AI概念会在讲义中解释。"],["学完后，会用在",map.next,"回到毕业项目，用阶段交卷与新变式答辩验证掌握。"]]) {
+      const block=textElement("section");block.append(textElement("h3",title));
+      if(ids.length) lessonButtons(ids,block); else block.append(textElement("p",fallback));
+      relations.append(block);
+    }
+    const orientation=byId("lesson-orientation");orientation.replaceChildren(
+      textElement("strong","本课先回答："+map.question),
+      textElement("p","先读入门讲义 → 运行1个最小例子 → 完成随堂题。完整机制与原有实验放在进阶折叠区，可理解主线后再看。"));
+    if(map.prerequisites.length) {
+      const list=textElement("div",undefined,"prerequisite-links");
+      list.append(textElement("span","若前置概念不熟，回到："));lessonButtons(map.prerequisites,list);orientation.append(list);
+    }
+    renderArchitecture();
+  }
+  function selectComponent(id) {
+    const node=architecture.nodes.find(node=>node.id===id);
+    if(!node) return;
+    for(const button of byId("architecture-components").querySelectorAll("button"))
+      button.setAttribute("aria-pressed",String(button.dataset.component===id));
+    for(const group of byId("architecture-visual").querySelectorAll("[data-graph-node]"))
+      group.classList.toggle("active",group.dataset.graphNode===id);
+    const detail=byId("architecture-detail");detail.replaceChildren(textElement("h3",node.title));
+    for(const [label,value] of [["输入",node.input],["输出",node.output],["先记住",node.rule]]) {
+      const p=textElement("p");p.append(textElement("b",label+"："),document.createTextNode(value));detail.append(p);
+    }
+    const incoming=architecture.edges.filter(edge=>edge[1]===id).map(edge=>architecture.nodes.find(n=>n.id===edge[0]).title+"（"+edge[2]+"）");
+    const outgoing=architecture.edges.filter(edge=>edge[0]===id).map(edge=>architecture.nodes.find(n=>n.id===edge[1]).title+"（"+edge[2]+"）");
+    detail.append(textElement("p","上游："+(incoming.join("；")||"此视角的起点")),textElement("p","下游："+(outgoing.join("；")||"此视角的出口")),textElement("h4","对应课程"));
+    lessonButtons(catalog.filter(item=>item.mindmap.components.includes(id)).map(item=>item.id),detail);
+  }
+  function renderScenario() {
+    const [id,text]=architecture.steps[scenarioIndex];
+    byId("scenario-step").textContent=(scenarioIndex+1)+" / "+architecture.steps.length+" · "+text;
+    byId("scenario-previous").disabled=scenarioIndex===0;
+    byId("scenario-next").disabled=scenarioIndex===architecture.steps.length-1;
+    selectComponent(id);
+  }
+  function renderArchitecture() {
+    const views=byId("architecture-views");views.replaceChildren();
+    for(const view of material.architecture) {
+      const button=textElement("button",view.title,"button");
+      button.type="button";button.setAttribute("aria-pressed",String(view.id===architecture.id));
+      button.addEventListener("click",()=>{architecture=view;scenarioIndex=0;renderArchitecture();});views.append(button);
+    }
+    byId("architecture-summary").textContent=architecture.summary;
+    byId("architecture-visual").innerHTML=architecture.svg;
+    byId("architecture-components").replaceChildren();
+    architecture.nodes.forEach((node,index)=>{
+      const button=textElement("button",(current.mindmap.components.includes(node.id)?"★ ":"")+(index+1)+". "+node.title,"button");
+      button.type="button";button.dataset.component=node.id;button.addEventListener("click",()=>selectComponent(node.id));
+      byId("architecture-components").append(button);
+    });
+    byId("architecture-edges").replaceChildren();
+    for(const [a,b,label] of architecture.edges) byId("architecture-edges").append(textElement("li",architecture.nodes.find(n=>n.id===a).title+" → "+architecture.nodes.find(n=>n.id===b).title+"："+label));
+    renderScenario();
+  }
+  document.addEventListener("click",event=>{
+    const button=event.target.closest?.("[data-open-lesson]");
+    if(button) selectLesson(button.dataset.openLesson,"lecture",true);
+  });
+  byId("scenario-previous").addEventListener("click",()=>{if(scenarioIndex>0){scenarioIndex-=1;renderScenario();}});
+  byId("scenario-next").addEventListener("click",()=>{if(scenarioIndex<architecture.steps.length-1){scenarioIndex+=1;renderScenario();}});
+  byId("download-mindmap").addEventListener("click",()=>download(current.id+"-脑图.svg",current.mindmap.svg,"image/svg+xml;charset=utf-8"));
+  byId("download-map-notes").addEventListener("click",()=>download(current.id+"-脑图笔记.md",current.mindmap.markdown,"text/markdown;charset=utf-8"));
+  byId("download-architecture").addEventListener("click",()=>download("architecture-"+architecture.id+".svg",architecture.svg,"image/svg+xml;charset=utf-8"));
   document.addEventListener("click", async event => {
     const button = event.target.closest?.(".copy-code");
     if (!button) return;
@@ -69,7 +162,7 @@
     byId("lesson-progress").value = progress.completed;
     ["read", "lab", "practice", "quiz"].forEach((key, index) =>
       byId("progress-" + key).classList.toggle("done", progress.parts[index]));
-    byId("quiz-count").textContent = "已选 " + progress.grade.answered + " / " + quiz.length;
+    byId("quiz-count").textContent = "入门已选 " + progress.grade.answered + " / " + requiredItems(quiz).length;
     for (const item of checkpoints)
       byId("draft-status-" + item.id).textContent = state.drafts[item.id]?.trim() ? "已填写 · 待评阅" : "待作答";
     for (const button of document.querySelectorAll("[data-lesson]")) {
@@ -105,6 +198,8 @@
     byId("search-status").textContent = "";
     document.querySelectorAll("[data-lesson],.stage-group").forEach(node => { node.hidden = false; });
     experiments = current.experiments; checkpoints = current.checkpoints; quiz = current.quiz;
+    const coreExperimentCount = experiments.filter(item=>item.level!=="advanced").length;
+    const advancedExperimentCount = experiments.length-coreExperimentCount;
     state = book.lessons[current.id] || emptyState(current.id);
     if (tab && tabs.includes(tab)) state.tab = tab;
     document.title = current.id + " · " + current.title + " | Agent Engineering Lab";
@@ -117,17 +212,21 @@
     byId("lesson-summary").textContent = current.summary;
     byId("content-status").textContent = current.contentLevel==="detailed" ? "详细教程 · 含步骤、实操、排错与验收" : "简版材料 · 详细教程正在补写";
     byId("lesson-duration").textContent = "◷ " + current.duration;
-    byId("lab-meta").textContent = experiments.length + " 个实验";
-    byId("practice-meta").textContent = checkpoints.length + " 道随堂题";
+    byId("lab-meta").textContent = coreExperimentCount + " 个入门实验" + (advancedExperimentCount ? " · "+advancedExperimentCount+" 个进阶选做" : "");
+    byId("practice-meta").textContent = requiredItems(checkpoints).length + " 道入门随堂题";
     byId("lab-description").textContent = "直接在网站里预测、修改、运行和观察。每个实验标明实际执行与模拟的范围，无需启动项目。";
-    byId("quiz-description").textContent = quiz.length + " 道公开单选题。提交后显示解析，可修改后重测。";
-    byId("progress-lab").textContent = "运行 " + experiments.length + " 个实验";
-    byId("progress-practice").textContent = "填写 " + checkpoints.length + " 道随堂题";
-    byId("tab-lab").querySelector("b").textContent = experiments.length;
-    byId("tab-practice").querySelector("b").textContent = checkpoints.length;
+    byId("quiz-description").textContent = requiredItems(quiz).length + " 道入门题计入本次自测；进阶题选做，提交后已作答题显示解析。";
+    byId("progress-lab").textContent = "运行 " + coreExperimentCount + " 个核心实验";
+    byId("progress-practice").textContent = "填写 " + requiredItems(checkpoints).length + " 道入门题";
+    byId("tab-lab").querySelector("b").textContent = coreExperimentCount;
+    byId("tab-practice").querySelector("b").textContent = requiredItems(checkpoints).length;
     // Only compiler-generated trusted teaching HTML is rendered here; answers always use textContent/value.
     byId("lecture-content").innerHTML = current.lectureHtml;
+    byId("advanced-lecture").hidden = !current.advancedLectureHtml;
+    byId("advanced-lecture").open = false;
+    byId("advanced-lecture-content").innerHTML = current.advancedLectureHtml || "";
     byId("notes-content").innerHTML = current.notesHtml;
+    renderLearningMaps();
     byId("lecture-toc").innerHTML = '<span class="eyebrow">本课目录</span>' + current.tocHtml;
     byId("mission-title").textContent = "本课网页任务";
     byId("mission-text").textContent = current.experiments[0].challenge || "预测实验输出，再修改一个条件，用自己的话解释检查通过和未证明的事项。";
@@ -280,7 +379,11 @@
       textareaField(card, "observe-" + item.id, "观察与证据边界", state.observations[item.id],
         "实际输出是什么？与预测有什么不同？哪些事情仍未被证明？", 6000,
         value => { state.observations[item.id] = value; });
-      byId("experiments").append(card);
+      if (item.level === "advanced") {
+        const advanced = textElement("details",undefined,"advanced-experiment");
+        advanced.append(textElement("summary","进阶实验："+item.title),card);
+        byId("experiments").append(advanced);
+      } else byId("experiments").append(card);
     }
   }
   function runExperiment(item, code) {
@@ -350,7 +453,11 @@
       answer.placeholder = "结论：\n依据：\n还需要补查的证据：";
       answer.value = state.drafts[item.id] || "";
       answer.addEventListener("input", () => { state.drafts[item.id] = answer.value; persist(); });
-      card.append(caption, answer); byId("checkpoints").append(card);
+      card.append(caption, answer);
+      if(item.level==="advanced") {
+        const optional=textElement("details",undefined,"advanced-experiment");
+        optional.append(textElement("summary","进阶选做："+item.title),card);byId("checkpoints").append(optional);
+      } else byId("checkpoints").append(card);
     }
   }
   function renderQuiz() {
@@ -369,7 +476,8 @@
         input.addEventListener("change", () => {
           state.answers[item.id] = optionIndex;
           // Invalidate the old result until the learner explicitly submits the new attempt.
-          state.submitted = false; renderQuizResults(); persist();
+          if(item.level!=="advanced") state.submitted = false;
+          renderQuizResults(); persist();
         });
         label.append(input, textElement("span", String.fromCharCode(65 + optionIndex) + ".", "option-letter"),
           textElement("span", option));
@@ -377,17 +485,21 @@
       });
       const explanation = textElement("p", undefined, "quiz-explanation");
       explanation.id = "explanation-" + item.id; explanation.hidden = true;
-      fieldset.append(options, explanation); byId("quiz-questions").append(fieldset);
+      fieldset.append(options, explanation);
+      if(item.level==="advanced") {
+        const optional=textElement("details",undefined,"advanced-experiment");
+        optional.append(textElement("summary","进阶选做题："+item.id),fieldset);byId("quiz-questions").append(optional);
+      } else byId("quiz-questions").append(fieldset);
     });
     renderQuizResults();
   }
   function renderQuizResults() {
-    const grade = gradeQuiz(state.answers, quiz);
+    const grade = gradeQuiz(state.answers, requiredItems(quiz));
     byId("quiz-result").hidden = !state.submitted;
     for (const item of quiz) {
       const explanation = byId("explanation-" + item.id);
-      explanation.hidden = !state.submitted;
-      if (!state.submitted) continue;
+      explanation.hidden = !state.submitted || !Number.isInteger(state.answers[item.id]);
+      if (explanation.hidden) continue;
       const correct = state.answers[item.id] === item.answer;
       explanation.classList.toggle("incorrect", !correct);
       explanation.textContent = (correct ? "回答正确。" : "再想一想。") + "参考选择：" +
@@ -403,10 +515,10 @@
   }
   byId("quiz-form").addEventListener("submit", event => {
     event.preventDefault();
-    const grade = gradeQuiz(state.answers, quiz);
-    if (grade.answered !== quiz.length) {
+    const grade = gradeQuiz(state.answers, requiredItems(quiz));
+    if (grade.answered !== grade.total) {
       const unanswered = grade.items.find(item => !item.answered);
-      toast("还有 " + (quiz.length - grade.answered) + " 道题未选择，请先完成。");
+      toast("还有 " + (grade.total - grade.answered) + " 道入门题未选择，请先完成。");
       document.querySelector('input[name="' + unanswered.id + '"]').focus(); return;
     }
     state.submitted = true; renderQuizResults(); persist();

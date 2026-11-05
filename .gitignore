@@ -9,4 +9,5 @@ coverage/
 work/
 submissions/private/
 learning/private/
+learning/progress.json
 .venv/

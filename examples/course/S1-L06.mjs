@@ -1,7 +1,22 @@
 // S1-L06 local teaching demo. No model API calls; not a complete homework solution.
 import assert from "node:assert/strict";
 {
-console.log("实验 1：在网页推演 Python 路由契约");
+console.log("实验 1：先把 Python 服务当成一个函数看");
+function handle(body) {
+  if (!body || typeof body.text !== "string" || !body.text.trim()) {
+    return { status: 400, json: { error: "需要非空text" } };
+  }
+  // 固定规则替身，不调用模型。
+  return { status: 200, json: { group: "技术支持" } };
+}
+console.log(handle({ text: "" }).status);
+console.log(handle({ text: "订单页白屏" }).json.group);
+assert.equal(handle(null).status, 400);
+
+}
+
+{
+console.log("实验 2：在网页推演 Python 路由契约");
 // Python 路由的“契约推演”：本代码运行 JavaScript，不解释或执行 Python。
 function validateReadingInput(input) {
   const validObject = input !== null && typeof input === "object";

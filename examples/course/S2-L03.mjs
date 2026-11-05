@@ -1,7 +1,26 @@
 // S2-L03 local teaching demo. No model API calls; not a complete homework solution.
 import assert from "node:assert/strict";
 {
-console.log("实验 1：业务意图与重试");
+console.log("实验 1：重复提交为什么可能发出两封邮件");
+const completed = new Map();
+let sent = 0;
+function send(operationId, approved) {
+  if (!approved) throw new Error("等待具体确认");
+  if (completed.has(operationId)) return completed.get(operationId);
+  sent += 1;
+  const result = { receipt: "receipt-" + sent };
+  completed.set(operationId, result);
+  return result;
+}
+const first = send("operation-42", true);
+const retry = send("operation-42", true);
+console.log("发送次数：", sent, "同一回执：", first.receipt === retry.receipt);
+assert.equal(sent, 1);
+
+}
+
+{
+console.log("实验 2：业务意图与重试");
 // 浏览器用 Map 观察幂等契约，不提供数据库持久化或并发原子性。
 const savedResults = new Map();
 let createdDrafts = 0;

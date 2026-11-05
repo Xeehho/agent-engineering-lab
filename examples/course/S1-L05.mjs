@@ -1,7 +1,29 @@
 // S1-L05 local teaching demo. No model API calls; not a complete homework solution.
 import assert from "node:assert/strict";
 {
-console.log("实验 1：手算概率与容量");
+console.log("实验 1：模型看到的输入并不等于全部历史");
+const capacity = 100;
+const outputReserve = 20;
+const pieces = [
+  { name: "规则", tokens: 15 },
+  { name: "当前问题", tokens: 10 },
+  { name: "相关文档", tokens: 40 },
+  { name: "无关历史", tokens: 50 },
+];
+let used = 0;
+const selected = [];
+for (const piece of pieces) {
+  if (used + piece.tokens + outputReserve > capacity) continue;
+  selected.push(piece.name);
+  used += piece.tokens;
+}
+console.log(selected.join("、"), used);
+assert.equal(used, 65);
+
+}
+
+{
+console.log("实验 2：手算概率与容量");
 // 直接在网页运行。assert 是课堂提供的检查工具，失败会中断本次实验。
 
 function softmax(logits, temperature) {

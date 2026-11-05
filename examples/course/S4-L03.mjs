@@ -1,7 +1,21 @@
 // S4-L03 local teaching demo. No model API calls; not a complete homework solution.
 import assert from "node:assert/strict";
 {
-console.log("实验 1：给具体审批动作签名");
+console.log("实验 1：“同意”必须对应一份确定的草稿");
+const draft = { operationId: "send-42", version: 2, text: "新版草稿" };
+const approval = { operationId: "send-42", version: 1, actor: "u-A" };
+function canExecute(draft, approval) {
+  return (
+    draft.operationId === approval.operationId && draft.version === approval.version
+  );
+}
+console.log("旧批准可发送新版：", canExecute(draft, approval));
+assert.equal(canExecute(draft, approval), false);
+
+}
+
+{
+console.log("实验 2：给具体审批动作签名");
 // 实际使用浏览器 Web Crypto 签名；单次消费仍只保存在内存。
 const signingKey = await crypto.subtle.generateKey(
   { name: "HMAC", hash: "SHA-256" },

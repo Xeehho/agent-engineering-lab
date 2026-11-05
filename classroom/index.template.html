@@ -70,6 +70,8 @@
           <button id="tab-practice" role="tab" aria-selected="false" aria-controls="panel-practice" data-tab="practice" tabindex="-1"><span>03</span> 随堂练习 <b>5</b></button>
           <button id="tab-quiz" role="tab" aria-selected="false" aria-controls="panel-quiz" data-tab="quiz" tabindex="-1"><span>04</span> 课后自测</button>
           <button id="tab-notes" role="tab" aria-selected="false" aria-controls="panel-notes" data-tab="notes" tabindex="-1"><span>05</span> 复习速记</button>
+          <button id="tab-mindmap" role="tab" aria-selected="false" aria-controls="panel-mindmap" data-tab="mindmap" tabindex="-1">本课脑图</button>
+          <button id="tab-architecture" role="tab" aria-selected="false" aria-controls="panel-architecture" data-tab="architecture" tabindex="-1">工程架构</button>
           <button id="tab-roadmap" role="tab" aria-selected="false" aria-controls="panel-roadmap" data-tab="roadmap" tabindex="-1"><span>06</span> 知识地图</button>
         </div>
       </div>
@@ -78,7 +80,10 @@
         <div class="content-grid">
           <article class="paper">
             <div class="section-kicker"><span class="tag">课堂讲义</span><span>阅读 → 判断 → 验证</span></div>
+            <div id="lesson-orientation" class="lesson-orientation"></div>
+            <details class="lesson-map-preview"><summary>先看本课脑图：四个问题，串起学习主线</summary><div id="inline-mindmap"></div><button class="button small" data-go="mindmap">打开脑图与关联课程 →</button></details>
             <div class="article-body" id="lecture-content">__LECTURE__</div>
+            <details class="advanced-reading" id="advanced-lecture" hidden><summary>进阶阅读：完整机制与边界，理解入门例子后再展开</summary><div class="article-body" id="advanced-lecture-content"></div></details>
             <details class="tutorial-files" id="tutorial-files" hidden></details>
             <div class="completion-row"><label><input type="checkbox" id="read-complete"> 我已通读本课讲义</label><button class="button primary" data-go="lab">开始动手实验 <span aria-hidden="true">→</span></button></div>
           </article>
@@ -99,7 +104,7 @@
       </section>
 
       <section id="panel-practice" class="tab-panel" role="tabpanel" aria-labelledby="tab-practice" tabindex="0" hidden>
-        <div class="panel-heading"><div><span class="eyebrow green">EXPLAIN IT IN YOUR WORDS</span><h2>会解释，才是你的能力。</h2><p>每题写出结论、依据，以及还需补查的证据；先完成 C1–C3。</p></div><span class="pill">开放作答 · 老师评阅</span></div>
+        <div class="panel-heading"><div><span class="eyebrow green">EXPLAIN IT IN YOUR WORDS</span><h2>会解释，才是你的能力。</h2><p>先完成 F1–F3 入门练习，写出输入、变化与结果；原有完整机制题在下方进阶区选做。</p></div><span class="pill">开放作答 · 老师评阅</span></div>
         <div class="notice">答案自动保存在当前浏览器；填写完成只记为“已填写”。导出 Markdown 后发到聊天，我会逐题追问和批改。</div>
         <div id="checkpoints"></div>
         <div class="next-row"><button class="button" id="export-answers">导出作答 Markdown ↓</button><button class="button primary" data-go="quiz">检查基础概念 →</button></div>
@@ -119,12 +124,32 @@
         <div class="record-tools"><div><h3>把学习记录带走</h3><p>JSON 备份包含所有课程记录，也兼容第一课旧版备份。Markdown 导出当前课作答。个人答案不上传到服务器或 GitHub。</p><p class="microcopy">file://、本地服务和不同浏览器使用不同存储；隐私模式或清理缓存可能丢失数据。建议及时导出。</p></div><div class="record-buttons"><button class="button" id="backup">备份全部课程 JSON ↓</button><label class="button file-label" for="import-file">导入 JSON ↑</label><input type="file" id="import-file" accept=".json,application/json" hidden><button class="button" id="export-notes">导出作答 Markdown ↓</button><button class="button danger" id="reset-progress">清空当前课进度</button></div></div>
         <details class="paste-import"><summary>也可以粘贴 JSON 导入</summary><label for="import-text">粘贴备份内容（仅本机处理）</label><textarea id="import-text" rows="5" maxlength="10000000" placeholder="粘贴单课旧版或全课程 JSON 备份"></textarea><button id="import-text-button" class="button">校验并导入</button></details>
       </section>
+      <section id="panel-mindmap" class="tab-panel" role="tabpanel" aria-labelledby="tab-mindmap" tabindex="0" hidden>
+        <div class="panel-heading"><div><span class="eyebrow green">CONNECT THE IDEAS</span><h2>知道自己正在学哪一块。</h2><p>中心是本课问题，四个分支是理解与验证路径。关联课说明前置知识和后续用途。</p></div></div>
+        <div id="mindmap-visual" class="diagram-scroll" tabindex="0" aria-label="本课思维导图，可横向滚动"></div>
+        <div id="mindmap-tree" class="map-tree"></div>
+        <div id="lesson-relations" class="lesson-relations"></div>
+        <div class="record-buttons"><button id="download-mindmap" class="button">下载脑图 SVG ↓</button><button id="download-map-notes" class="button">下载脑图笔记 Markdown ↓</button><button class="button primary" data-go="architecture">放进完整工程架构 →</button></div>
+      </section>
+      <section id="panel-architecture" class="tab-panel" role="tabpanel" aria-labelledby="tab-architecture" tabindex="0" hidden>
+        <div class="panel-heading"><div><span class="eyebrow green">ONE SYSTEM, THREE VIEWS</span><h2>让整套 AI 工程知识连起来。</h2><p>组件表示职责，可以放在同一进程。沿箭头看输入输出，再选择组件查看课程与常见误解。</p></div></div>
+        <div id="architecture-views" class="view-buttons" aria-label="选择架构视角"></div>
+        <p id="architecture-summary"></p>
+        <div id="architecture-visual" class="diagram-scroll" tabindex="0" aria-label="工程架构，可横向滚动"></div>
+        <p class="architecture-mobile-help">窄屏使用下方组件导航与文字连接，避免把整图缩成小字。完整图可下载 SVG 查看。</p>
+        <p class="microcopy">★ 标出本课会用到的组件。选择任一组件查看输入、输出、上下游与对应课程。</p>
+        <div id="architecture-components" class="component-buttons" aria-label="选择组件查看职责"></div>
+        <article id="architecture-detail" class="paper component-detail" aria-live="polite"></article>
+        <details class="architecture-edges"><summary>查看所有连接的文字说明</summary><ol id="architecture-edges"></ol></details>
+        <div class="paper scenario"><h3>用一个具体任务沿图走一遍</h3><p class="microcopy">固定课堂场景，无模型、网络或真实业务执行。每一步只说明数据如何流动。</p><p id="scenario-step" aria-live="polite"></p><div class="record-buttons"><button id="scenario-previous" class="button">← 上一步</button><button id="scenario-next" class="button primary">下一步 →</button><button id="download-architecture" class="button">下载架构 SVG ↓</button></div></div>
+      </section>
       <section id="panel-roadmap" class="tab-panel" role="tabpanel" aria-labelledby="tab-roadmap" tabindex="0" hidden>
         <div class="panel-heading"><div><span class="eyebrow green">FROM KNOWLEDGE TO EVIDENCE</span><h2>学成一个能交付的 AI 工程师。</h2><p>31 课、8 阶段。教材已备，个人作业与正式考试按实际证据推进。</p></div></div>
         <article class="paper"><div class="article-body" id="knowledge-map">__OVERVIEW__</div></article>
       </section>
       <div class="course-pager"><button class="button" id="previous-lesson">← 上一课</button><span id="lesson-position">1 / 31</span><button class="button primary" id="next-lesson">下一课 →</button></div>
       <footer class="page-footer"><span>Agent Engineering Lab <span aria-hidden="true">/</span> 自主判断 · 可验证交付</span><span>交互参考 <a href="https://learn-py.org/" target="_blank" rel="noopener noreferrer">learn-py.org ↗</a> <span aria-hidden="true">·</span> 本项目原创课程</span></footer>
+      <details class="license-notice"><summary>开放许可：代码 MIT · 课程与脑图 CC BY 4.0</summary>__LICENSE__</details>
     </div>
   </main>
   <div class="toast" id="toast" role="status" hidden></div>

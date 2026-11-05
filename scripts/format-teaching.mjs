@@ -3,7 +3,7 @@ import { format } from "prettier";
 
 const checkOnly = process.argv.includes("--check");
 let changed = 0;
-for (const directory of ["course/tutorials/code", "course/browser-demos"]) {
+for (const directory of ["course/tutorials/code", "course/browser-demos", "course/beginners/code"]) {
   for (const name of (await readdir(directory)).sort()) {
     if (!name.endsWith(".mjs")) continue;
     const path = directory + "/" + name;

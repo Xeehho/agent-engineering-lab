@@ -20,7 +20,7 @@
       },
       "lessons": {
         "S1-L01": {
-          "status": "in_progress",
+          "status": "not_started",
           "notes": "course/stage-01/lessons/01-success-contracts.md",
           "checkpoint": "not_submitted",
           "masteryVerified": false

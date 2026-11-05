@@ -1,10 +1,10 @@
 # 贡献与课程编写约定
 
-本项目在准备面向更多学习者的资料，目前仍为私有仓库。公开发布与发行许可证由项目所有者另行确定；本文件不代替许可证。
+欢迎改进讲解、复现错误和补充失败案例。代码采用MIT，原创教学内容采用CC BY 4.0，提交前请阅读[许可范围](LICENSING.md)。贡献应为自己有权提交的内容，并按对应内容类型授权。
 
 ## 新课格式
 
-网站内学习是默认路径；无需安装依赖的网页实验优先，真实组件与完整项目单列为进阶实操。代码源分别在course/browser-demos/与course/tutorials/code/，函数阅读拆解在course/tutorials/walkthrough/。生成讲义完整展开代码，作者无需在长字符串中维护程序。
+网站内学习是默认路径；无需安装依赖的网页实验优先，真实组件与完整项目单列为进阶实操。入门讲义与代码在course/beginners/，入门练习在assessment.mjs；进阶代码在course/browser-demos/与course/tutorials/code/，函数阅读拆解在course/tutorials/walkthrough/。每课脑图源在course/knowledge-graphs.mjs，总架构源在course/architecture.mjs。不要直接修改生成的HTML、讲义或SVG。
 
 示例先解释输入输出与一个具体执行过程，再给完整文件。使用明确命名、分段控制流、中文注释与有提示的故障练习。不要用长链或压缩语句省略教学步骤。运行teaching:format后再生成教材。
 

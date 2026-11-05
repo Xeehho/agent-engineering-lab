@@ -1,4 +1,5 @@
-export const tabs = ["lecture", "lab", "practice", "quiz", "notes", "roadmap"];
+export const tabs = ["lecture", "lab", "practice", "quiz", "notes", "mindmap", "architecture", "roadmap"];
+export const requiredItems = items => items.filter(item=>item.level!=="advanced");
 export function emptyState(course = "S1-L01") {
   return { schemaVersion: 1, course, tab: "lecture", read: false,
     drafts: {}, codes: {}, predictions: {}, observations: {}, ran: [],
@@ -28,7 +29,7 @@ export function normalizeState(value, experiments, checkpoints, quiz, course = "
     if (Number.isInteger(answer) && answer >= 0 && answer < item.options.length)
       state.answers[item.id] = answer;
   }
-  state.submitted = state.submitted && quiz.every(item => Object.hasOwn(state.answers, item.id));
+  state.submitted = state.submitted && requiredItems(quiz).every(item => Object.hasOwn(state.answers, item.id));
   if (typeof value.personalNotes === "string") state.personalNotes = value.personalNotes.slice(0, 20000);
   return state;
 }
@@ -39,11 +40,13 @@ export function gradeQuiz(answers, quiz) {
     answered: items.filter(item => item.answered).length, total: quiz.length, items };
 }
 export function summarizeProgress(state, experiments, checkpoints, quiz) {
-  const drafted = checkpoints.filter(item => state.drafts[item.id]?.trim()).length;
-  const grade = gradeQuiz(state.answers, quiz);
-  const reviewed = state.submitted && grade.answered === quiz.length;
-  const parts = [state.read, state.ran.length === experiments.length,
-    drafted === checkpoints.length, reviewed];
+  const requiredCheckpoints=requiredItems(checkpoints),requiredQuiz=requiredItems(quiz);
+  const drafted = requiredCheckpoints.filter(item => state.drafts[item.id]?.trim()).length;
+  const grade = gradeQuiz(state.answers, requiredQuiz);
+  const reviewed = state.submitted && grade.answered === requiredQuiz.length;
+  const requiredExperiments = experiments.filter(item=>item.level !== "advanced");
+  const parts = [state.read, requiredExperiments.every(item=>state.ran.includes(item.id)),
+    drafted === requiredCheckpoints.length, reviewed];
   return { drafted, grade, parts, completed: parts.filter(Boolean).length };
 }
 export function exportAnswers(state, experiments, checkpoints, quiz) {
@@ -60,7 +63,7 @@ export function exportAnswers(state, experiments, checkpoints, quiz) {
   }
   lines.push("", "## 公开自测");
   if (state.submitted) {
-    const grade = gradeQuiz(state.answers, quiz);
+    const grade = gradeQuiz(state.answers, requiredItems(quiz));
     lines.push("", "最近一次自测：" + grade.correct + "/" + grade.total + "，不计入正式成绩。");
   } else lines.push("", "尚未提交自测。");
   lines.push("", "## 我的笔记", "", state.personalNotes || "（未填写）", "");

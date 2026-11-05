@@ -1,7 +1,24 @@
 // S1-L02 local teaching demo. No model API calls; not a complete homework solution.
 import assert from "node:assert/strict";
 {
-console.log("实验 1：追踪取消与清理");
+console.log("实验 1：停止等待和停止工作是两件事");
+let calls = 0;
+async function run(signal) {
+  // 执行方主动检查通知；不检查就不会自动停。
+  if (signal.aborted) return "cancelled";
+  calls += 1;
+  return "done";
+}
+const controller = new AbortController();
+controller.abort();
+console.log(await run(controller.signal));
+console.log("实际开始次数：", calls);
+assert.equal(calls, 0);
+
+}
+
+{
+console.log("实验 2：追踪取消与清理");
 // 直接在网页运行。assert 是课堂提供的检查工具，失败会中断本次实验。
 
 // 本课只有两个计时器角色：工作计时器模拟任务，截止计时器限制总等待时间。

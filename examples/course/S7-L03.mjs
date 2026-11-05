@@ -1,7 +1,30 @@
 // S7-L03 local teaching demo. No model API calls; not a complete homework solution.
 import assert from "node:assert/strict";
 {
-console.log("实验 1：明确区分降级、等待与拒绝");
+console.log("实验 1：服务很忙时，要有明确的拒绝方式");
+let active = 0;
+const limit = 1;
+function enter() {
+  if (active >= limit) throw new Error("busy");
+  active += 1;
+}
+function leave() {
+  active -= 1;
+}
+enter();
+try {
+  assert.throws(enter, /busy/);
+  console.log("第二个请求：拒绝进入");
+} finally {
+  leave();
+}
+console.log("剩余在途：", active);
+assert.equal(active, 0);
+
+}
+
+{
+console.log("实验 2：明确区分降级、等待与拒绝");
 // 用纯函数验证故障策略，不启动HTTP服务，不发送请求。
 function chooseRecovery(status) {
   if (status === 503) {

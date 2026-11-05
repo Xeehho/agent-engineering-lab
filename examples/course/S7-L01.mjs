@@ -1,7 +1,22 @@
 // S7-L01 local teaching demo. No model API calls; not a complete homework solution.
 import assert from "node:assert/strict";
 {
-console.log("实验 1：高平均分也可以阻止发布");
+console.log("实验 1：先约定什么错误会阻止发布");
+const cases = [
+  { id: "普通问答", passed: true, critical: false },
+  { id: "租户隔离", passed: false, critical: true },
+  { id: "无答案拒答", passed: true, critical: false },
+];
+const accuracy = cases.filter((item) => item.passed).length / cases.length;
+const criticalFailure = cases.some((item) => item.critical && !item.passed);
+const release = accuracy >= 0.6 && !criticalFailure;
+console.log("关键失败：", criticalFailure, "允许发布：", release);
+assert.equal(release, false);
+
+}
+
+{
+console.log("实验 2：高平均分也可以阻止发布");
 // 直接在网页运行。assert 是课堂提供的检查工具，失败会中断本次实验。
 
 // 简化评分只检查分类、摘要与隔离结果，不代替第一阶段的完整输出契约。

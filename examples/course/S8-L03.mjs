@@ -1,7 +1,21 @@
 // S8-L03 local teaching demo. No model API calls; not a complete homework solution.
 import assert from "node:assert/strict";
 {
-console.log("实验 1：给简历声明找证据");
+console.log("实验 1：简历能力要能指向具体证据");
+const item = {
+  claim: "实现有限Agent循环并拒绝超预算工具调用",
+  artifact: "可复现测试与一次失败复盘",
+  scope: "本地受控，无真实模型质量结论",
+  reviewed: false,
+};
+const ready = Boolean(item.claim && item.artifact && item.scope);
+console.log("陈述材料齐备：", ready, "已评阅：", item.reviewed);
+assert.equal(item.reviewed, false);
+
+}
+
+{
+console.log("实验 2：给简历声明找证据");
 // 直接在网页运行。assert 是课堂提供的检查工具，失败会中断本次实验。
 // 先核验简历声明的证据类型，再计算目标岗位的能力缺口。
 const evidenceById = new Map([

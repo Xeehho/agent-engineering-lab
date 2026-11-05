@@ -1,7 +1,22 @@
 // S8-L01 local teaching demo. No model API calls; not a complete homework solution.
 import assert from "node:assert/strict";
 {
-console.log("实验 1：当前需求对应当前证据");
+console.log("实验 1：毕业项目先从验收边界画起");
+const requirements = ["租户隔离", "可取消", "草稿不自动发送"];
+const evidence = [
+  { requirementId: "租户隔离", scope: "本地受控" },
+  { requirementId: "草稿不自动发送", scope: "本地受控" },
+];
+const missing = requirements.filter(
+  (id) => !evidence.some((item) => item.requirementId === id),
+);
+console.log("缺少证据：", missing.join("、"));
+assert.deepEqual(missing, ["可取消"]);
+
+}
+
+{
+console.log("实验 2：当前需求对应当前证据");
 // 直接在网页运行。assert 是课堂提供的检查工具，失败会中断本次实验。
 // 证据需要同时匹配需求、类型和当前commit；元数据通过后仍要审阅实际产物。
 const requirements = [

@@ -1,7 +1,26 @@
 // S6-L02 local teaching demo. No model API calls; not a complete homework solution.
 import assert from "node:assert/strict";
 {
-console.log("实验 1：交接中的证据与冲突");
+console.log("实验 1：交接不能只说“我查过了”");
+const packet = {
+  taskId: "task-42",
+  sourceVersion: 1,
+  facts: ["审核需要三天"],
+  unresolved: ["到账时间未知"],
+};
+function accept(packet, expectedVersion) {
+  if (packet.sourceVersion !== expectedVersion) return "重新检索";
+  if (packet.unresolved.length) return "保留不确定项";
+  return "可继续撰写";
+}
+console.log(accept(packet, 2));
+console.log(accept(packet, 1));
+assert.equal(accept(packet, 2), "重新检索");
+
+}
+
+{
+console.log("实验 2：交接中的证据与冲突");
 // 手动验证结构化交接，来源存在仍不等于结论受支持。
 const sources = new Map([
   ["rule-v2", { tenant: "A", current: true }],

@@ -1,7 +1,20 @@
 // S6-L01 local teaching demo. No model API calls; not a complete homework solution.
 import assert from "node:assert/strict";
 {
-console.log("实验 1：先验图，再执行");
+console.log("实验 1：先证明分工值得增加复杂度");
+function route(task) {
+  if (task.kind === "固定分诊") return "workflow";
+  if (task.kind === "跨资料调查") return "specialist";
+  return "追问任务范围";
+}
+console.log(route({ kind: "固定分诊" }));
+console.log(route({ kind: "跨资料调查" }));
+assert.equal(route({ kind: "未知" }), "追问任务范围");
+
+}
+
+{
+console.log("实验 2：先验图，再执行");
 // 直接在网页运行。assert 是课堂提供的检查工具，失败会中断本次实验。
 // 先验证依赖图，再分波执行；本例不会自动取消 Promise.all 中的其他任务。
 // 输入节点列表与并发预算，返回所有结果和每波执行记录。

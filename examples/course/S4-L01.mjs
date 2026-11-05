@@ -1,7 +1,27 @@
 // S4-L01 local teaching demo. No model API calls; not a complete homework solution.
 import assert from "node:assert/strict";
 {
-console.log("实验 1：状态版本与旧写者");
+console.log("实验 1：任务状态是可检查的记录");
+const allowed = {
+  queued: ["running"],
+  running: ["succeeded", "failed"],
+  succeeded: [],
+  failed: [],
+};
+function transition(task, next) {
+  if (!allowed[task.state].includes(next)) throw new Error("不允许的状态变化");
+  return { ...task, state: next, version: task.version + 1 };
+}
+let task = { id: "task-42", state: "queued", version: 0 };
+task = transition(task, "running");
+task = transition(task, "succeeded");
+console.log(task.state, task.version);
+assert.throws(() => transition(task, "running"), /不允许/);
+
+}
+
+{
+console.log("实验 2：状态版本与旧写者");
 // 网站内验证状态转换与版本；JSON快照不等于真实数据库持久化。
 const allowedTransitions = {
   queued: ["running", "cancelled"],

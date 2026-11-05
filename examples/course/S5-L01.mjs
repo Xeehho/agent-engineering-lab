@@ -1,7 +1,29 @@
 // S5-L01 local teaching demo. No model API calls; not a complete homework solution.
 import assert from "node:assert/strict";
 {
-console.log("实验 1：可追溯的切块与版本");
+console.log("实验 1：RAG 先从一份能追溯的文档开始");
+const document = {
+  id: "policy",
+  version: 2,
+  tenant: "A",
+  text: "交通费需要发票。\n住宿费需要审批。",
+};
+const chunks = document.text.split("\n").map((text, index) => ({
+  chunkId: document.id + "@v" + document.version + "#" + index,
+  sourceId: document.id,
+  version: document.version,
+  tenant: document.tenant,
+  active: true,
+  text,
+}));
+const visible = chunks.filter((chunk) => chunk.tenant === "A" && chunk.active);
+console.log(visible.map((chunk) => chunk.chunkId).join("、"));
+assert.equal(visible.length, 2);
+
+}
+
+{
+console.log("实验 2：可追溯的切块与版本");
 // 这里实际执行切块算法，版本存储是内存夹具，不模拟向量数据库。
 function splitDocument(text, windowSize = 3, overlap = 1) {
   if (

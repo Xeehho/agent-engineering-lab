@@ -391,3 +391,5 @@ button, a, input, summary { outline-offset: 5px; }
 @media (prefers-reduced-motion: reduce) {
   *, *:before, *:after { scroll-behavior: auto !important; transition: none !important; }
 }
+
+.course-connections{padding-top:25px;padding-bottom:25px;font-size:13px;line-height:1.9;color:#536b5f}.course-connections p{max-width:760px}.course-connections a{display:inline-block;margin:8px 25px 5px 0;color:#315b44;text-decoration:underline;text-underline-offset:4px}

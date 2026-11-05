@@ -28,6 +28,6 @@
 
 ## 进度记录
 
-learning/progress.json记录当前阶段、作业commit、考试尝试、分数和未验证事项。只有老师完成评阅才标passed，测试脚本不自动打分。锁定后续阶段属于教学约定，不是仓库访问权限。
+learning/private/progress.json记录个人真实进度（初始模板为learning/progress.example.json），不提交公共仓库；其中包含当前阶段、作业commit、考试尝试、分数和未验证事项。只有老师完成评阅才标passed，测试脚本不自动打分。锁定后续阶段属于教学约定，不是仓库访问权限。
 
 若暂停或换聊天，使用course/continue-with-teacher.md恢复上下文；不依赖老师自动在其他聊天记住进度。

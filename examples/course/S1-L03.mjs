@@ -1,7 +1,32 @@
 // S1-L03 local teaching demo. No model API calls; not a complete homework solution.
 import assert from "node:assert/strict";
 {
-console.log("实验 1：字节拆包与终态守卫");
+console.log("实验 1：逐字显示时，怎样挡住旧回答");
+const initial = { requestId: "B", seq: 0, text: "", done: false };
+function apply(state, event) {
+  if (event.requestId !== state.requestId) return state;
+  if (state.done || event.seq <= state.seq) return state;
+  return {
+    ...state,
+    seq: event.seq,
+    text: state.text + (event.text ?? ""),
+    done: event.done === true,
+  };
+}
+const events = [
+  { requestId: "A", seq: 1, text: "旧答案" },
+  { requestId: "B", seq: 1, text: "新答案" },
+  { requestId: "B", seq: 2, done: true },
+  { requestId: "B", seq: 3, text: "结束后晚到" },
+];
+const state = events.reduce(apply, initial);
+console.log(state.text, state.done);
+assert.equal(state.text, "新答案");
+
+}
+
+{
+console.log("实验 2：字节拆包与终态守卫");
 // 直接在网页运行。assert 是课堂提供的检查工具，失败会中断本次实验。
 
 // 这是课堂事件契约；项目作业仍使用 started/completed/failed，不能直接混接。

@@ -21,7 +21,7 @@
 - 2026-11-05 通过 GitHub 官方 API 核对公开账号、主页和头像；头像保存为本地 JPEG，页面不依赖实时请求 GitHub 数据。
 - Star 按钮链接 https://github.com/Xeehho/agent-engineering-lab ，不会自动替访客点 Star，也未展示模拟的 Star 数。
 
-仓库目前为私有预览。外部访客访问和 Star 仍受 GitHub 可见性影响，本次首页开发没有改变仓库权限或创建公网托管。
+项目首页已部署至https://agent-engineering-lab.vercel.app。项目所有者授权公开仓库，代码MIT、课程CC BY 4.0。仓库实际可见性以GitHub当前状态为准。
 
 ## 验证
 

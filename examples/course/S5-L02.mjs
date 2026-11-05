@@ -1,7 +1,25 @@
 // S5-L02 local teaching demo. No model API calls; not a complete homework solution.
 import assert from "node:assert/strict";
 {
-console.log("实验 1：相似度与混合排名");
+console.log("实验 1：找相近文字，与判断事实是两件事");
+const query = [1, 0];
+const docs = [
+  { id: "退款说明", vector: [0.9, 0.1] },
+  { id: "登录说明", vector: [0.1, 0.9] },
+];
+function dot(a, b) {
+  return a.reduce((sum, value, index) => sum + value * b[index], 0);
+}
+const ranked = docs
+  .map((doc) => ({ id: doc.id, score: dot(query, doc.vector) }))
+  .sort((a, b) => b.score - a.score);
+console.log(ranked[0].id, ranked[0].score);
+assert.equal(ranked[0].id, "退款说明");
+
+}
+
+{
+console.log("实验 2：相似度与混合排名");
 // 直接在网页运行。assert 是课堂提供的检查工具，失败会中断本次实验。
 
 // 本课向量来自题目，不是 embedding 模型。先读公式，再读排名与融合。

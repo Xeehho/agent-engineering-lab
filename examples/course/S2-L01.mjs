@@ -1,7 +1,24 @@
 // S2-L01 local teaching demo. No model API calls; not a complete homework solution.
 import assert from "node:assert/strict";
 {
-console.log("实验 1：校验之后才执行");
+console.log("实验 1：工具调用就是提出一个函数请求");
+const registry = {
+  readTicket: ({ ticketId }) => ({ ticketId, title: "订单页白屏" }),
+};
+function dispatch(proposal) {
+  if (!Object.hasOwn(registry, proposal.name)) throw new Error("未知工具");
+  if (typeof proposal.args?.ticketId !== "string") throw new Error("参数不合法");
+  return registry[proposal.name](proposal.args);
+}
+const proposal = { name: "readTicket", args: { ticketId: "T-42" } };
+const result = dispatch(proposal);
+console.log(result.title);
+assert.throws(() => dispatch({ name: "deleteAll", args: {} }), /未知工具/);
+
+}
+
+{
+console.log("实验 2：校验之后才执行");
 // 不安装 Zod 也能学习执行边界：先验证参数，再调用允许的处理器。
 let executionCount = 0;
 const toolRegistry = {

@@ -1,7 +1,25 @@
 // S4-L02 local teaching demo. No model API calls; not a complete homework solution.
 import assert from "node:assert/strict";
 {
-console.log("实验 1：拒绝过期工作者");
+console.log("实验 1：租约到期后，旧工作者不能继续交卷");
+let lease = { owner: null, until: 0, token: 0 };
+function claim(owner, now) {
+  if (now < lease.until) throw new Error("仍被占用");
+  lease = { owner, until: now + 10, token: lease.token + 1 };
+  return lease.token;
+}
+function commit(token, now) {
+  return token === lease.token && now < lease.until;
+}
+const old = claim("W1", 0);
+const latest = claim("W2", 11);
+console.log("旧提交：", commit(old, 12), "新提交：", commit(latest, 12));
+assert.equal(commit(old, 12), false);
+
+}
+
+{
+console.log("实验 2：拒绝过期工作者");
 // 逻辑时钟 + 内存状态，观察 fencing；不是分布式队列或数据库原子性测试。
 let job = { state: "queued", owner: null, token: 0, leaseUntil: 0 };
 function claimJob(workerId, now) {

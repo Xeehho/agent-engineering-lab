@@ -1,7 +1,21 @@
 // S7-L02 local teaching demo. No model API calls; not a complete homework solution.
 import assert from "node:assert/strict";
 {
-console.log("实验 1：在浏览器关联并发链路");
+console.log("实验 1：一条用户请求怎样串起多段日志");
+const spans = [
+  { traceId: "trace-42", spanId: "api", parent: null, usage: null },
+  { traceId: "trace-42", spanId: "model", parent: "api", usage: null },
+];
+function summary(span) {
+  return span.spanId + ": " + (span.usage === null ? "用量未知" : span.usage.tokens);
+}
+console.log(spans.map(summary).join("\n"));
+assert.equal(spans[0].traceId, spans[1].traceId);
+
+}
+
+{
+console.log("实验 2：在浏览器关联并发链路");
 // 浏览器显式传递上下文，不使用 Node AsyncLocalStorage 或 OpenTelemetry SDK。
 const spans = [];
 const logs = [];

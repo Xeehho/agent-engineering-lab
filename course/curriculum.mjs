@@ -8,6 +8,9 @@ import production from "./content/stage-07.mjs";
 import graduation from "./content/stage-08.mjs";
 import { experiments, checkpoints, quiz } from "../classroom/content.mjs";
 import { tutorials } from "./tutorials/catalog.mjs";
+import { beginners } from "./beginners/catalog.mjs";
+import { readFileSync } from "node:fs";
+import { foundationAssessment } from "./beginners/assessment.mjs";
 
 export const stages = [
   { id:"01", title:"模型应用基础", prerequisites:"能阅读 JavaScript / TypeScript",
@@ -49,6 +52,17 @@ const first = {
 };
 export const lessons = [first,...foundation,...tools,...mcp,...workflow,...rag,...collaboration,...production,...graduation]
   .map(item => ({...item,
+    beginner: beginners[item.id] || null,
+    checkpoints:[...foundationAssessment(item.id,beginners[item.id]).checkpoints,...item.checkpoints.map(c=>({...c,level:"advanced"}))],
+    quiz:[...foundationAssessment(item.id,beginners[item.id]).quiz,...item.quiz.map(q=>({...q,level:"advanced"}))],
+    experiments: beginners[item.id] ? [{
+      id:"start",level:"foundation",label:item.id+" / 从最小例子开始",
+      title:beginners[item.id].title,
+      intro:"先读本课讲义中概念和字段的解释，再运行这个小例子。无需安装或启动项目。",
+      code:readFileSync(new URL("../"+beginners[item.id].codePath,import.meta.url),"utf8"),
+      expected:beginners[item.id].scope,challenge:beginners[item.id].challenge,
+      hint:"先跟踪一组具体输入怎样变成输出；每次只改一个条件，不急着展开完整实现。",
+    }, ...item.experiments.map(experiment=>({...experiment,level:"advanced"}))] : item.experiments,
     contentLevel: item.id === "S1-L01" || tutorials[item.id] ? "detailed" : "brief",
     tutorial: tutorials[item.id] || null,
     lecturePath:item.lecturePath || "course/stage-" + item.stage + "/lessons/" + item.id + ".md",

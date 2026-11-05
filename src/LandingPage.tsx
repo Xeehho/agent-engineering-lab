@@ -60,9 +60,11 @@ export function LandingPage() {
         <div className="course-stats home-container" aria-label="课程内容规模">
           <div><strong>{stats.stages}<small>个</small></strong><span>递进阶段</span></div>
           <div><strong>{stats.lessons}<small>课</small></strong><span>系统讲义与速记</span></div>
-          <div><strong>{stats.experiments}<small>个</small></strong><span>网页内可运行实验</span></div>
+          <div><strong>{stats.experiments}<small>个</small></strong><span>31 入门 + 34 进阶实验</span></div>
           <div><strong>{stats.quizzes}<small>道</small></strong><span>公开自测与解析</span></div>
         </div>
+
+        <div className="home-container course-connections"><p>每课先讲清问题、概念与字段来源，再从最小例子走向完整实现。31份脑图与三个工程架构视角，帮助你知道正在学哪一块、下一步用在哪里。</p><a href="/learn.html#S2-L02/mindmap">看看 Agent 循环脑图 →</a><a href="/learn.html#S1-L01/architecture">把整套 AI 工程串起来 →</a></div>
 
         <section className="outcomes-section home-container home-section" id="outcomes" aria-labelledby="outcomes-title">
           <div className="section-editorial"><div><p className="home-eyebrow">WHAT YOU WILL BUILD</p><h2 id="outcomes-title">学到最后，<br />带走能交付的能力。</h2></div><p>目标是从“能把功能跑起来”，进阶到“能理解、验证并改进完整系统”。完成项目与考核后，用这些作品证明自己。</p></div>
@@ -104,7 +106,7 @@ export function LandingPage() {
         <section className="faq-section home-container home-section" id="faq" aria-labelledby="faq-title"><div><p className="home-eyebrow">A FEW THINGS TO KNOW</p><h2 id="faq-title">开始之前，<br />你可能还想知道。</h2></div><div className="faq-list">{faqs.map(item=><details key={item.question}><summary>{item.question}<Icon name="chevron" /></summary><p>{item.answer.replace('{experiments}', String(stats.experiments))}</p></details>)}</div></section>
         <section className="closing-section home-container"><span className="home-eyebrow">YOUR NEXT STEP</span><h2>从一个问题开始，<br />慢慢建立完整的判断。</h2><p>第一课：一次模型请求，怎样才算成功？</p><a className="home-button primary" href={firstLesson}>进入互动课堂 <Icon name="arrow" /></a></section>
       </main>
-      <footer className="home-footer home-container"><div><b>Agent Engineering Lab</b><p>自主判断 · 可验证交付</p></div><nav aria-label="页脚导航"><a href={firstLesson}>互动课堂</a><a href="/lab.html">项目实验台</a><a href={developer.github} target="_blank" rel="noopener noreferrer">Xeehho <span aria-hidden="true">↗</span></a><a href={developer.repository} target="_blank" rel="noopener noreferrer">GitHub <Icon name="github" /></a></nav><span>项目预览版 · 开源准备中</span></footer>
+      <footer className="home-footer home-container"><div><b>Agent Engineering Lab</b><p>自主判断 · 可验证交付</p></div><nav aria-label="页脚导航"><a href={firstLesson}>互动课堂</a><a href="/lab.html">项目实验台</a><a href={developer.github} target="_blank" rel="noopener noreferrer">Xeehho <span aria-hidden="true">↗</span></a><a href={developer.repository} target="_blank" rel="noopener noreferrer">GitHub <Icon name="github" /></a></nav><span>代码 MIT · 课程 CC BY 4.0</span></footer>
     </div>
   );
 }
