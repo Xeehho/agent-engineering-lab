@@ -19,4 +19,3 @@
 
 Node 24、React、TypeScript、Node HTTP。npm run check为骨架检查；npm run practice:stage1为作业练习。初始练习未实现会失败，这是课程设计，不得通过删测试、硬编码场景或伪造结果标记完成。
 保留密钥于本地，不提交.env；对外请求与费用只能使用用户已授权的模型服务。默认Mock，无外部模型调用。
-

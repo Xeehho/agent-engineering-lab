@@ -18,4 +18,3 @@ export class MockProvider implements ModelProvider {
     return { text, model: 'fixture-v1', usage: null };
   }
 }
-

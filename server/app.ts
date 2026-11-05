@@ -52,4 +52,3 @@ export function createHandler(provider: ModelProvider = new MockProvider()) {
     }
   };
 }
-

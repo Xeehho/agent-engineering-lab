@@ -9,4 +9,3 @@ export async function triageTicket(
 ): Promise<TriageResponse> {
   return notImplemented('S1-T1～T3：输入校验、模型调用、结果校验、超时与错误分类');
 }
-

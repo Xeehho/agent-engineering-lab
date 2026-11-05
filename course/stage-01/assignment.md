@@ -79,4 +79,3 @@ triageTicket(input, provider, options)调用注入的provider，不按scenario�
 自行实现一个ModelProvider适配器，凭本机配置显式启用。默认仍为Mock，不让测试或CI调用收费服务。处理HTTP错误、用量缺失与模型格式差异。只允许连接你已获授权的服务，不把Key提交或贴进聊天。
 
 未完成该加题时，可用离线证据参加阶段考试，但真实模型接入能力记为待验证。
-

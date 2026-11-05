@@ -49,4 +49,3 @@ POST流可通过fetch消费ReadableStream。必须考虑响应头已发送后不
 - [AI SDK](https://ai-sdk.dev/docs/introduction)：可选参考，当前阶段先理解底层数据流。
 
 不要在第一阶段同时引入多套Agent框架。你可以选常用库完成校验与流式实现，但需要说明它负责了什么。
-

@@ -5,4 +5,3 @@ console.log(JSON.stringify({
   provider: 'mock only', realModelVerified: false,
   stage01: 'not assessed; check learning/progress.json',
 }, null, 2));
-

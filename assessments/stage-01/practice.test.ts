@@ -35,7 +35,7 @@ for (const scenario of ['invalid-json', 'wrong-shape', 'empty-summary']) {
 test('P07 upstream error is classified without leaking its raw details', async () => {
   await assert.rejects(triageTicket({ text: '有效工单', scenario: 'upstream-error' }, new MockProvider(), options()), matches('MODEL_UPSTREAM_ERROR', 502));
 });
-test('P08 timeout has a finite deadline and cancels upstream work', async () => {
+test('P08 timeout has a finite deadline and cancels upstream work', { timeout: 1_500 }, async () => {
   let cancelled = false;
   const provider = {
     kind: 'mock' as const,
@@ -56,4 +56,3 @@ test('P09 an already-cancelled caller never starts model work', async () => {
   await assert.rejects(triageTicket({ text: '有效工单' }, provider, options(controller.signal)), matches('REQUEST_CANCELLED', 499));
   assert.equal(called, false);
 });
-

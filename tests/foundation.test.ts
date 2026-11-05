@@ -48,4 +48,3 @@ test('mock provider actually observes cancellation', async () => {
   controller.abort();
   await assert.rejects(promise, { name: 'AbortError' });
 });
-

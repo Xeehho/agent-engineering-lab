@@ -11,4 +11,3 @@ export class LabError extends Error {
 export function notImplemented(task: string): never {
   throw new LabError('LAB_NOT_IMPLEMENTED', '尚未完成学习任务：' + task, 501);
 }
-

@@ -7,4 +7,3 @@ export async function streamTriage(
 ): Promise<void> {
   return notImplemented('S1-T4：流式事件、取消与终止状态');
 }
-

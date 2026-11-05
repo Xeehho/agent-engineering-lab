@@ -24,4 +24,3 @@ try {
   $taskExitCode = $LASTEXITCODE
 } finally { Pop-Location }
 exit $taskExitCode
-

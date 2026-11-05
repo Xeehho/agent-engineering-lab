@@ -23,4 +23,3 @@ export interface ProgressEvent {
   requestId: string;
   data?: unknown;
 }
-

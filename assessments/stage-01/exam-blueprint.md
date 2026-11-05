@@ -34,4 +34,3 @@
 ## 记录
 
 使用exam-record-template.md。老师没有阅卷时，exam状态保持not_scheduled或pending，不能因CI绿而标passed。真实模型加题未完成时单独记live_pending；毕业前补实测证据。
-

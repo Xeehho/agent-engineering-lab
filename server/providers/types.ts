@@ -9,4 +9,3 @@ export const SCENARIOS = [
   'valid', 'invalid-json', 'wrong-shape', 'empty-summary', 'timeout', 'upstream-error',
 ] as const;
 export type Scenario = (typeof SCENARIOS)[number];
-

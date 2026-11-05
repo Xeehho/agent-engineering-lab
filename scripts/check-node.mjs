@@ -4,4 +4,3 @@ if (major !== 24) {
   console.error('On this Windows machine: powershell -File scripts/run.ps1 install');
   process.exit(1);
 }
-

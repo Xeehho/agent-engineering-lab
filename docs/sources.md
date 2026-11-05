@@ -16,4 +16,3 @@
 - [OpenTelemetry Traces](https://opentelemetry.io/docs/concepts/signals/traces/)
 
 第一阶段使用直接HTTP与可注入provider，帮助观察边界。后续按真实需要选择库，框架名称不作为通关标准。
-
