@@ -1,0 +1,23 @@
+name: 课程讲解与练习反馈
+description: 指出哪里跳过了前提、术语未解释或例子无法复现
+title: '[课程] '
+body:
+  - type: input
+    id: lesson
+    attributes:
+      label: 课号与位置
+      placeholder: 例如 S2-L02，字段来源表之前
+    validations:
+      required: true
+  - type: textarea
+    id: confusion
+    attributes:
+      label: 哪一步开始跟不上
+      description: 写清已有理解、出现的新概念，以及希望补充的问题或例子。请勿贴个人答案、密钥或真实用户数据。
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: 复现与预期（可选）
+      description: 若是代码问题，提供浏览器、修改后的合成输入、实际输出和预期；不要只贴“报错了”。

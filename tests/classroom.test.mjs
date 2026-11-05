@@ -176,6 +176,18 @@ test("all course demonstrations really run without network, keys or external dep
   }
 });
 
+test("each beginner lesson documents the actual output of its minimal program",async()=>{
+  for(const lesson of lessons) {
+    const source=(await readFile(new URL('../'+lesson.beginner.lessonPath,import.meta.url),'utf8')).replaceAll('\r\n','\n');
+    const afterCode=source.split('~~~js beginner='+lesson.id+'.mjs\n~~~')[1];
+    assert.ok(afterCode,lesson.id+' includes the same source used by the runner');
+    const expected=afterCode.match(/~~~text\n([\s\S]+?)\n~~~/)?.[1];
+    assert.ok(expected,lesson.id+' documented stdout');
+    const actual=await runDemo(lesson.experiments.find(e=>e.id==='start').code);
+    assert.equal(actual,expected,lesson.id+' beginner stdout');
+  }
+});
+
 test("browser assertion failures and rejection mismatches stop the exercise",async () => {
   await assert.rejects(runDemo("assert.equal(1,2);"),/检查失败/);
   await assert.rejects(runDemo('await assert.rejects(Promise.resolve("ok"));'),/检查失败/);

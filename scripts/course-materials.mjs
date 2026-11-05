@@ -24,12 +24,12 @@ export function courseMaterials(lessons, stages) {
       "观察方向：" + demo.expected, "", "提示：" + demo.hint, "",
     ].join("\n")).join("\n");
     const checkpoints = item.checkpoints.map(check => [
-      "## " + check.id + " " + check.title, "", check.text, "",
+      "## " + check.id + " " + (check.level==="advanced"?"进阶选做 · ":"入门 · ") + check.title, "", check.text, "",
       ...(check.code ? ["~~~text", check.code, "~~~", ""] : []),
       "提示：" + check.hint, "",
     ].join("\n")).join("\n");
     const quiz = item.quiz.map(check => [
-      "## " + check.id + " " + check.question, "",
+      "## " + check.id + " " + (check.level==="advanced"?"进阶选做 · ":"入门 · ") + check.question, "",
       ...check.options.map((option, index) => "- " + String.fromCharCode(65 + index) + ". " + option), "",
       "公开解析：" + String.fromCharCode(65 + check.answer) + "。" + check.explanation, "",
     ].join("\n")).join("\n");
@@ -56,9 +56,9 @@ export function courseMaterials(lessons, stages) {
         "- 哪一步真正验证或执行了约束？", "- 哪类失败会被拒绝，何时停止或恢复？",
         "- 证据来自机制演示、Mock、真实服务还是生产？结论有多大范围？", "",
         "## 本课行动", "", item.project, "", "## 参考资料", "", sources, ""].join("\n"));
-      files.set(item.checkpointPath, ["# " + item.id + " 随堂练习", "",
-        "每题写结论、依据与补查证据。个人答案不自动进入通用教材。", "", checkpoints, ""].join("\n"));
     }
+    files.set(item.checkpointPath, ["# " + item.id + " 随堂练习", "",
+      "先完成F1–F3入门题，再选做完整机制题。每题写结论、依据与补查证据。个人答案不自动进入通用教材。", "", checkpoints, ""].join("\n"));
     files.set("course/stage-" + item.stage + "/exercises/" + item.id + "-self-check.md",
       ["# " + item.id + " 公开自测与解析", "", "这是公开练习，不是正式考试。HTML 默认在提交后显示解析；此文件公开保留课程内容。", "", quiz, ""].join("\n"));
     files.set("examples/course/" + item.id + ".mjs",

@@ -182,7 +182,9 @@
     }
     if (focus) {
       byId("tab-" + name).focus({ preventScroll: true });
-      document.querySelector(".tabs-wrap").scrollIntoView({ block: "start" });
+      // Scroll the newly visible content. A sticky tab bar can remain at the
+      // viewport top while its normal document position is far above us.
+      byId("panel-" + name).scrollIntoView({ block: "start" });
     }
     persist();
     const hash = "#" + current.id + "/" + name;
@@ -246,9 +248,10 @@
     byId("exam-link").href = "https://github.com/Xeehho/agent-engineering-lab/blob/main/assessments/stage-" + current.stage + "/exam-blueprint.md";
     const maps = document.querySelectorAll(".map-step");
     maps.forEach((node, index) => {
-      node.querySelector("b").textContent = current.goals[index];
-      node.querySelector("small").textContent = ["理解机制", "识别失败边界", "用证据验证"][index];
-      node.querySelector(".map-tag").textContent = ["LEARN", "VERIFY", "APPLY"][index];
+      const branch=current.mindmap.branches[index];
+      node.querySelector("b").textContent = branch.title+"："+branch.points[0];
+      node.querySelector("small").textContent = branch.points[1];
+      node.querySelector(".map-tag").textContent = ["START", "FOLLOW", "CHECK"][index];
     });
     document.querySelector(".boundary-map").setAttribute("aria-label", "本课三个学习目标");
     document.querySelector(".map-label").innerHTML = '<span class="terminal-dot"></span> concept → boundary → evidence <span>' + current.stage + "</span>";
@@ -292,7 +295,7 @@
     if (catalog.some(item => item.id === id)) selectLesson(id, tab);
   });
   document.querySelectorAll("[data-tab]").forEach(button => {
-    button.addEventListener("click", () => selectTab(button.dataset.tab));
+    button.addEventListener("click", () => selectTab(button.dataset.tab, true));
     button.addEventListener("keydown", event => {
       let target = null;
       const index = tabs.indexOf(button.dataset.tab);
@@ -300,7 +303,7 @@
       if (event.key === "ArrowLeft") target = tabs[(index + tabs.length - 1) % tabs.length];
       if (event.key === "Home") target = tabs[0];
       if (event.key === "End") target = tabs[tabs.length - 1];
-      if (target) { event.preventDefault(); selectTab(target); byId("tab-" + target).focus(); }
+      if (target) { event.preventDefault(); selectTab(target, true); }
     });
   });
   document.querySelectorAll("[data-go]").forEach(button =>

@@ -12,7 +12,7 @@ export function mindmapSvg(id,title,map) {
   positions.forEach(([x,y])=>{svg+='<path d="M500 300 Q'+(x<100?350:650)+' '+(y<100?180:420)+' '+(x+195)+' '+(y+90)+'"/>';});
   svg+='<g class="root"><rect x="330" y="245" width="340" height="105"/>'+lines(id,350,276,24)+lines(map.question,350,305,18)+'</g>';
   map.branches.forEach((b,i)=>{const [x,y]=positions[i];svg+='<g class="branch"><rect x="'+x+'" y="'+y+'" width="390" height="175"/>'+lines((i+1)+'. '+b.title,x+18,y+29,24)+b.points.map((p,j)=>lines('• '+p,x+18,y+65+j*48,24)).join('')+'</g>';});
-  return svg+'<text x="25" y="587" style="font-size:11px">Agent Engineering Lab · Xeehho · CC BY 4.0</text></svg>';
+  return svg+'<text x="25" y="587" style="font-size:11px">Agent Engineering Lab · Xeehho · CC BY 4.0 · creativecommons.org/licenses/by/4.0/</text></svg>';
 }
 export function architectureSvg(view) {
   const height=Math.max(...view.nodes.map(n=>n.y))+145;
@@ -33,12 +33,16 @@ export function architectureSvg(view) {
     if(view.id==='request' && a==='tool-gate' && b==='tool-adapter') {route='M850 415 L770 415 L770 665 L570 665 L570 715';lx=675;ly=657;}
     if(view.id==='request' && a==='retrieval' && b==='context') {route='M270 375 L270 285';lx=285;ly=346;}
     if(view.id==='request' && a==='context' && b==='retrieval') {route='M90 285 L90 375';lx=90;ly=319;}
+    // Keep the update/delete feedback outside the retrieval node. A straight
+    // vertical edge would look like an unintended bidirectional index query.
+    const outerFeedback=view.id==='knowledge' && a==='lifecycle' && b==='index';
+    if(outerFeedback) {route='M1110 495 L1160 495 L1160 75 L1110 75';lx=1182;ly=285;}
     svg+='<path marker-end="url(#arrow)" d="'+route+'"/>';
     const labelChars=Array.from(label),labelLines=[];
     for(let i=0;i<labelChars.length;i+=10) labelLines.push(labelChars.slice(i,i+10).join(''));
-    svg+='<text x="'+lx+'" y="'+ly+'" text-anchor="middle" style="font-size:14px;paint-order:stroke;stroke:#fff;stroke-width:5px;stroke-linejoin:round">'+labelLines.map((line,i)=>'<tspan x="'+lx+'" dy="'+(i?17:0)+'">'+esc(line)+'</tspan>').join('')+'</text>';
+    svg+='<text x="'+lx+'" y="'+ly+'"'+(outerFeedback?' transform="rotate(-90 '+lx+' '+ly+')"':'')+' text-anchor="middle" style="font-size:14px;paint-order:stroke;stroke:#fff;stroke-width:5px;stroke-linejoin:round">'+labelLines.map((line,i)=>'<tspan x="'+lx+'" dy="'+(i?17:0)+'">'+esc(line)+'</tspan>').join('')+'</text>';
   }
   for (const n of nodes) svg+='<g data-graph-node="'+n.id+'"><rect x="'+n.x+'" y="'+n.y+'" width="260" height="80"/>'+lines(n.title,n.x+15,n.y+32,15)+'</g>';
-  svg+='</svg>';
+  svg+='<text x="30" y="'+(height-12)+'" style="font-size:12px">Agent Engineering Lab · Xeehho · CC BY 4.0 · creativecommons.org/licenses/by/4.0/</text></svg>';
   return svg.replaceAll('diagram-title','architecture-'+view.id+'-title').replaceAll('diagram-description','architecture-'+view.id+'-description').replaceAll('id="arrow"','id="arrow-'+view.id+'"').replaceAll('url(#arrow)','url(#arrow-'+view.id+')');
 }

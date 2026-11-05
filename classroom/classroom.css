@@ -87,6 +87,7 @@ main{padding-top:84px;margin-left:254px;outline:none}.page-container{max-width:1
 .architecture-edges summary{cursor:pointer;font-size:13px}.architecture-edges li{font-size:12px;line-height:2}
 .scenario{padding:24px;margin:24px 0}.scenario h3{margin-top:0}.scenario>p{font-size:14px;line-height:1.9}
 .tabs{overflow-x:auto;white-space:nowrap}.tabs>button{flex-shrink:0}
+.tab-panel{scroll-margin-top:150px}
 .license-notice{font-size:11px;color:var(--muted);line-height:1.9;margin:22px 0}.license-notice summary{cursor:pointer}.license-notice pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:10px;padding:15px;background:#fff;max-height:340px;overflow:auto}
 @media(max-width:700px){.map-branches,.lesson-relations{grid-template-columns:1fr}.map-tree{display:block}.map-tree:before{content:'文字树状版：无需缩放也能读完整脑图';font-size:12px;color:var(--muted)}#mindmap-visual,#architecture-visual{display:none}.architecture-mobile-help{display:block}.view-buttons{flex-direction:column}.diagram-scroll svg{min-width:900px}.component-detail,.scenario{padding:18px}.lesson-orientation{padding:15px}.map-branches ul{font-size:13px}}
 @media print{.view-buttons,.component-buttons,.record-buttons{display:none}.diagram-scroll{overflow:visible}.diagram-scroll svg{min-width:0}.map-tree{display:none}}
