@@ -7,6 +7,8 @@
 
 ## 从这里开始
 
+**[课程首页](http://127.0.0.1:5173/)**：启动项目后先看课程体系、学习成果、前置条件与准备自查；有开发者 Xeehho 的介绍及 GitHub Star 入口。[项目实验台](http://127.0.0.1:5173/lab.html)与课堂各有独立入口。
+
 **[打开单文件互动课堂](public/learn.html)**：下载 HTML 后直接用浏览器打开，或启动项目访问 http://127.0.0.1:5173/learn.html 。八阶段 31 课、34 个机制实验、95 道开放题、96 道公开自测与笔记集中在一页；支持搜索、逐课记录、旧版迁移和全课程备份。[使用与维护说明](classroom/README.md)。
 
 [知识体系与学习投入](course/knowledge-map.md) · [全部课程](course/README.md) · [求职作品与面试训练](docs/career/job-readiness.md)。React/TypeScript 为主线，补 Python、模型机制、工具、MCP、SQL/状态、RAG、多角色、评测、观测与部署。
@@ -46,7 +48,7 @@ powershell -NoProfile -File scripts/run.ps1 install
 powershell -NoProfile -File scripts/run.ps1 dev
 ~~~
 
-浏览器打开 http://127.0.0.1:5173 ，API在127.0.0.1:8787。若已使用Node 24，直接npm install、npm run dev即可。
+浏览器打开 http://127.0.0.1:5173 查看首页；课堂在 /learn.html，原工单实验台在 /lab.html，API在127.0.0.1:8787。若已使用Node 24，直接npm install、npm run dev即可。
 
 ~~~powershell
 powershell -NoProfile -File scripts/run.ps1 doctor

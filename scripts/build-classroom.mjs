@@ -19,6 +19,19 @@ async function emit(path, content) {
   }
 }
 for (const [path, content] of generated) await emit(path, content);
+const overviewData = {
+  stats: {
+    stages: stages.length, lessons: lessons.length,
+    experiments: lessons.reduce((sum, lesson) => sum + lesson.experiments.length, 0),
+    checkpoints: lessons.reduce((sum, lesson) => sum + lesson.checkpoints.length, 0),
+    quizzes: lessons.reduce((sum, lesson) => sum + lesson.quiz.length, 0),
+  },
+  stages: stages.map(stage => ({
+    id: stage.id, title: stage.title, deliverable: stage.deliverable,
+    lessons: lessons.filter(lesson => lesson.stage === stage.id).map(lesson => ({id:lesson.id,title:lesson.title})),
+  })),
+};
+await emit("src/generated/course-overview.ts", "// Generated from course/curriculum.mjs. Run npm run classroom:build.\nexport const courseOverview = " + JSON.stringify(overviewData, null, 2) + " as const;\n");
 const [template, css, app, core, knowledgeMap] = await Promise.all([
   read("classroom/index.template.html"), read("classroom/classroom.css"), read("classroom/app.js"),
   read("classroom/core.mjs"), read("course/knowledge-map.md"),

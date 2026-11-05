@@ -8,6 +8,12 @@
   let current = catalog[0];
   let experiments = current.experiments, checkpoints = current.checkpoints, quiz = current.quiz;
   const byId = id => document.getElementById(id);
+  if (location.protocol === "file:") {
+    byId("classroom-home").href = "https://github.com/Xeehho/agent-engineering-lab#readme";
+    byId("classroom-home").setAttribute("aria-label", "查看项目介绍");
+    byId("classroom-home").target = "_blank";
+    byId("classroom-home").rel = "noopener noreferrer";
+  }
   let state = emptyState();
   let storageAvailable = true;
   let toastTimer;
