@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <meta name="description" content="Agent Engineering Lab 第一课：讲义、离线实验、随堂题与公开自测。">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval' blob:; style-src 'unsafe-inline'; worker-src blob:; connect-src 'none'; img-src data:; base-uri 'none'; form-action 'none'; object-src 'none'">
+  <title>第一课 · 模型请求的成功边界 | Agent Engineering Lab</title>
+  <style>/*__CSS__*/</style>
+</head>
+<body>
+  <a href="#main" class="skip-link">跳到课堂内容</a>
+  <header class="topbar">
+    <a class="brand" href="#lecture" aria-label="Agent Engineering Lab 课堂首页">
+      <span class="brand-symbol" aria-hidden="true">a<span>↗</span></span>
+      <span>Agent Engineering <b>Lab</b><small>从 AI Coding 到 AI 应用工程</small></span>
+    </a>
+    <div class="header-actions">
+      <span class="offline-label"><i></i> 离线课堂</span>
+      <button class="button quiet" id="export-top">导出学习记录 <span aria-hidden="true">↗</span></button>
+      <a class="github-link" href="https://github.com/Xeehho/agent-engineering-lab" target="_blank" rel="noopener noreferrer">GitHub <span aria-hidden="true">↗</span></a>
+    </div>
+  </header>
+
+  <aside class="sidebar" aria-label="课程目录">
+    <div class="sidebar-heading"><span class="eyebrow">YOUR LEARNING PATH</span><strong>AI 应用工程</strong><span class="stage-label">阶段 01 <span>模型应用基础</span></span></div>
+    <nav class="lesson-list" aria-label="本阶段课程">
+      <a class="lesson-link current" href="#lecture" aria-current="page"><span class="lesson-number">01</span><span><b>模型请求的成功边界</b><small>正在学习 <i class="tiny-dot"></i></small></span></a>
+      <div class="lesson-link upcoming"><span class="lesson-number">02</span><span><b>超时与取消</b><small>后续授课</small></span></div>
+      <div class="lesson-link upcoming"><span class="lesson-number">03</span><span><b>流式事件与前端状态</b><small>后续授课</small></span></div>
+      <div class="lesson-link upcoming"><span class="lesson-number">04</span><span><b>验证证据与阶段交卷</b><small>后续授课</small></span></div>
+    </nav>
+    <a class="stage-exam" href="#quiz"><span aria-hidden="true">◇</span><div><b>阶段考试</b><small>交卷后由老师出新题</small></div><span aria-hidden="true">↗</span></a>
+    <div class="sidebar-bottom">
+      <div class="progress-caption"><b>本课学习记录</b><span id="progress-label">0 / 4</span></div>
+      <progress id="lesson-progress" max="4" value="0" aria-label="本课四项活动记录"></progress>
+      <ol class="progress-items">
+        <li id="progress-read">阅读讲义</li><li id="progress-lab">运行 4 个实验</li>
+        <li id="progress-practice">填写 5 道随堂题</li><li id="progress-quiz">提交公开自测</li>
+      </ol>
+      <p class="microcopy">活动记录仅保存在本机，不代表老师已评阅或掌握认证。</p>
+      <span class="save-status" id="save-status" role="status">准备本机存储…</span>
+    </div>
+  </aside>
+
+  <main id="main" tabindex="-1">
+    <div class="page-container">
+      <div class="breadcrumb"><span>课程</span><span aria-hidden="true">/</span><span>阶段 01</span><span aria-hidden="true">/</span><b>第一课</b><span class="version">S1–L01</span></div>
+      <section class="hero" aria-labelledby="lesson-title">
+        <div class="hero-copy">
+          <span class="eyebrow green">LESSON 01 · BUILD YOUR JUDGMENT</span>
+          <h1 id="lesson-title">一次模型请求<br>怎样才算<span>成功</span>？</h1>
+          <p>从“拿到一个响应”，到“交付可信的结果”。<br>学会区分调用、数据契约与业务正确性。</p>
+          <div class="lesson-meta"><span>◷ 建议 25–40 分钟</span><span>4 个实验</span><span>5 道随堂题</span></div>
+        </div>
+        <div class="boundary-map" aria-label="三个独立检查边界：调用、数据契约、业务">
+          <div class="map-label"><span class="terminal-dot"></span> response → reliable result <span>01</span></div>
+          <div class="map-step"><span class="map-index">01</span><div><b>调用成功</b><small>收到响应，确认完成状态</small></div><span class="map-tag">HTTP / SDK</span></div>
+          <div class="map-connector" aria-hidden="true">↓ <span>继续检查</span></div>
+          <div class="map-step"><span class="map-index">02</span><div><b>数据符合契约</b><small>解析、字段、类型与约束</small></div><span class="map-tag">VALIDATE</span></div>
+          <div class="map-connector" aria-hidden="true">↓ <span>继续检查</span></div>
+          <div class="map-step final"><span class="map-index">03</span><div><b>业务结果正确</b><small>忠于输入，结论有依据</small></div><span class="map-tag">EVALUATE</span></div>
+          <p>每通过一层，都还有下一层需要证明。</p>
+        </div>
+      </section>
+
+      <div class="tabs-wrap">
+        <div class="tabs" role="tablist" aria-label="课堂内容">
+          <button id="tab-lecture" role="tab" aria-selected="true" aria-controls="panel-lecture" data-tab="lecture"><span>01</span> 讲义</button>
+          <button id="tab-lab" role="tab" aria-selected="false" aria-controls="panel-lab" data-tab="lab" tabindex="-1"><span>02</span> 动手实验 <b>4</b></button>
+          <button id="tab-practice" role="tab" aria-selected="false" aria-controls="panel-practice" data-tab="practice" tabindex="-1"><span>03</span> 随堂练习 <b>5</b></button>
+          <button id="tab-quiz" role="tab" aria-selected="false" aria-controls="panel-quiz" data-tab="quiz" tabindex="-1"><span>04</span> 课后自测</button>
+          <button id="tab-notes" role="tab" aria-selected="false" aria-controls="panel-notes" data-tab="notes" tabindex="-1"><span>05</span> 复习速记</button>
+        </div>
+      </div>
+
+      <section id="panel-lecture" class="tab-panel" role="tabpanel" aria-labelledby="tab-lecture" tabindex="0">
+        <div class="content-grid">
+          <article class="paper">
+            <div class="section-kicker"><span class="tag">课堂讲义</span><span>阅读 → 判断 → 验证</span></div>
+            <div class="article-body">__LECTURE__</div>
+            <div class="completion-row"><label><input type="checkbox" id="read-complete"> 我已通读本课讲义</label><button class="button primary" data-go="lab">开始动手实验 <span aria-hidden="true">→</span></button></div>
+          </article>
+          <aside class="right-rail" aria-label="学习指引">
+            <div class="rail-note"><span class="eyebrow green">TODAY'S QUESTION</span><h2>HTTP 200，<br>为什么还会错？</h2><p>先带着这个问题阅读。你要能指出成功发生在哪个边界，以及还有什么没被验证。</p></div>
+            <nav class="toc" aria-label="讲义目录"><span class="eyebrow">本课目录</span>__TOC__</nav>
+            <div class="teacher-tip"><span>老师提示</span><p>可以继续用 AI 写代码。你的任务是定义正确结果、读懂关键路径，并亲自验证。</p></div>
+          </aside>
+        </div>
+      </section>
+
+      <section id="panel-lab" class="tab-panel" role="tabpanel" aria-labelledby="tab-lab" tabindex="0" hidden>
+        <div class="panel-heading"><div><span class="eyebrow green">LEARN BY OBSERVING</span><h2>先预测，再运行。</h2><p>4 个可编辑的 JavaScript 小实验。全部在本机运行，不调用模型，无需 API Key。</p></div><span class="pill">Browser · JavaScript</span></div>
+        <div class="notice">运行器在独立 Worker 中执行，3 秒后终止；不支持 TypeScript、安装依赖或网络请求。这里只运行你理解的课堂代码。</div>
+        <div id="experiments"></div>
+        <div class="next-row"><p>看到输出之后，用自己的话写清它证明了什么。</p><button class="button primary" data-go="practice">去做随堂练习 →</button></div>
+      </section>
+
+      <section id="panel-practice" class="tab-panel" role="tabpanel" aria-labelledby="tab-practice" tabindex="0" hidden>
+        <div class="panel-heading"><div><span class="eyebrow green">EXPLAIN IT IN YOUR WORDS</span><h2>会解释，才是你的能力。</h2><p>先完成 C1–C3。每题写出结论、依据，以及还需补查的证据。</p></div><span class="pill">开放作答 · 老师评阅</span></div>
+        <div class="notice">答案自动保存在当前浏览器；填写完成只记为“已填写”。导出 Markdown 后发到聊天，我会逐题追问和批改。</div>
+        <div id="checkpoints"></div>
+        <div class="next-row"><button class="button" id="export-answers">导出作答 Markdown ↓</button><button class="button primary" data-go="quiz">检查基础概念 →</button></div>
+      </section>
+
+      <section id="panel-quiz" class="tab-panel" role="tabpanel" aria-labelledby="tab-quiz" tabindex="0" hidden>
+        <div class="panel-heading"><div><span class="eyebrow green">CHECK YOUR UNDERSTANDING</span><h2>给理解做一次自检。</h2><p>6 道公开单选题。提交后显示解析，可修改后重测。</p></div><span class="pill">课堂自测</span></div>
+        <form id="quiz-form"><div id="quiz-questions"></div><div class="quiz-actions"><button type="submit" class="button primary">提交自测并看解析 →</button><span id="quiz-count">已选 0 / 6</span></div></form>
+        <div id="quiz-result" class="quiz-result" role="status" hidden></div>
+        <div class="exam-note"><span class="exam-icon" aria-hidden="true">◇</span><div><h3>正式阶段考试，等你交卷后开始。</h3><p>完成阶段作业并提交 commit 后，老师会 review 并出新的概念与排错变式。正式考核包含答辩 30 分、项目 50 分、排错 20 分；总分至少 80，且分别至少 20 / 35 / 12 分，无关键正确性问题。网页自测不计入正式成绩。</p><a href="https://github.com/Xeehho/agent-engineering-lab/blob/main/assessments/stage-01/exam-blueprint.md" target="_blank" rel="noopener noreferrer">查看考试蓝图 ↗</a></div></div>
+      </section>
+
+      <section id="panel-notes" class="tab-panel" role="tabpanel" aria-labelledby="tab-notes" tabindex="0" hidden>
+        <div class="panel-heading"><div><span class="eyebrow green">KEEP WHAT MATTERS</span><h2>复习时，回到这几件事。</h2><p>课程速记、个人笔记和可迁移的学习记录，放在一起。</p></div><button class="button" id="print-notes">打印速记 / 存为 PDF</button></div>
+        <article class="paper notes-paper"><div class="article-body">__NOTES__</div></article>
+        <div class="paper personal-notes"><label for="personal-notes"><h3>我的笔记</h3><span>今天改变了哪个认识？还有什么不能解释？</span></label><textarea id="personal-notes" maxlength="20000" rows="7" placeholder="用自己的话记下来，导出时会一起带走。"></textarea></div>
+        <div class="record-tools"><div><h3>把学习记录带走</h3><p>导出的 JSON 可在另一浏览器导入。个人答案不上传到服务器，不写入 GitHub。</p><p class="microcopy">file://、本地服务和不同浏览器使用不同存储；隐私模式或清理缓存可能丢失数据。建议及时导出。</p></div><div class="record-buttons"><button class="button" id="backup">备份 JSON ↓</button><label class="button file-label" for="import-file">导入 JSON ↑</label><input type="file" id="import-file" accept=".json,application/json" hidden><button class="button" id="export-notes">导出作答 Markdown ↓</button><button class="button danger" id="reset-progress">清空本机进度</button></div></div>
+      </section>
+      <footer class="page-footer"><span>Agent Engineering Lab <span aria-hidden="true">/</span> 自主判断 · 可验证交付</span><span>交互参考 <a href="https://learn-py.org/" target="_blank" rel="noopener noreferrer">learn-py.org ↗</a> <span aria-hidden="true">·</span> 本项目原创课程</span></footer>
+    </div>
+  </main>
+  <div class="toast" id="toast" role="status" hidden></div>
+  <dialog id="confirm-dialog" aria-labelledby="dialog-title"><h2 id="dialog-title">确认操作</h2><p id="dialog-message"></p><div class="dialog-actions"><button class="button" id="dialog-cancel">取消</button><button class="button primary" id="dialog-confirm">确认</button></div></dialog>
+  <noscript><div class="noscript">JavaScript 已关闭：你仍可阅读当前讲义；实验、答题与进度保存需要启用 JavaScript。</div></noscript>
+  <script>/*__JS__*/</script>
+</body>
+</html>

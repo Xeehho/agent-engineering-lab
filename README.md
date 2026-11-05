@@ -7,7 +7,9 @@
 
 ## 从这里开始
 
-先在聊天中上课，配套资料保存在[课堂目录](course/README.md)。当前课：[完整讲义](course/stage-01/lessons/01-success-contracts.md) · [速记](course/stage-01/notes/01-quick-reference.md) · [随堂题](course/stage-01/exercises/01-checkpoint.md) · [离线实验](examples/lesson-01/README.md)。
+**[打开单文件互动课堂](public/learn.html)**：下载 HTML 后直接用浏览器打开，或启动项目访问 http://127.0.0.1:5173/learn.html 。讲义、4 个可运行实验、5 道随堂题、6 道公开自测和笔记集中在一页，支持本机自动保存及导出作答。[使用与维护说明](classroom/README.md)。
+
+聊天中继续由老师讲解、追问和评阅，配套资料保存在[课堂目录](course/README.md)。当前课：[完整讲义](course/stage-01/lessons/01-success-contracts.md) · [速记](course/stage-01/notes/01-quick-reference.md) · [随堂题](course/stage-01/exercises/01-checkpoint.md) · [离线实验](examples/lesson-01/README.md)。
 
 1. [起点诊断：先凭自己的理解回答](course/diagnostic.md)
 2. [第一阶段计划](course/stage-01/plan.md)

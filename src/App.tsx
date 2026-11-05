@@ -42,6 +42,7 @@ export function App() {
         <p className="eyebrow">STAGE 01 / 模型应用基础</p>
         <h1>把AI交付<br />变成可解释的工程能力。</h1>
         <p>智能工单分诊 · 结构化输出 · 错误处理 · 流式响应</p>
+        <p><a href="/learn.html">进入互动课堂：讲义、实验、随堂题与自测 →</a></p>
       </section>
       <section className="workspace">
         <article className="panel">

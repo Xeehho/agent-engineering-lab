@@ -1,0 +1,116 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
+import { execFileSync } from "node:child_process";
+import { Worker } from "node:worker_threads";
+import vm from "node:vm";
+import { experiments, checkpoints, quiz } from "../classroom/content.mjs";
+import { emptyState, normalizeState, gradeQuiz, summarizeProgress, exportAnswers, classroomWorker } from "../classroom/core.mjs";
+import { renderMarkdown } from "../classroom/markdown.mjs";
+
+test("self-test grades actual choices and does not award unanswered points", () => {
+  assert.equal(gradeQuiz({}, quiz).correct, 0);
+  assert.equal(gradeQuiz({}, quiz).answered, 0);
+  const answers = Object.fromEntries(quiz.map(item => [item.id, item.answer]));
+  assert.equal(gradeQuiz(answers, quiz).correct, 6);
+  answers.Q1 = 0;
+  assert.equal(gradeQuiz(answers, quiz).correct, 5);
+});
+
+test("imports accept only bounded known course fields and valid choices", () => {
+  const imported = normalizeState({ ...emptyState(), tab: "unknown", drafts: { C1: "x".repeat(13000), evil: "ignored" },
+    codes: { assertion: "<script>alert(1)</script>" }, ran: ["json", "json", "evil"],
+    answers: { Q1: -1, Q2: 999, Q3: 1, Q4: "0" }, masteryVerified: true, exam: { score: 100 } },
+  experiments, checkpoints, quiz);
+  assert.equal(imported.tab, "lecture");
+  assert.equal(imported.drafts.C1.length, 12000);
+  assert.equal(imported.drafts.evil, undefined);
+  assert.equal(imported.codes.assertion, "<script>alert(1)</script>");
+  assert.deepEqual(imported.ran, ["json"]);
+  assert.deepEqual(imported.answers, { Q3: 1 });
+  assert.equal(imported.masteryVerified, undefined);
+  assert.equal(imported.exam, undefined);
+  const incomplete = normalizeState({ ...emptyState(), submitted: true, answers: { Q1: 1 } }, experiments, checkpoints, quiz);
+  assert.equal(incomplete.submitted, false);
+  assert.throws(() => normalizeState({ schemaVersion: 2, course: "S1-L01" }, experiments, checkpoints, quiz));
+  assert.throws(() => normalizeState({ schemaVersion: 1, course: "S2" }, experiments, checkpoints, quiz));
+});
+
+test("activity progress tracks drafting and submission, never teacher certification", () => {
+  const state = emptyState();
+  state.read = true;
+  state.ran = experiments.map(item => item.id);
+  state.drafts = Object.fromEntries(checkpoints.map(item => [item.id, "我的回答"]));
+  state.answers = Object.fromEntries(quiz.map(item => [item.id, 0]));
+  assert.equal(summarizeProgress(state, experiments, checkpoints, quiz).completed, 3);
+  state.submitted = true;
+  assert.equal(summarizeProgress(state, experiments, checkpoints, quiz).completed, 4);
+  assert.equal(state.exam, undefined);
+  state.drafts.C1 = "   ";
+  assert.equal(summarizeProgress(state, experiments, checkpoints, quiz).drafted, 4);
+});
+
+test("Markdown export retains learner text and explicitly limits evidence", () => {
+  const state = emptyState();
+  state.drafts.C1 = "我的结论\n下一行";
+  state.predictions.assertion = "预测";
+  state.observations.assertion = "实际观察";
+  state.personalNotes = "个人笔记";
+  const markdown = exportAnswers(state, experiments, checkpoints, quiz);
+  for (const text of ["我的结论\n下一行", "预测", "实际观察", "个人笔记", "待老师评阅", "无真实模型调用", "AI 协助范围"])
+    assert.ok(markdown.includes(text), text);
+});
+
+test("teaching renderer escapes HTML, blocks script URLs, resolves repository links", () => {
+  const html = renderMarkdown("## 标题\n\n<script>alert(1)</script>\n\n[速记](../notes/01.md)\n\n~~~js\nconsole.log('<img>');\n~~~", "course/stage-01/lessons/01.md");
+  assert.ok(html.includes("&lt;script&gt;"));
+  assert.ok(!html.includes("<script>"));
+  assert.ok(html.includes("https://github.com/Xeehho/agent-engineering-lab/blob/main/course/stage-01/notes/01.md"));
+  assert.ok(html.includes("&lt;img&gt;"));
+  assert.throws(() => renderMarkdown("[bad](javascript:alert)", "course/test.md"));
+});
+
+test("committed single-file HTML matches teaching sources, parses, and embeds all assets", async () => {
+  execFileSync(process.execPath, ["scripts/build-classroom.mjs", "--check"], { cwd: new URL("../", import.meta.url) });
+  const html = await readFile(new URL("../public/learn.html", import.meta.url), "utf8");
+  const scripts = [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)];
+  assert.equal(scripts.length, 1);
+  new vm.Script(scripts[0][1]);
+  assert.ok(!/<script[^>]+src=|<link[^>]+stylesheet/.test(html));
+  assert.ok(html.includes("connect-src 'none'"));
+  assert.ok(html.includes("window.print()"));
+  assert.equal(experiments.length, 4);
+  assert.equal(checkpoints.length, 5);
+  assert.equal(quiz.length, 6);
+  assert.ok(html.includes("JSON.parse只解决JSON语法解析"));
+});
+
+async function runDemo(code) {
+  const worker = new Worker(
+    'const {parentPort} = require("node:worker_threads"); global.self = global;' +
+    'self.postMessage = value => parentPort.postMessage(value);' +
+    "(" + classroomWorker.toString() + ")();" +
+    'parentPort.on("message", data => self.onmessage({data}));',
+    { eval: true });
+  const lines = [];
+  try {
+    return await new Promise((resolve, reject) => {
+      const timer = setTimeout(() => reject(new Error("Demo deadline exceeded")), 2000);
+      worker.on("error", error => { clearTimeout(timer); reject(error); });
+      worker.on("message", message => {
+        if (message.type === "log") lines.push(message.text);
+        if (message.type === "error") { clearTimeout(timer); reject(new Error(message.text)); }
+        if (message.type === "done") { clearTimeout(timer); resolve(lines.join("\n")); }
+      });
+      worker.postMessage(code);
+    });
+  } finally { await worker.terminate(); }
+}
+test("all four editable demos execute the actual runner protocol", async () => {
+  const output = [];
+  for (const item of experiments) output.push(await runDemo(item.code));
+  assert.match(output[0], /string[\s\S]*TypeError/);
+  assert.match(output[1], /null => object/);
+  assert.match(output[2], /status: 503[\s\S]*ok: false/);
+  assert.match(output[3], /请增加深色模式[\s\S]*订单页白屏/);
+});

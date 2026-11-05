@@ -1,0 +1,597 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <meta name="description" content="Agent Engineering Lab 第一课：讲义、离线实验、随堂题与公开自测。">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval' blob:; style-src 'unsafe-inline'; worker-src blob:; connect-src 'none'; img-src data:; base-uri 'none'; form-action 'none'; object-src 'none'">
+  <title>第一课 · 模型请求的成功边界 | Agent Engineering Lab</title>
+  <style>:root{--bg:#f7f8f5;--paper:#fff;--ink:#1b302a;--muted:#6b7a74;--line:#e1e7e2;--green:#087f5b;--green-dark:#075e46;--pale:#eaf4ed;--mono:"Cascadia Code",Consolas,monospace;--sans:Inter,"Segoe UI","Microsoft YaHei",system-ui,sans-serif}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.75 var(--sans)}a{color:var(--green);text-underline-offset:4px}button,input,textarea{font:inherit}button,a,input,textarea,summary{ -webkit-tap-highlight-color:transparent}button{cursor:pointer}button:disabled{cursor:wait;opacity:.6}button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{outline:3px solid #38a683;outline-offset:4px}button{color:inherit}h1,h2,h3,p{margin-top:0}button svg{vertical-align:middle}[hidden]{display:none!important}.skip-link{position:fixed;top:-70px;left:20px;z-index:100;background:var(--green);color:white;padding:10px}.skip-link:focus{top:10px}
+.topbar{height:84px;position:fixed;top:0;left:0;right:0;z-index:20;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 34px;gap:20px}.brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--ink);line-height:1.3;font-size:17px;font-weight:650;letter-spacing:-.4px}.brand b{color:var(--green)}.brand small{display:block;font-size:10px;color:var(--muted);font-weight:400;letter-spacing:1.8px;margin-top:5px}.brand-symbol{width:38px;height:38px;background:var(--green);color:white;border-radius:11px;position:relative;font:700 33px/35px Georgia,serif;text-align:center}.brand-symbol span{font:17px/1 var(--sans);position:absolute;right:4px;top:4px}.header-actions{display:flex;align-items:center;gap:25px;font-size:12px}.offline-label{display:flex;align-items:center;gap:7px;color:var(--muted)}.offline-label i,.tiny-dot{height:6px;width:6px;background:#16a06c;border-radius:50%;display:inline-block}.github-link{color:var(--ink);text-decoration:none;font-weight:600}.github-link span{margin-left:8px}.button{border:1px solid #d8e1da;background:#fff;padding:10px 17px;border-radius:7px;font-size:13px;font-weight:600;line-height:1.5;display:inline-flex;justify-content:center;align-items:center;gap:12px;text-decoration:none;transition:background .15s,border-color .15s}.button:hover{background:#f0f5f1;border-color:#a2bcad}.button.primary{background:var(--green);border-color:var(--green);color:#fff}.button.primary:hover{background:var(--green-dark)}.button.quiet{padding:7px 12px;font-weight:500}.button.danger{color:#a54636;border-color:#ebd9d3}.button.small{font-size:12px;padding:6px 12px}
+.sidebar{position:fixed;top:84px;bottom:0;left:0;width:254px;border-right:1px solid var(--line);background:#fdfefd;display:flex;flex-direction:column;overflow-y:auto;padding:32px 20px 22px}.eyebrow{font-size:10px;letter-spacing:1.6px;font-weight:650;display:block;color:#7b8a80;line-height:1.5}.eyebrow.green{color:var(--green)}.sidebar-heading{padding:0 14px}.sidebar-heading strong{display:block;font-size:21px;letter-spacing:1px;margin:8px 0 22px}.stage-label{font-size:11px;font-family:var(--mono);color:var(--green);display:flex;gap:11px;align-items:center}.stage-label span{font:12px var(--sans);color:var(--muted)}.lesson-list{display:grid;gap:7px;margin-top:17px}.lesson-link{display:flex;gap:13px;padding:15px 13px;align-items:flex-start;border-radius:7px;color:var(--ink);text-decoration:none;line-height:1.4}.lesson-link.current{background:var(--pale);box-shadow:inset 3px 0 var(--green)}.lesson-number{font:12px var(--mono);padding-top:2px;color:#89958c}.current .lesson-number{color:var(--green)}.lesson-link b{font-size:12px;font-weight:550;display:block}.lesson-link small{font-size:10px;color:var(--muted);display:block;margin-top:8px}.current b,.current small{color:var(--green)}.tiny-dot{width:4px;height:4px;vertical-align:2px;margin-left:3px}.upcoming{color:#8c968f}.upcoming small{color:#8c968f}.stage-exam{border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin:22px 10px 28px;display:flex;gap:10px;padding:18px 0;text-decoration:none;color:#607368;align-items:center}.stage-exam>span:first-child{font-size:24px}.stage-exam>span:last-child{margin-left:auto}.stage-exam b{display:block;font-size:12px}.stage-exam small{font-size:10px;display:block;margin-top:3px;color:var(--muted)}.sidebar-bottom{margin-top:auto;padding:10px 14px 0}.progress-caption{display:flex;justify-content:space-between;align-items:center;font-size:11px}.progress-caption span{color:var(--green);font:11px var(--mono)}progress{display:block;width:100%;height:5px;margin:14px 0 17px;border:0;border-radius:4px;overflow:hidden;background:#e5ece6;accent-color:var(--green)}progress::-webkit-progress-bar{background:#e5ece6}progress::-webkit-progress-value{background:var(--green);transition:width .2s}.progress-items{list-style:none;padding:0;margin:0;font-size:11px;color:var(--muted);line-height:2.2}.progress-items li:before{content:"";display:inline-block;border:1px solid #b8c6bb;border-radius:50%;width:8px;height:8px;margin-right:9px}.progress-items .done{color:var(--green)}.progress-items .done:before{background:var(--green);border-color:var(--green)}.microcopy{font-size:11px;color:var(--muted);line-height:1.8}.sidebar-bottom .microcopy{margin:16px 0 10px}.save-status{font-size:10px;color:#7d8c82}.save-status:before{content:"●";color:#83ab92;font-size:8px;margin-right:6px}
+main{padding-top:84px;margin-left:254px;outline:none}.page-container{max-width:1350px;margin:auto;padding:28px 52px 0}.breadcrumb{display:flex;gap:13px;align-items:center;font-size:11px;color:var(--muted)}.breadcrumb b{font-weight:500;color:#465e51}.version{margin-left:auto;font:10px var(--mono);letter-spacing:1px;color:#8c9a90}.hero{display:grid;grid-template-columns:1fr .9fr;gap:48px;padding:43px 0 42px;align-items:center}.hero-copy h1{font-size:40px;line-height:1.43;letter-spacing:-1.5px;margin:12px 0 16px;font-weight:730}.hero-copy h1 span{color:var(--green);position:relative;white-space:nowrap}.hero-copy h1 span:after{content:"";position:absolute;left:0;right:0;bottom:1px;height:5px;background:#c6e3cc;border-radius:4px;z-index:-1}.hero-copy p{color:var(--muted);font-size:13px;line-height:1.9;margin-bottom:21px}.lesson-meta{display:flex;flex-wrap:wrap;gap:18px;font-size:10px;color:#657b6b}.lesson-meta span+span{position:relative}.lesson-meta span+span:before{content:"·";position:absolute;left:-11px;color:#a6b4a9}.boundary-map{border:1px solid #d7e3d8;border-radius:12px;padding:19px 22px 12px;background:linear-gradient(120deg,#fff,#edf5ec);position:relative}.map-label{font:9px var(--mono);color:#7e9684;margin-bottom:17px;display:flex;gap:7px;align-items:center}.map-label>span:last-child{margin-left:auto;color:#9cb4a0}.terminal-dot{display:inline-block;width:5px;height:5px;border-radius:50%;background:#4da77c}.map-step{display:flex;align-items:center;gap:12px}.map-index{font:12px var(--mono);border:1px solid #ccdbce;background:#fff;border-radius:7px;width:32px;height:32px;display:grid;place-items:center;color:#5d836b}.map-step b{display:block;font-size:12px;line-height:1.6;font-weight:650}.map-step small{font-size:9px;color:#78907d;display:block;margin-top:2px}.map-tag{font:8px var(--mono);margin-left:auto;color:#76957d;border:1px solid #dae7db;padding:2px 4px;border-radius:3px}.map-connector{height:23px;line-height:23px;padding-left:12px;font-size:12px;color:#a7bda9}.map-connector span{font-size:8px;margin-left:17px}.final .map-index{background:var(--green);border-color:var(--green);color:#fff}.final b{color:var(--green)}.boundary-map>p{font-size:9px;color:#859c89;border-top:1px solid #dce8dd;margin:14px 0 0;padding-top:8px}
+.tabs-wrap{position:sticky;top:84px;z-index:10;background:var(--bg);margin-bottom:26px}.tabs{display:flex;border-bottom:1px solid var(--line);gap:26px;overflow-x:auto;scrollbar-width:thin}.tabs button{background:none;border:0;border-bottom:2px solid transparent;border-radius:0;white-space:nowrap;padding:13px 0 15px;color:#6c8072;font-size:12px;display:flex;align-items:center;gap:6px}.tabs button>span{font:10px var(--mono);opacity:.5;margin-right:2px}.tabs button b{background:#e7ede7;font-size:9px;font-weight:500;min-width:17px;text-align:center;border-radius:4px}.tabs button[aria-selected=true]{color:var(--green);border-bottom-color:var(--green);font-weight:650}.tabs button[aria-selected=true]>span{opacity:1}.tabs button[aria-selected=true] b{background:#deeee1}.tab-panel{outline:none;min-height:400px}.content-grid{display:grid;grid-template-columns:minmax(0,1fr) 212px;gap:28px}.paper{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:28px 32px;min-width:0}.section-kicker{display:flex;align-items:center;justify-content:space-between;font-size:10px;color:#8c9b90;border-bottom:1px solid #edf0ec;padding-bottom:20px;margin-bottom:22px;gap:10px}.tag{font-size:10px;color:var(--green);background:var(--pale);border-radius:4px;padding:3px 8px}.article-body{font-size:13px;line-height:1.95;color:#40584b;overflow-wrap:anywhere}.article-body h2{font-size:19px;line-height:1.55;color:var(--ink);margin:32px 0 16px;scroll-margin-top:163px;letter-spacing:-.3px}.article-body h2:first-child{margin-top:0}.article-body h3{font-size:15px;margin:25px 0 13px}.article-body p{margin-bottom:18px}.article-body ul,.article-body ol{padding-left:22px;margin:16px 0 22px}.article-body li{padding-left:3px;margin:6px 0}.article-body strong{font-weight:650;color:#304a3b}.article-body a{word-break:break-word}.article-body code{font-family:var(--mono);font-size:.95em}.article-body p code{background:#f0f4ee;padding:2px 4px;border-radius:3px}.code-block{margin:20px 0;background:#f5f7f3;border:1px solid #e7ece4;border-radius:7px;overflow:hidden}.code-block figcaption{padding:5px 14px;border-bottom:1px solid #e6ece2;color:#83927f;font:9px var(--mono)}pre{margin:0;white-space:pre;overflow:auto;font:12px/1.8 var(--mono);tab-size:2}.code-block pre{padding:15px;color:#36543f}.table-wrap{overflow:auto;margin:20px 0;border:1px solid var(--line);border-radius:6px}table{width:100%;border-collapse:collapse;font-size:11px;min-width:400px}th,td{padding:11px 12px;border-bottom:1px solid var(--line);vertical-align:top;text-align:left}th{background:#f2f6ef;font-weight:600;color:#46624b}tr:last-child td{border-bottom:0}.completion-row{display:flex;align-items:center;justify-content:space-between;gap:14px;border-top:1px solid var(--line);margin-top:30px;padding-top:22px;font-size:11px}.completion-row label{display:flex;gap:7px;align-items:center;cursor:pointer}input[type=checkbox],input[type=radio]{accent-color:var(--green);width:16px;height:16px;flex-shrink:0}.right-rail{min-width:0;align-self:start;position:sticky;top:170px}.rail-note{padding:4px 0 21px;border-bottom:1px solid var(--line)}.rail-note h2{font-size:20px;line-height:1.65;margin:10px 0 10px;letter-spacing:-.5px}.rail-note p,.teacher-tip p{font-size:11px;line-height:1.9;color:var(--muted);margin-bottom:0}.toc{padding:22px 0;display:grid;gap:10px}.toc>.eyebrow{margin-bottom:5px}.toc a{font-size:10px;text-decoration:none;line-height:1.7;color:#708574;padding-left:10px;border-left:1px solid #d9e3d9}.toc a:hover{color:var(--green);border-color:var(--green)}.teacher-tip{background:#edf3e9;padding:17px;border-radius:7px}.teacher-tip>span{font-size:10px;font-weight:650;color:#68845e}.teacher-tip p{font-size:10px;margin-top:7px}
+.panel-heading{display:flex;justify-content:space-between;align-items:center;gap:18px;margin:36px 0 24px}.panel-heading h2{font-size:27px;line-height:1.5;letter-spacing:-.7px;margin:8px 0 10px}.panel-heading p{font-size:12px;color:var(--muted);margin:0}.pill{white-space:nowrap;font-size:10px;color:var(--green);border:1px solid #d4e3d5;background:#f1f7ef;padding:5px 9px;border-radius:5px}.notice{font-size:11px;background:#edf3e8;border-left:3px solid #9ab389;padding:12px 16px;color:#64765b;line-height:1.9;margin-bottom:25px;border-radius:0 5px 5px 0}.experiment,.checkpoint,.quiz-question{border:1px solid var(--line);background:white;border-radius:10px;margin-bottom:22px;padding:26px 30px;min-width:0}.experiment-head{display:flex;align-items:center;justify-content:space-between;gap:12px}.experiment .eyebrow{letter-spacing:.8px;font-size:9px}.experiment h3,.checkpoint h3{font-size:18px;margin:9px 0 12px;line-height:1.6}.experiment p,.checkpoint>p{font-size:12px;color:var(--muted);margin-bottom:20px}.experiment .field-label{display:block;color:#54735e;font-size:11px;margin-bottom:7px}.field-label small{color:#8b9e8f;margin-left:8px;font-weight:400}textarea{display:block;width:100%;border:1px solid #dce5db;border-radius:6px;background:#fcfdfb;padding:13px 15px;line-height:1.8;font-size:12px;color:#304d38;resize:vertical;min-height:80px}textarea::placeholder{color:#94a191}.prediction{margin-bottom:17px}.editor-shell{border-radius:8px;overflow:hidden;background:#182b24;margin:17px 0}.editor-header{display:flex;justify-content:space-between;font:10px var(--mono);padding:10px 15px;color:#94b49d;border-bottom:1px solid #2c4135}.editor-header span:first-child:before{content:"● ● ●";font-size:7px;letter-spacing:3px;color:#73967c;margin-right:18px}.code-editor{background:#182b24!important;border:0;border-radius:0;resize:vertical;min-height:240px;color:#d9e8ce;font:12px/1.9 var(--mono);padding:18px 20px;tab-size:2;white-space:pre;overflow:auto;overflow-wrap:normal}.editor-toolbar{display:flex;align-items:center;gap:9px;padding:10px 14px;border-top:1px solid #2c4135}.editor-toolbar .button{background:#243e2e;border-color:#3d5a43;color:#c7dbbf;padding:6px 11px;font-size:10px}.editor-toolbar .primary{background:#b4d88f;border-color:#b4d88f;color:#1f3824}.editor-toolbar .primary:hover{background:#cee8b2}.editor-toolbar .run-state{margin-left:auto;font-size:10px;color:#a0b49e}.output-label{font-size:9px;color:#85a98d;padding:11px 16px 0;border-top:1px solid #2c4135;letter-spacing:1px}.output{color:#c4d7b9;font-size:11px;min-height:72px;max-height:240px;overflow:auto;padding:11px 17px 16px;white-space:pre-wrap;overflow-wrap:anywhere}.output.error{color:#f4b4a2}.expected{font-size:11px;color:#7d8f7b;border-bottom:1px solid var(--line);padding-bottom:16px;margin-bottom:16px}.hint{font-size:11px;margin:14px 0;color:#6c8568}.hint summary{cursor:pointer;color:var(--green);font-weight:500;width:fit-content}.hint p{margin:9px 0 0;padding:10px 13px;border-left:2px solid #bad4b1;background:#f7faf3;color:#6c8568;font-size:11px}.checkpoint .question-meta{display:flex;gap:10px;align-items:center;color:#6b8870;font:10px var(--mono)}.question-meta .tag{font:9px var(--sans)}.answer-label{display:flex;align-items:center;justify-content:space-between;font-size:11px;color:#71856e;margin:18px 0 9px}.answer-label span{font-size:10px;color:#899983}.checkpoint pre{padding:17px;background:#f3f6f0;border-radius:6px;border:1px solid #e2eadd;color:#496544;margin:0 0 15px;white-space:pre-wrap;overflow-wrap:anywhere;font-size:11px}.next-row{border-top:1px solid var(--line);padding:22px 0;display:flex;justify-content:space-between;align-items:center;gap:15px}.next-row p{margin:0;font-size:11px;color:var(--muted)}.quiz-question{padding:24px 28px;border:1px solid var(--line)}.quiz-question legend{float:left;width:100%;font-size:14px;font-weight:600;margin-bottom:17px;line-height:1.8}.quiz-question legend span{font:10px var(--mono);color:#88a087;margin-right:12px}.quiz-options{clear:both;display:grid;gap:8px}.quiz-option{display:flex;align-items:flex-start;gap:11px;padding:10px 13px;background:#fafcf8;border:1px solid #e7ede2;border-radius:5px;font-size:12px;cursor:pointer;line-height:1.7}.quiz-option:has(input:checked){border-color:#88b890;background:#eef6e9}.quiz-option input{margin-top:2px}.quiz-explanation{font-size:11px;border-left:3px solid #8eb882;background:#f3f8ee;margin:17px 0 0;padding:12px 14px;color:#54764c}.quiz-explanation.incorrect{border-color:#cb9a71;background:#fbf5ed;color:#866642}.quiz-actions{display:flex;gap:20px;align-items:center;margin:25px 0}.quiz-actions>span{color:var(--muted);font-size:11px}.quiz-result{background:#e9f3e5;border:1px solid #cce0c2;border-radius:8px;padding:24px 28px;margin:24px 0}.quiz-result h3{font-size:21px;margin:0 0 9px}.quiz-result p{font-size:12px;color:#6a825f;margin:0}.exam-note{display:flex;gap:17px;padding:24px 0;margin-top:28px;border-top:1px solid var(--line)}.exam-icon{font-size:30px;color:#8caa83;line-height:1.4}.exam-note h3{font-size:14px;margin:0 0 9px}.exam-note p,.exam-note a{font-size:11px;color:var(--muted)}.exam-note a{color:var(--green)}.notes-paper{max-width:900px}.personal-notes{margin:22px 0}.personal-notes h3{font-size:16px;margin-bottom:6px}.personal-notes label>span{display:block;font-size:11px;color:var(--muted);margin-bottom:15px}.record-tools{display:flex;gap:30px;justify-content:space-between;border-top:1px solid var(--line);padding:26px 0}.record-tools h3{font-size:15px;margin-bottom:10px}.record-tools p{max-width:580px;font-size:11px;color:var(--muted);margin-bottom:8px}.record-buttons{display:flex;flex-wrap:wrap;align-content:start;gap:8px;max-width:330px;flex-shrink:0}.record-buttons .button{font-size:11px}.file-label{cursor:pointer}.page-footer{display:flex;justify-content:space-between;gap:15px;padding:24px 0;margin-top:35px;border-top:1px solid var(--line);font-size:9px;color:#869580}.page-footer span>span{margin:0 8px;color:#adbba7}.page-footer a{color:#7f9377;text-decoration:none}.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);z-index:50;max-width:calc(100% - 32px);background:#193e2d;color:white;padding:13px 23px;border-radius:8px;font-size:12px;box-shadow:0 6px 28px #173b2629}dialog{border:1px solid var(--line);border-radius:12px;padding:30px;max-width:440px;width:calc(100% - 36px);color:var(--ink)}dialog::backdrop{background:#18392366;backdrop-filter:blur(3px)}dialog h2{font-size:19px;margin-bottom:13px}dialog p{font-size:13px;color:var(--muted)}.dialog-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:25px}.noscript{position:fixed;bottom:0;left:0;right:0;background:#fff0ce;padding:10px;text-align:center;z-index:100}
+@media(min-width:1550px){.page-container{padding-left:70px;padding-right:70px}.hero{gap:75px}.hero-copy h1{font-size:46px}.boundary-map{padding:24px 28px 15px}.map-step b{font-size:14px}.map-step small{font-size:11px}.map-connector{height:27px;line-height:27px}.map-label{font-size:10px}.map-tag{font-size:9px}.boundary-map>p{font-size:10px}.hero{padding:45px 0 46px}.article-body{font-size:14px}.content-grid{grid-template-columns:minmax(0,1fr) 225px;gap:35px}}
+@media(max-width:1150px){.sidebar{width:218px;padding-left:12px;padding-right:12px}main{margin-left:218px}.page-container{padding:25px 30px 0}.hero{gap:25px}.hero-copy h1{font-size:33px}.hero-copy .eyebrow{font-size:8px;letter-spacing:1.2px}.content-grid{grid-template-columns:minmax(0,1fr) 170px;gap:20px}.paper{padding:24px}.map-tag{display:none}.tabs{gap:21px}.tabs button{font-size:11px}.right-rail h2{font-size:18px}.lesson-meta{gap:15px;font-size:9px}.record-tools{display:block}.record-buttons{max-width:none;margin-top:18px}.header-actions{gap:15px}.brand{font-size:15px}.brand small{font-size:9px}}
+@media(max-width:900px){.topbar{height:72px;padding:0 22px}.offline-label{display:none}.sidebar{top:72px;width:190px;padding-top:24px}.sidebar-heading{padding:0 8px}.sidebar-heading>.eyebrow{font-size:8px}.sidebar-heading strong{font-size:18px}.lesson-link{gap:9px;padding:13px 8px}.lesson-link b{font-size:11px}.stage-label{font-size:10px;gap:8px}.stage-label span{font-size:10px}.stage-exam{margin:20px 6px}.sidebar-bottom{padding:10px 8px 0}main{margin-left:190px;padding-top:72px}.page-container{padding:23px 25px 0}.hero{grid-template-columns:1fr;gap:26px;padding:28px 0}.hero-copy h1{font-size:37px}.hero-copy p br{display:none}.hero-copy p{font-size:12px;margin-bottom:17px}.hero-copy .eyebrow{font-size:9px}.boundary-map{max-width:none}.map-tag{display:inline}.boundary-map>p{font-size:9px}.hero-copy h1 br{display:none}.hero-copy h1{max-width:430px}.content-grid{display:block}.right-rail{position:static;display:none}.tabs-wrap{top:72px}.tabs{gap:21px}.tabs button>span{display:none}.experiment,.checkpoint,.quiz-question{padding:22px}.panel-heading{align-items:flex-start}.panel-heading .pill{display:none}.completion-row{flex-wrap:wrap}.record-tools{display:block}.page-footer{flex-direction:column;gap:8px}.brand-symbol{width:33px;height:33px;font-size:29px;line-height:30px}.brand{gap:8px}.header-actions .quiet{font-size:11px}.github-link{font-size:11px}}
+@media(max-width:640px){.topbar{height:67px;padding:0 16px;gap:10px}.brand{font-size:12px;gap:8px;letter-spacing:-.2px}.brand small{font-size:7px;letter-spacing:.6px;margin-top:3px}.brand-symbol{width:29px;height:29px;font-size:25px;line-height:27px;border-radius:8px}.brand-symbol span{font-size:12px;right:3px;top:3px}.header-actions{gap:11px}.header-actions .quiet{font-size:10px;padding:6px 8px;gap:5px}.github-link{font-size:10px}.sidebar{position:static;top:auto;width:auto;margin-top:67px;border-right:0;border-bottom:1px solid var(--line);padding:15px 19px 0;display:block;overflow:visible}.sidebar-heading{padding:0;display:flex;gap:12px;align-items:center;flex-wrap:wrap}.sidebar-heading>.eyebrow,.sidebar-heading strong{display:none}.stage-label{font-size:10px;gap:10px}.stage-label span{font-size:10px}.lesson-list{display:flex;overflow-x:auto;gap:8px;margin-top:12px;padding-bottom:13px}.lesson-link{min-width:185px;padding:10px 12px;gap:9px}.lesson-link b{font-size:10px}.lesson-link small{font-size:8px;margin-top:5px}.lesson-number{font-size:10px}.stage-exam,.sidebar-bottom{display:none}main{padding-top:0;margin-left:0}.page-container{padding:21px 19px 0}.breadcrumb{font-size:10px;gap:10px}.version{font-size:8px}.hero{padding:30px 0 26px;gap:25px}.hero-copy .eyebrow{font-size:8px;letter-spacing:1.1px}.hero-copy h1{font-size:34px;line-height:1.5;letter-spacing:-1px;margin-top:12px;max-width:340px}.hero-copy h1 br{display:block}.hero-copy p{font-size:11px;line-height:1.9}.hero-copy p br{display:block}.lesson-meta{font-size:9px;gap:18px}.boundary-map{padding:17px 18px 11px}.map-step b{font-size:12px}.map-step small{font-size:9px}.map-tag{font-size:7px}.tabs-wrap{top:67px;margin-bottom:20px}.tabs{gap:23px}.tabs button{font-size:11px;padding:13px 0}.tabs button b{font-size:8px;min-width:15px}.paper{padding:21px 18px;border-radius:8px}.article-body{font-size:12px;line-height:1.95}.article-body h2{font-size:17px;scroll-margin-top:135px}.article-body h3{font-size:14px}.section-kicker{font-size:8px;padding-bottom:15px}.tag{font-size:9px}pre{font-size:10px}.code-block pre{padding:12px}.code-block{margin:17px 0}table{font-size:10px;min-width:350px}.completion-row{gap:16px}.completion-row .button{width:100%;font-size:11px}.completion-row label{font-size:10px}.panel-heading{margin:26px 0 19px;display:block}.panel-heading h2{font-size:23px;margin:9px 0}.panel-heading p{font-size:11px}.panel-heading>.button{margin-top:15px;font-size:11px}.notice{font-size:10px;padding:11px 13px}.experiment,.checkpoint,.quiz-question{padding:21px 17px;border-radius:8px}.experiment h3,.checkpoint h3{font-size:16px;margin-top:10px}.experiment p,.checkpoint>p{font-size:11px}.experiment .field-label{font-size:10px}.experiment .field-label small{display:block;margin:2px 0 0}.code-editor{font-size:10px;padding:15px 12px;min-height:250px}.editor-header{font-size:8px;padding:9px 12px}.editor-header span:first-child:before{margin-right:8px;letter-spacing:1px}.editor-toolbar{padding:9px;gap:6px;flex-wrap:wrap}.editor-toolbar .button{padding:6px 8px;font-size:9px}.editor-toolbar .run-state{font-size:9px}.output{font-size:10px}.expected{font-size:10px}.hint{font-size:10px}.hint p{font-size:10px}.next-row{flex-wrap:wrap}.next-row p{font-size:10px}.next-row .button{font-size:11px}.quiz-question legend{font-size:12px}.quiz-option{font-size:11px;padding:10px;gap:8px}.quiz-explanation{font-size:10px}.quiz-actions{flex-wrap:wrap;gap:15px}.quiz-actions .button{font-size:11px}.quiz-result{padding:20px}.quiz-result h3{font-size:19px}.quiz-result p{font-size:11px}.exam-note h3{font-size:12px}.exam-note p,.exam-note a{font-size:10px}.record-tools h3{font-size:14px}.record-tools p{font-size:10px}.record-buttons .button{font-size:10px}.page-footer{font-size:8px;padding-top:21px;margin-top:24px}.toast{font-size:11px;min-width:220px}textarea{font-size:11px} .answer-label{font-size:10px}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+@media print{body{background:white;color:#111}.topbar,.sidebar,.hero,.breadcrumb,.tabs-wrap,.page-footer,.personal-notes,.record-tools,.panel-heading,.toast,.skip-link{display:none!important}main{margin:0;padding:0}.page-container{max-width:none;padding:0}.tab-panel{display:none!important}#panel-notes{display:block!important}.paper{border:0;padding:0}.article-body{font-size:11pt;color:#222}.article-body h2{break-after:avoid}.table-wrap,pre{overflow:visible;white-space:pre-wrap}table{min-width:0}.code-block,tr{break-inside:avoid}}
+</style>
+</head>
+<body>
+  <a href="#main" class="skip-link">跳到课堂内容</a>
+  <header class="topbar">
+    <a class="brand" href="#lecture" aria-label="Agent Engineering Lab 课堂首页">
+      <span class="brand-symbol" aria-hidden="true">a<span>↗</span></span>
+      <span>Agent Engineering <b>Lab</b><small>从 AI Coding 到 AI 应用工程</small></span>
+    </a>
+    <div class="header-actions">
+      <span class="offline-label"><i></i> 离线课堂</span>
+      <button class="button quiet" id="export-top">导出学习记录 <span aria-hidden="true">↗</span></button>
+      <a class="github-link" href="https://github.com/Xeehho/agent-engineering-lab" target="_blank" rel="noopener noreferrer">GitHub <span aria-hidden="true">↗</span></a>
+    </div>
+  </header>
+
+  <aside class="sidebar" aria-label="课程目录">
+    <div class="sidebar-heading"><span class="eyebrow">YOUR LEARNING PATH</span><strong>AI 应用工程</strong><span class="stage-label">阶段 01 <span>模型应用基础</span></span></div>
+    <nav class="lesson-list" aria-label="本阶段课程">
+      <a class="lesson-link current" href="#lecture" aria-current="page"><span class="lesson-number">01</span><span><b>模型请求的成功边界</b><small>正在学习 <i class="tiny-dot"></i></small></span></a>
+      <div class="lesson-link upcoming"><span class="lesson-number">02</span><span><b>超时与取消</b><small>后续授课</small></span></div>
+      <div class="lesson-link upcoming"><span class="lesson-number">03</span><span><b>流式事件与前端状态</b><small>后续授课</small></span></div>
+      <div class="lesson-link upcoming"><span class="lesson-number">04</span><span><b>验证证据与阶段交卷</b><small>后续授课</small></span></div>
+    </nav>
+    <a class="stage-exam" href="#quiz"><span aria-hidden="true">◇</span><div><b>阶段考试</b><small>交卷后由老师出新题</small></div><span aria-hidden="true">↗</span></a>
+    <div class="sidebar-bottom">
+      <div class="progress-caption"><b>本课学习记录</b><span id="progress-label">0 / 4</span></div>
+      <progress id="lesson-progress" max="4" value="0" aria-label="本课四项活动记录"></progress>
+      <ol class="progress-items">
+        <li id="progress-read">阅读讲义</li><li id="progress-lab">运行 4 个实验</li>
+        <li id="progress-practice">填写 5 道随堂题</li><li id="progress-quiz">提交公开自测</li>
+      </ol>
+      <p class="microcopy">活动记录仅保存在本机，不代表老师已评阅或掌握认证。</p>
+      <span class="save-status" id="save-status" role="status">准备本机存储…</span>
+    </div>
+  </aside>
+
+  <main id="main" tabindex="-1">
+    <div class="page-container">
+      <div class="breadcrumb"><span>课程</span><span aria-hidden="true">/</span><span>阶段 01</span><span aria-hidden="true">/</span><b>第一课</b><span class="version">S1–L01</span></div>
+      <section class="hero" aria-labelledby="lesson-title">
+        <div class="hero-copy">
+          <span class="eyebrow green">LESSON 01 · BUILD YOUR JUDGMENT</span>
+          <h1 id="lesson-title">一次模型请求<br>怎样才算<span>成功</span>？</h1>
+          <p>从“拿到一个响应”，到“交付可信的结果”。<br>学会区分调用、数据契约与业务正确性。</p>
+          <div class="lesson-meta"><span>◷ 建议 25–40 分钟</span><span>4 个实验</span><span>5 道随堂题</span></div>
+        </div>
+        <div class="boundary-map" aria-label="三个独立检查边界：调用、数据契约、业务">
+          <div class="map-label"><span class="terminal-dot"></span> response → reliable result <span>01</span></div>
+          <div class="map-step"><span class="map-index">01</span><div><b>调用成功</b><small>收到响应，确认完成状态</small></div><span class="map-tag">HTTP / SDK</span></div>
+          <div class="map-connector" aria-hidden="true">↓ <span>继续检查</span></div>
+          <div class="map-step"><span class="map-index">02</span><div><b>数据符合契约</b><small>解析、字段、类型与约束</small></div><span class="map-tag">VALIDATE</span></div>
+          <div class="map-connector" aria-hidden="true">↓ <span>继续检查</span></div>
+          <div class="map-step final"><span class="map-index">03</span><div><b>业务结果正确</b><small>忠于输入，结论有依据</small></div><span class="map-tag">EVALUATE</span></div>
+          <p>每通过一层，都还有下一层需要证明。</p>
+        </div>
+      </section>
+
+      <div class="tabs-wrap">
+        <div class="tabs" role="tablist" aria-label="课堂内容">
+          <button id="tab-lecture" role="tab" aria-selected="true" aria-controls="panel-lecture" data-tab="lecture"><span>01</span> 讲义</button>
+          <button id="tab-lab" role="tab" aria-selected="false" aria-controls="panel-lab" data-tab="lab" tabindex="-1"><span>02</span> 动手实验 <b>4</b></button>
+          <button id="tab-practice" role="tab" aria-selected="false" aria-controls="panel-practice" data-tab="practice" tabindex="-1"><span>03</span> 随堂练习 <b>5</b></button>
+          <button id="tab-quiz" role="tab" aria-selected="false" aria-controls="panel-quiz" data-tab="quiz" tabindex="-1"><span>04</span> 课后自测</button>
+          <button id="tab-notes" role="tab" aria-selected="false" aria-controls="panel-notes" data-tab="notes" tabindex="-1"><span>05</span> 复习速记</button>
+        </div>
+      </div>
+
+      <section id="panel-lecture" class="tab-panel" role="tabpanel" aria-labelledby="tab-lecture" tabindex="0">
+        <div class="content-grid">
+          <article class="paper">
+            <div class="section-kicker"><span class="tag">课堂讲义</span><span>阅读 → 判断 → 验证</span></div>
+            <div class="article-body"><h2 id="section-0">本课目标</h2><p>学完后，应能做到：</p><ol><li>区分调用成功、数据符合契约、业务结果正确。</li><li>解释JSON.parse、TypeScript类型断言和运行时校验各自做了什么。</li><li>说明Prompt与结构化输出能提供哪些帮助，以及仍需验证什么。</li><li>根据失败发生的边界，提出有针对性的检查方法。</li></ol><p>本课提供小范围演示，不提前实现server/learning/中的整份作业。随堂练习也不是阶段正式考试。</p><h2 id="section-1">1. 从熟悉的前端场景开始</h2><p>假设前端调用工单分诊接口。用户输入：</p><p>“订单页打开后白屏，昨天还能正常使用。”</p><p>模型返回：</p><figure class="code-block"><figcaption>json</figcaption><pre><code>{
+  &quot;category&quot;: &quot;feature&quot;,
+  &quot;priority&quot;: &quot;medium&quot;,
+  &quot;summary&quot;: &quot;新增订单统计功能&quot;,
+  &quot;missingInformation&quot;: []
+}</code></pre></figure><p>即使HTTP为200、这段文本能解析成JSON、所有字段都符合类型，内容仍然没有忠实描述输入。“新增功能”与用户反馈的已有功能故障不符。</p><p>这说明应分别检查以下三个边界：</p><div class="table-wrap" tabindex="0" role="region" aria-label="课程对照表"><table><thead><tr><th>检查边界</th><th>具体问题</th><th>通过后仍未证明的事项</th></tr></thead><tbody><tr><td>调用层</td><td>是否收到响应？HTTP／SDK状态和模型完成状态如何？</td><td>返回数据一定符合契约</td></tr><tr><td>数据契约层</td><td>语法能解析吗？对象、字段、类型、枚举、长度等符合约定吗？</td><td>内容忠于输入、符合业务规则</td></tr><tr><td>业务层</td><td>分类、摘要与输入一致吗？结论有依据吗？</td><td>对所有真实输入都同样有效</td></tr></tbody></table></div><p>这里的“调用层”是应用开发的教学划分，不是在复述OSI网络分层。</p><h2 id="section-2">2. 调用成功：先确认接口发生了什么</h2><p>在Fetch中，收到404或503响应时，Promise仍可能正常得到Response；应检查状态，而不能只看是否进入catch。Response.ok表示状态码是否在200–299范围。<a href="https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch" target="_blank" rel="noopener noreferrer">依据：MDN Fetch</a></p><p>还要区分两次调用：</p><figure class="code-block"><figcaption>text</figcaption><pre><code>浏览器 ──HTTP──&gt; 你的应用API ──HTTP或SDK──&gt; 模型服务</code></pre></figure><p>浏览器看到的200、应用调用模型时的200，属于不同位置。健康检查接口200，也不能证明工单分诊已经完成。本仓库的Mock provider是本地函数，并没有第二次远程模型HTTP调用。</p><p>部分模型服务即使HTTP为200，也可能返回拒答或因输出长度限制而未完成。适配器应按所用服务的协议检查完成状态，而不把不同厂商字段混为一谈。<a href="https://platform.claude.com/docs/en/build-with-claude/structured-outputs#invalid-outputs" target="_blank" rel="noopener noreferrer">示例依据：Claude结构化输出中的异常情况</a></p><p><strong>排错习惯</strong>：先写明观察的是哪一层、哪个接口、什么状态、是否完整，再判断结果。</p><h2 id="section-3">3. JSON.parse只解决JSON语法解析</h2><p>以下文本都属于合法JSON：</p><figure class="code-block"><figcaption>json</figcaption><pre><code>{&quot;count&quot;: 3}</code></pre></figure><figure class="code-block"><figcaption>json</figcaption><pre><code>&quot;hello&quot;</code></pre></figure><figure class="code-block"><figcaption>json</figcaption><pre><code>null</code></pre></figure><p>合法JSON可以是对象，也可以是数组、字符串、数字、布尔值或null。因此，“JSON.parse没有抛错”仍不足以判断结果是不是你需要的业务对象。</p><p>下一步才是验证数据契约，例如：</p><ul><li>最外层是否是期望的对象。</li><li>category是不是允许的枚举值。</li><li>summary是不是去除空白后仍非空的字符串。</li><li>missingInformation是不是字符串数组。</li><li>长度、数量和额外字段的策略是什么。</li></ul><p>JSON Schema可以描述结构与约束，并交给运行时validator检查。Schema本身需要配合校验器执行。<a href="https://json-schema.org/learn/getting-started-step-by-step" target="_blank" rel="noopener noreferrer">依据：JSON Schema入门</a></p><p>注意：字段的“非空”“最多200字符”等局部约束，属于本课的数据契约检查；摘要是否忠于用户输入，属于业务判断。两者不要混称为“语义校验”而省略具体规则。</p><h2 id="section-4">4. TypeScript的as不会校验外部数据</h2><p>看一个与工单作业无关的小例子：</p><figure class="code-block"><figcaption>ts</figcaption><pre><code>type Counter = { count: number };
+
+const counter = JSON.parse('{&quot;count&quot;:&quot;three&quot;}') as Counter;
+
+console.log(typeof counter.count);</code></pre></figure><p>输出是：</p><figure class="code-block"><figcaption>text</figcaption><pre><code>string</code></pre></figure><p>TypeScript按你的断言看待该值，但原始JSON里的字符串没有被转换成数字。如果继续调用只属于数字的方法，可能在运行时失败。类型断言在编译时被移除，不执行运行时检查。<a href="https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#type-assertions" target="_blank" rel="noopener noreferrer">依据：TypeScript Type Assertions</a></p><p>因此，读取外部输入时，可以先把它当unknown，再通过运行时检查逐步确定类型。你可以使用校验库，也可以为简单结构写检查；重点是检查真实数据，并能解释约束。</p><p><strong>代码阅读时要问</strong>：这个类型是程序验证出来的，还是通过as告诉编译器的？</p><h2 id="section-5">5. 结构合格与业务正确分别判断</h2><p>仍以工单分诊为例：</p><div class="table-wrap" tabindex="0" role="region" aria-label="课程对照表"><table><thead><tr><th>返回情况</th><th>定位</th></tr></thead><tbody><tr><td>JSON文本被截断，无法解析</td><td>数据契约层中的语法问题；同时需要追查是否调用未完成</td></tr><tr><td>category为urgent，超出允许枚举</td><td>数据契约错误</td></tr><tr><td>summary只有空格</td><td>违反字段约束，属于数据契约错误</td></tr><tr><td>字段全部合法，但把白屏故障写成新增需求</td><td>业务内容错误</td></tr><tr><td>分类合理，但优先级缺少统一规则</td><td>需要先定义业务规则，不能凭感觉宣布正确</td></tr></tbody></table></div><p>表中的urgent只是假设错误值，课程契约的category枚举为bug／feature／question。</p><p>业务正确性应使用有标准的样例、来源核对或人工评阅等方法验证。在更复杂的系统中，还会进一步建立评测集与评分口径。</p><p>一个成功样例可以说明这个样例成功，不足以推出整套应用的可靠性。</p><h2 id="section-6">6. Prompt、结构化输出、程序校验的分工</h2><div class="table-wrap" tabindex="0" role="region" aria-label="课程对照表"><table><thead><tr><th>机制</th><th>能帮助解决什么</th><th>仍需处理什么</th></tr></thead><tbody><tr><td>Prompt</td><td>描述任务、输入范围、字段含义、输出约定和缺信息处理</td><td>模型未按要求作答、任务理解错误</td></tr><tr><td>服务端结构化输出能力</td><td>在服务支持的范围内约束输出结构</td><td>拒答、截断、支持范围、字段内容是否正确</td></tr><tr><td>应用运行时校验</td><td>按业务契约检查实际收到的数据</td><td>分类和摘要是否忠于输入</td></tr><tr><td>业务评测与复核</td><td>按样例、规则与证据判断任务结果</td><td>数据覆盖范围、规则变化及真实使用表现</td></tr></tbody></table></div><p>结构化输出比单纯要求“返回JSON”提供更强的结构约束。具体支持范围和异常以所用服务文档为准，不能把“格式受约束”解释成“内容天然正确”。<a href="https://platform.claude.com/docs/en/build-with-claude/structured-outputs" target="_blank" rel="noopener noreferrer">服务能力示例：Claude Structured Outputs</a></p><p>本课不要求现在接入某一家服务，也不要求为学习这个概念发起收费调用。</p><h2 id="section-7">7. 用本仓库验证，而不是只记住结论</h2><p>运行：</p><figure class="code-block"><figcaption>bash</figcaption><pre><code>npm run lesson:01</code></pre></figure><p>Windows默认Node较旧时：</p><figure class="code-block"><figcaption>powershell</figcaption><pre><code>powershell -NoProfile -File scripts/run.ps1 lesson:01</code></pre></figure><p>脚本位置：<a href="https://github.com/Xeehho/agent-engineering-lab/blob/main/examples/lesson-01/boundaries.ts" target="_blank" rel="noopener noreferrer">examples/lesson-01/boundaries.ts</a>。它只做离线演示：</p><ol><li>类型断言后，实际值仍为字符串；数字方法调用产生TypeError并被演示脚本捕获。</li><li>合法JSON解析后可能不是对象。</li><li>一个503 Response的ok为false；这是本地构造的Response，不是实测远程503服务。</li><li>给固定Mock不同任务文本，观察它仍返回固定工单内容。</li></ol><p>第4项说明Mock可用于验证你如何处理输入输出，但不能证明模型理解能力或分类准确率。</p><p>本课脚本不会实现triageTicket，也不会读取模型Key。</p><h2 id="section-8">8. 本次作业只推进到哪里</h2><p>先完成随堂题，再开始第一阶段的S1-T1与S1-T2：</p><ol><li>写下你认为正确的输入与输出约束。</li><li>列出正常、语法错误、结构错误、字段约束错误、业务错误各一例。</li><li>再让AI参与实现；要求它指出边界和假设。</li><li>你亲自跑验证，并解释其中一个失败。</li></ol><p>超时、取消、流式事件将在后续课逐项展开。本课不要求一次完成所有阶段任务。</p><h2 id="section-9">9. 随堂题与复习</h2><ul><li><a href="https://github.com/Xeehho/agent-engineering-lab/blob/main/course/stage-01/exercises/01-checkpoint.md" target="_blank" rel="noopener noreferrer">本课随堂题</a></li><li><a href="https://github.com/Xeehho/agent-engineering-lab/blob/main/course/stage-01/notes/01-quick-reference.md" target="_blank" rel="noopener noreferrer">本课速记</a></li><li><a href="https://github.com/Xeehho/agent-engineering-lab/blob/main/course/stage-01/assignment.md" target="_blank" rel="noopener noreferrer">第一阶段完整任务契约</a></li></ul><p>随堂题用自己的话回答即可。老师会根据回答补讲；没有答案提交时，不标记已经掌握或考试通过。</p><h2 id="section-10">资料说明</h2><p>讲解、示例和习题为本项目编写；技术事实参考上面就近引用的官方文档，核查日期为2026-11-05。示例不含真实用户工单。个人答案、成绩与原始聊天不作为默认公开课程内容。后续补讲继续按课程编号记录。</p></div>
+            <div class="completion-row"><label><input type="checkbox" id="read-complete"> 我已通读本课讲义</label><button class="button primary" data-go="lab">开始动手实验 <span aria-hidden="true">→</span></button></div>
+          </article>
+          <aside class="right-rail" aria-label="学习指引">
+            <div class="rail-note"><span class="eyebrow green">TODAY'S QUESTION</span><h2>HTTP 200，<br>为什么还会错？</h2><p>先带着这个问题阅读。你要能指出成功发生在哪个边界，以及还有什么没被验证。</p></div>
+            <nav class="toc" aria-label="讲义目录"><span class="eyebrow">本课目录</span><a href="#section-0">本课目标</a>
+<a href="#section-1">1. 从熟悉的前端场景开始</a>
+<a href="#section-2">2. 调用成功：先确认接口发生了什么</a>
+<a href="#section-3">3. JSON.parse只解决JSON语法解析</a>
+<a href="#section-4">4. TypeScript的as不会校验外部数据</a>
+<a href="#section-5">5. 结构合格与业务正确分别判断</a>
+<a href="#section-6">6. Prompt、结构化输出、程序校验的分工</a>
+<a href="#section-7">7. 用本仓库验证，而不是只记住结论</a>
+<a href="#section-8">8. 本次作业只推进到哪里</a>
+<a href="#section-9">9. 随堂题与复习</a>
+<a href="#section-10">资料说明</a></nav>
+            <div class="teacher-tip"><span>老师提示</span><p>可以继续用 AI 写代码。你的任务是定义正确结果、读懂关键路径，并亲自验证。</p></div>
+          </aside>
+        </div>
+      </section>
+
+      <section id="panel-lab" class="tab-panel" role="tabpanel" aria-labelledby="tab-lab" tabindex="0" hidden>
+        <div class="panel-heading"><div><span class="eyebrow green">LEARN BY OBSERVING</span><h2>先预测，再运行。</h2><p>4 个可编辑的 JavaScript 小实验。全部在本机运行，不调用模型，无需 API Key。</p></div><span class="pill">Browser · JavaScript</span></div>
+        <div class="notice">运行器在独立 Worker 中执行，3 秒后终止；不支持 TypeScript、安装依赖或网络请求。这里只运行你理解的课堂代码。</div>
+        <div id="experiments"></div>
+        <div class="next-row"><p>看到输出之后，用自己的话写清它证明了什么。</p><button class="button primary" data-go="practice">去做随堂练习 →</button></div>
+      </section>
+
+      <section id="panel-practice" class="tab-panel" role="tabpanel" aria-labelledby="tab-practice" tabindex="0" hidden>
+        <div class="panel-heading"><div><span class="eyebrow green">EXPLAIN IT IN YOUR WORDS</span><h2>会解释，才是你的能力。</h2><p>先完成 C1–C3。每题写出结论、依据，以及还需补查的证据。</p></div><span class="pill">开放作答 · 老师评阅</span></div>
+        <div class="notice">答案自动保存在当前浏览器；填写完成只记为“已填写”。导出 Markdown 后发到聊天，我会逐题追问和批改。</div>
+        <div id="checkpoints"></div>
+        <div class="next-row"><button class="button" id="export-answers">导出作答 Markdown ↓</button><button class="button primary" data-go="quiz">检查基础概念 →</button></div>
+      </section>
+
+      <section id="panel-quiz" class="tab-panel" role="tabpanel" aria-labelledby="tab-quiz" tabindex="0" hidden>
+        <div class="panel-heading"><div><span class="eyebrow green">CHECK YOUR UNDERSTANDING</span><h2>给理解做一次自检。</h2><p>6 道公开单选题。提交后显示解析，可修改后重测。</p></div><span class="pill">课堂自测</span></div>
+        <form id="quiz-form"><div id="quiz-questions"></div><div class="quiz-actions"><button type="submit" class="button primary">提交自测并看解析 →</button><span id="quiz-count">已选 0 / 6</span></div></form>
+        <div id="quiz-result" class="quiz-result" role="status" hidden></div>
+        <div class="exam-note"><span class="exam-icon" aria-hidden="true">◇</span><div><h3>正式阶段考试，等你交卷后开始。</h3><p>完成阶段作业并提交 commit 后，老师会 review 并出新的概念与排错变式。正式考核包含答辩 30 分、项目 50 分、排错 20 分；总分至少 80，且分别至少 20 / 35 / 12 分，无关键正确性问题。网页自测不计入正式成绩。</p><a href="https://github.com/Xeehho/agent-engineering-lab/blob/main/assessments/stage-01/exam-blueprint.md" target="_blank" rel="noopener noreferrer">查看考试蓝图 ↗</a></div></div>
+      </section>
+
+      <section id="panel-notes" class="tab-panel" role="tabpanel" aria-labelledby="tab-notes" tabindex="0" hidden>
+        <div class="panel-heading"><div><span class="eyebrow green">KEEP WHAT MATTERS</span><h2>复习时，回到这几件事。</h2><p>课程速记、个人笔记和可迁移的学习记录，放在一起。</p></div><button class="button" id="print-notes">打印速记 / 存为 PDF</button></div>
+        <article class="paper notes-paper"><div class="article-body"><h2 id="note-section-0">五个需要分开记住的判断</h2><div class="table-wrap" tabindex="0" role="region" aria-label="课程对照表"><table><thead><tr><th>判断</th><th>检查对象</th></tr></thead><tbody><tr><td>HTTP／SDK调用是否正常</td><td>响应、状态、错误、完成／拒答状态</td></tr><tr><td>JSON语法能否解析</td><td>文本是否是完整合法JSON</td></tr><tr><td>数据是否符合契约</td><td>对象、字段、类型、枚举、长度与数量</td></tr><tr><td>内容是否符合任务</td><td>与输入一致、规则明确、结论有依据</td></tr><tr><td>验证能支持多大范围</td><td>单个样例、Mock、真实模型或真实使用分别记录</td></tr></tbody></table></div><p>后三个检查不能由HTTP 200自动推出。</p><h2 id="note-section-1">常用概念</h2><ul><li>JSON.parse：解析语法，不验证你的业务对象。</li><li>as：类型断言，不会把字符串变成数字，也不执行运行时校验。</li><li>unknown：先不假设外部数据的结构，再验证和缩小类型。</li><li>Schema：描述数据结构与约束；validator负责执行检查。</li><li>Prompt：表达任务与约定。</li><li>结构化输出：服务在支持范围内约束结构；仍要处理异常与业务正确性。</li><li>Mock：人为固定或模拟的响应，用于工程验证；不能证明模型理解了输入。</li></ul><p>类型断言行为见<a href="https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#type-assertions" target="_blank" rel="noopener noreferrer">TypeScript官方说明</a>；Fetch状态处理见<a href="https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch" target="_blank" rel="noopener noreferrer">MDN</a>。</p><h2 id="note-section-2">失败分类速查</h2><ul><li>无法解析JSON：语法或完整性问题，并追查上游完成状态。</li><li>未知枚举／字段缺失／空白摘要：数据契约问题。</li><li>字段合法但内容答错：业务问题。</li><li>规则根本没定义：先补业务规则，再谈正确率。</li></ul><h2 id="note-section-3">代码审查四问</h2><ol><li>此处数据来自哪里？</li><li>这个类型由什么实际检查支撑？</li><li>无效结果在哪一层被拒绝？</li><li>我亲自验证的结果，能支持多大范围的结论？</li></ol><h2 id="note-section-4">本课实验</h2><p>npm run lesson:01；Windows可用scripts/run.ps1 lesson:01。</p><p>实验固定输出不构成真实模型测试，不计为学习者已经完成阶段作业。</p></div></article>
+        <div class="paper personal-notes"><label for="personal-notes"><h3>我的笔记</h3><span>今天改变了哪个认识？还有什么不能解释？</span></label><textarea id="personal-notes" maxlength="20000" rows="7" placeholder="用自己的话记下来，导出时会一起带走。"></textarea></div>
+        <div class="record-tools"><div><h3>把学习记录带走</h3><p>导出的 JSON 可在另一浏览器导入。个人答案不上传到服务器，不写入 GitHub。</p><p class="microcopy">file://、本地服务和不同浏览器使用不同存储；隐私模式或清理缓存可能丢失数据。建议及时导出。</p></div><div class="record-buttons"><button class="button" id="backup">备份 JSON ↓</button><label class="button file-label" for="import-file">导入 JSON ↑</label><input type="file" id="import-file" accept=".json,application/json" hidden><button class="button" id="export-notes">导出作答 Markdown ↓</button><button class="button danger" id="reset-progress">清空本机进度</button></div></div>
+      </section>
+      <footer class="page-footer"><span>Agent Engineering Lab <span aria-hidden="true">/</span> 自主判断 · 可验证交付</span><span>交互参考 <a href="https://learn-py.org/" target="_blank" rel="noopener noreferrer">learn-py.org ↗</a> <span aria-hidden="true">·</span> 本项目原创课程</span></footer>
+    </div>
+  </main>
+  <div class="toast" id="toast" role="status" hidden></div>
+  <dialog id="confirm-dialog" aria-labelledby="dialog-title"><h2 id="dialog-title">确认操作</h2><p id="dialog-message"></p><div class="dialog-actions"><button class="button" id="dialog-cancel">取消</button><button class="button primary" id="dialog-confirm">确认</button></div></dialog>
+  <noscript><div class="noscript">JavaScript 已关闭：你仍可阅读当前讲义；实验、答题与进度保存需要启用 JavaScript。</div></noscript>
+  <script>(function () {
+  "use strict";
+  const tabs = ["lecture", "lab", "practice", "quiz", "notes"];
+function emptyState() {
+  return { schemaVersion: 1, course: "S1-L01", tab: "lecture", read: false,
+    drafts: {}, codes: {}, predictions: {}, observations: {}, ran: [],
+    answers: {}, submitted: false, personalNotes: "" };
+}
+function normalizeState(value, experiments, checkpoints, quiz) {
+  if (!value || value.schemaVersion !== 1 || value.course !== "S1-L01")
+    throw new Error("这不是 S1-L01 的有效进度文件。");
+  const state = emptyState();
+  state.tab = tabs.includes(value.tab) ? value.tab : "lecture";
+  state.read = value.read === true;
+  state.submitted = value.submitted === true;
+  const copyText = (from, to, ids, max) => {
+    for (const id of ids) {
+      const text = from && Object.hasOwn(from, id) ? from[id] : undefined;
+      if (typeof text === "string") to[id] = text.slice(0, max);
+    }
+  };
+  const experimentIds = experiments.map(item => item.id);
+  copyText(value.drafts, state.drafts, checkpoints.map(item => item.id), 12000);
+  copyText(value.codes, state.codes, experimentIds, 20000);
+  copyText(value.predictions, state.predictions, experimentIds, 6000);
+  copyText(value.observations, state.observations, experimentIds, 6000);
+  state.ran = Array.isArray(value.ran) ? experimentIds.filter(id => value.ran.includes(id)) : [];
+  for (const item of quiz) {
+    const answer = value.answers && Object.hasOwn(value.answers, item.id) ? value.answers[item.id] : undefined;
+    if (Number.isInteger(answer) && answer >= 0 && answer < item.options.length)
+      state.answers[item.id] = answer;
+  }
+  state.submitted = state.submitted && quiz.every(item => Object.hasOwn(state.answers, item.id));
+  if (typeof value.personalNotes === "string") state.personalNotes = value.personalNotes.slice(0, 20000);
+  return state;
+}
+function gradeQuiz(answers, quiz) {
+  const items = quiz.map(item => ({ id: item.id, answered: Number.isInteger(answers[item.id]),
+    correct: answers[item.id] === item.answer }));
+  return { correct: items.filter(item => item.correct).length,
+    answered: items.filter(item => item.answered).length, total: quiz.length, items };
+}
+function summarizeProgress(state, experiments, checkpoints, quiz) {
+  const drafted = checkpoints.filter(item => state.drafts[item.id]?.trim()).length;
+  const grade = gradeQuiz(state.answers, quiz);
+  const reviewed = state.submitted && grade.answered === quiz.length;
+  const parts = [state.read, state.ran.length === experiments.length,
+    drafted === checkpoints.length, reviewed];
+  return { drafted, grade, parts, completed: parts.filter(Boolean).length };
+}
+function exportAnswers(state, experiments, checkpoints, quiz) {
+  const lines = ["# S1-L01 课堂作答", "", "这些内容为个人课堂练习，待老师评阅；不是正式阶段考试。", "",
+    "AI 协助范围（请补充）：", "", "## 随堂题"];
+  for (const item of checkpoints)
+    lines.push("", "### " + item.id + " " + item.title, "", state.drafts[item.id] || "（未作答）");
+  lines.push("", "## 实验记录", "", "全部为浏览器本地 JavaScript 演示，无真实模型调用。");
+  for (const item of experiments) {
+    lines.push("", "### " + item.title, "",
+      "运行记录（本机可编辑的自报进度）：" + (state.ran.includes(item.id) ? "已运行" : "未运行"),
+      "", "运行前预测：", state.predictions[item.id] || "（未填写）",
+      "", "观察与证据边界：", state.observations[item.id] || "（未填写）");
+  }
+  lines.push("", "## 公开自测");
+  if (state.submitted) {
+    const grade = gradeQuiz(state.answers, quiz);
+    lines.push("", "最近一次自测：" + grade.correct + "/" + grade.total + "，不计入正式成绩。");
+  } else lines.push("", "尚未提交自测。");
+  lines.push("", "## 我的笔记", "", state.personalNotes || "（未填写）", "");
+  return lines.join("\n");
+}
+
+// Executed only in a dedicated Worker. No DOM or persistent storage is exposed.
+// CSP blocks network access; this is a local learning runner, not a hostile-code security boundary.
+function classroomWorker() {
+  const send = self.postMessage.bind(self);
+  const format = value => {
+    if (typeof value === "string") return value.slice(0, 4000);
+    if (value === undefined) return "undefined";
+    try { return JSON.stringify(value).slice(0, 4000); } catch { return String(value).slice(0, 4000); }
+  };
+  self.onmessage = async event => {
+    let lines = 0;
+    const output = (...values) => {
+      if (lines++ < 80) send({ type: "log", text: values.map(format).join(" ") });
+    };
+    self.console = { log: output, info: output, warn: output, error: output, debug: output };
+    try {
+      const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
+      await new AsyncFunction(event.data)();
+      send({ type: "done" });
+    } catch (error) {
+      send({ type: "error", text: error.name + ": " + error.message });
+    }
+  };
+}
+
+  const material = {"experiments":[{"id":"assertion","title":"类型写对了，值就对了吗？","label":"01 / 类型与运行时","intro":"先预测 typeof 的输出，再运行。这里是去除 TypeScript 类型后的等价 JavaScript；浏览器不会执行 as 语法。","code":"const reading = JSON.parse('{\"value\":\"8\"}');\nconsole.log(\"实际类型：\", typeof reading.value);\ntry {\n  console.log(reading.value.toFixed(1));\n} catch (error) {\n  console.log(error.name + \": \" + error.message);\n}","expected":"观察 string 和捕获的 TypeError。试着把 JSON 中的字符串改成数字，再运行比较。","hint":"双引号里的 8 是字符串。类型声明不负责转换它。"},{"id":"json","title":"合法 JSON，一定是业务对象吗？","label":"02 / 解析与契约","intro":"这些文本都能被 JSON.parse 解析。记录每个值的类型、是否为数组，以及它是否具有完整的工单字段。","code":"for (const text of ['null', '[]', '\"done\"', '42', '{\"category\":\"bug\"}']) {\n  const value = JSON.parse(text);\n  console.log(text, \"=>\", typeof value, \"数组:\", Array.isArray(value));\n}","expected":"注意 typeof null 的历史行为。typeof 为 object 仍不能证明是完整业务对象。","hint":"分别检查 null、数组、缺少字段的对象；不要只检查 typeof。"},{"id":"http","title":"HTTP 503，会直接进入 catch 吗？","label":"03 / 调用边界","intro":"这是本地构造的 Response，不是一次远程 Fetch。用它观察 status 与 ok，真实 Fetch 的行为参见讲义中的 MDN 来源。","code":"const response = new Response('{\"error\":\"unavailable\"}', {\n  status: 503,\n  headers: { \"Content-Type\": \"application/json\" }\n});\nconsole.log(\"status:\", response.status);\nconsole.log(\"ok:\", response.ok);\nconsole.log(\"body:\", await response.json());","expected":"503 对应 ok: false。把 status 改为 200，再比较；这仍不能证明业务内容正确。","hint":"Response.ok 只根据 200–299 状态范围判断。"},{"id":"mock","title":"固定 Mock，到底证明了什么？","label":"04 / 证据范围","intro":"这个 Mock 无论输入什么都返回同一结果。尝试更换输入，再描述它能验证和不能验证的事情。","code":"function mockProvider(input) {\n  return { category: \"bug\", priority: \"medium\",\n    summary: \"订单页白屏\", missingInformation: [] };\n}\nfor (const input of [\"订单页白屏\", \"请增加深色模式\"]) {\n  console.log(\"输入：\", input);\n  console.log(\"输出：\", mockProvider(input));\n}","expected":"能观察到固定返回与处理路径；不能据此评价真实模型的理解能力或分类准确率。","hint":"第二条输入是否被输出忠实描述？一次工程演示与模型效果证据要分开。"}],"checkpoints":[{"id":"C1","title":"这个结果该在哪一层处理？","badge":"先完成","text":"输入：登录按钮点击后没有反应。接口 HTTP 200，字段全部符合课程契约。哪些检查通过了？哪里仍有问题？改写 TypeScript 类型能解决吗？","code":"{\n  \"category\": \"feature\", \"priority\": \"medium\",\n  \"summary\": \"新增登录按钮动画\", \"missingInformation\": []\n}","hint":"把“调用状态”“字段约束”“内容与输入的关系”分别说明，不要合成一个成功标志。"},{"id":"C2","title":"没有解析错误就能显示吗？","badge":"先完成","text":"JSON.parse 成功。你会让页面显示“分诊完成”吗？指出一个可以由程序确定检查的规则。","code":"{\"category\":\"question\",\"priority\":\"low\",\"summary\":\"   \",\"missingInformation\":[]}","hint":"考虑字符串长度与去除两侧空白后长度的区别。"},{"id":"C3","title":"as 到底改变了什么？","badge":"先完成","text":"运行时 result.value 是什么类型？谁负责保证它是数字？解释编译器与实际数据之间的关系。","code":"type Reading = { value: number };\nconst result = JSON.parse('{\"value\":\"8\"}') as Reading;","hint":"对照实验 01；这段是 TypeScript 阅读题，网页实验运行的是去除类型后的 JavaScript。"},{"id":"C4","title":"合法 JSON 的边界","badge":"拓展","text":"分别解释以下文本被 JSON.parse 后得到什么，以及能否直接当作工单分诊对象使用。","code":"null\n[]\n\"done\"\n42\n{\"category\":\"bug\"}","hint":"成功解析只回答语法问题。为每个值继续检查外层结构和必需字段。"},{"id":"C5","title":"你会怎样要求 AI 改代码？","badge":"拓展","text":"AI 提出：“用 JSON.parse 加 as 就够了，只要不抛异常就返回成功。”写一段修正要求，包含任务边界、失败类型和验证证据，不要粘贴完整实现。","hint":"先描述预期行为与失败分类，再要求提供可复现的检查。你要能解释证据支持的范围。"}],"quiz":[{"id":"Q1","question":"Fetch 收到 HTTP 503，首先应怎么判断？","options":["只要没有进入 catch 就算成功","检查 response.ok / status，并识别这是哪个接口的响应","强制断言为业务结果","直接显示完成"],"answer":1,"explanation":"Fetch 对 HTTP 错误状态仍可能返回 Response；还需区分浏览器到应用、应用到模型两次调用。"},{"id":"Q2","question":"JSON.parse('null') 没抛错，可以说明什么？","options":["已经是工单对象","JSON 语法合法，但仍需检查业务对象契约","包含所有必需字段","模型理解了任务"],"answer":1,"explanation":"合法 JSON 可以是 null、数组或基本值。解析成功不等于结构与字段合格。"},{"id":"Q3","question":"把外部值写成 as Reading，运行时会发生什么？","options":["自动把字符串转成数字","自动拦截非法值","不会增加运行时检查，也不会转换原值","自动补全缺失字段"],"answer":2,"explanation":"类型断言在编译时移除。必须用实际运行的校验检查外部值。"},{"id":"Q4","question":"summary 只有三个空格，属于本课的哪类失败？","options":["数据契约中的非空字段约束失败","网络连接失败","单凭这一点可证明分类正确","没有失败，字符串都合法"],"answer":0,"explanation":"课程要求摘要去除空白后非空。这是可由程序确定检查的局部字段约束。"},{"id":"Q5","question":"字段完全合法，却把白屏故障写成新增需求，主要还需验证什么？","options":["TypeScript 能不能编译","JSON 是否有缩进","HTTP 是否是 200","内容是否忠于输入、符合业务规则"],"answer":3,"explanation":"结构满足约束不代表内容正确，需要样例、业务规则与证据支持。"},{"id":"Q6","question":"固定 Mock 的四个演示全部通过，能支持什么结论？","options":["真实模型准确率达到 100%","本地演示路径符合观察，真实模型效果仍待验证","第一阶段正式考试通过","所有真实输入都可靠"],"answer":1,"explanation":"Mock 用于工程行为验证。课堂自测、基础 CI 与正式阶段考核彼此独立。"}]};
+  const { experiments, checkpoints, quiz } = material;
+  const storageKey = "agent-engineering-lab:classroom:S1-L01:v1";
+  const byId = id => document.getElementById(id);
+  let state = emptyState();
+  let storageAvailable = true;
+  let toastTimer;
+  const activeWorkers = new Map();
+  const textElement = (tag, text, className) => {
+    const element = document.createElement(tag);
+    if (text !== undefined) element.textContent = text;
+    if (className) element.className = className;
+    return element;
+  };
+  function toast(message) {
+    clearTimeout(toastTimer);
+    byId("toast").textContent = message;
+    byId("toast").hidden = false;
+    toastTimer = setTimeout(() => { byId("toast").hidden = true; }, 4200);
+  }
+  try {
+    const saved = localStorage.getItem(storageKey);
+    if (saved) state = normalizeState(JSON.parse(saved), experiments, checkpoints, quiz);
+  } catch {
+    storageAvailable = false;
+    toast("本机记录不可读取。仍可学习，请及时导出备份。");
+  }
+  function persist() {
+    try {
+      localStorage.setItem(storageKey, JSON.stringify(state));
+      storageAvailable = true;
+    } catch { storageAvailable = false; }
+    byId("save-status").textContent = storageAvailable ? "已保存到本机" : "无法自动保存，请导出备份";
+    updateProgress();
+  }
+  function updateProgress() {
+    const progress = summarizeProgress(state, experiments, checkpoints, quiz);
+    byId("progress-label").textContent = progress.completed + " / 4";
+    byId("lesson-progress").value = progress.completed;
+    ["read", "lab", "practice", "quiz"].forEach((key, index) =>
+      byId("progress-" + key).classList.toggle("done", progress.parts[index]));
+    byId("quiz-count").textContent = "已选 " + progress.grade.answered + " / " + quiz.length;
+    for (const item of checkpoints)
+      byId("draft-status-" + item.id).textContent = state.drafts[item.id]?.trim() ? "已填写 · 待评阅" : "待作答";
+  }
+  function selectTab(name, focus = false) {
+    if (!tabs.includes(name)) name = "lecture";
+    state.tab = name;
+    for (const tab of tabs) {
+      byId("tab-" + tab).setAttribute("aria-selected", String(tab === name));
+      byId("tab-" + tab).tabIndex = tab === name ? 0 : -1;
+      byId("panel-" + tab).hidden = tab !== name;
+    }
+    if (focus) {
+      byId("tab-" + name).focus({ preventScroll: true });
+      document.querySelector(".tabs-wrap").scrollIntoView({ block: "start" });
+    }
+    persist();
+  }
+  document.querySelectorAll("[data-tab]").forEach(button => {
+    button.addEventListener("click", () => selectTab(button.dataset.tab));
+    button.addEventListener("keydown", event => {
+      let target = null;
+      const index = tabs.indexOf(button.dataset.tab);
+      if (event.key === "ArrowRight") target = tabs[(index + 1) % tabs.length];
+      if (event.key === "ArrowLeft") target = tabs[(index + tabs.length - 1) % tabs.length];
+      if (event.key === "Home") target = tabs[0];
+      if (event.key === "End") target = tabs[tabs.length - 1];
+      if (target) { event.preventDefault(); selectTab(target); byId("tab-" + target).focus(); }
+    });
+  });
+  document.querySelectorAll("[data-go]").forEach(button =>
+    button.addEventListener("click", () => selectTab(button.dataset.go, true)));
+  document.querySelectorAll('a[href="#lecture"],a[href="#quiz"]').forEach(link =>
+    link.addEventListener("click", event => {
+      event.preventDefault(); selectTab(link.getAttribute("href").slice(1), true);
+    }));
+  byId("read-complete").addEventListener("change", event => {
+    state.read = event.target.checked; persist();
+  });
+
+  function textareaField(parent, id, label, value, placeholder, max, onChange, className) {
+    const wrapper = textElement("div", undefined, className);
+    const caption = textElement("label", label, "field-label");
+    caption.htmlFor = id;
+    const textarea = document.createElement("textarea");
+    textarea.id = id; textarea.rows = 3; textarea.maxLength = max;
+    textarea.value = value || ""; textarea.placeholder = placeholder;
+    textarea.addEventListener("input", () => { onChange(textarea.value); persist(); });
+    wrapper.append(caption, textarea); parent.append(wrapper);
+    return textarea;
+  }
+  function addHint(parent, content) {
+    const details = textElement("details", undefined, "hint");
+    details.append(textElement("summary", "需要一条提示？"), textElement("p", content));
+    parent.append(details);
+  }
+  function renderExperiments() {
+    byId("experiments").replaceChildren();
+    for (const item of experiments) {
+      const card = textElement("article", undefined, "experiment");
+      card.append(textElement("span", item.label, "eyebrow green"), textElement("h3", item.title),
+        textElement("p", item.intro));
+      textareaField(card, "predict-" + item.id, "运行前预测", state.predictions[item.id],
+        "先写下你预期的输出，再用运行结果验证。", 6000,
+        value => { state.predictions[item.id] = value; }, "prediction");
+      const shell = textElement("div", undefined, "editor-shell");
+      const header = textElement("div", undefined, "editor-header");
+      const codeLabel = textElement("label", item.id + ".js");
+      codeLabel.htmlFor = "code-" + item.id;
+      header.append(codeLabel, textElement("span", "JavaScript · 可编辑"));
+      const editor = document.createElement("textarea");
+      editor.id = "code-" + item.id; editor.className = "code-editor"; editor.spellcheck = false;
+      editor.setAttribute("aria-label", item.title + " 实验代码");
+      editor.maxLength = 20000; editor.value = state.codes[item.id] ?? item.code;
+      editor.addEventListener("input", () => { state.codes[item.id] = editor.value; persist(); });
+      editor.addEventListener("keydown", event => {
+        if ((event.ctrlKey || event.metaKey) && event.key === "Enter") {
+          event.preventDefault();
+          if (!activeWorkers.has(item.id)) runExperiment(item, editor.value);
+        }
+      });
+      const toolbar = textElement("div", undefined, "editor-toolbar");
+      const run = textElement("button", "▶ 运行代码", "button primary");
+      run.type = "button"; run.id = "run-" + item.id;
+      run.setAttribute("aria-label", "运行实验 " + item.id);
+      run.addEventListener("click", () => runExperiment(item, editor.value));
+      const reset = textElement("button", "恢复示例", "button");
+      reset.type = "button"; reset.setAttribute("aria-label", "恢复实验 " + item.id);
+      reset.addEventListener("click", async () => {
+        if (editor.value !== item.code && !await askConfirmation("恢复示例代码？", "你对此实验代码的修改会被替换，预测与观察记录保留。")) return;
+        editor.value = item.code; state.codes[item.id] = item.code; persist(); toast("已恢复课堂示例代码。");
+      });
+      const runStatus = textElement("span", state.ran.includes(item.id) ? "上次已运行" : "Ctrl / ⌘ + Enter", "run-state");
+      runStatus.id = "run-state-" + item.id;
+      toolbar.append(run, reset, runStatus);
+      const output = textElement("pre", "等待运行。先写预测，再点击运行。", "output");
+      output.id = "output-" + item.id; output.setAttribute("role", "log");
+      output.setAttribute("aria-label", item.title + " 运行输出"); output.setAttribute("aria-live", "polite");
+      shell.append(header, editor, toolbar, textElement("div", "CONSOLE / 本地实际运行", "output-label"), output);
+      card.append(shell);
+      addHint(card, item.hint);
+      card.append(textElement("div", "观察方向：" + item.expected, "expected"));
+      textareaField(card, "observe-" + item.id, "观察与证据边界", state.observations[item.id],
+        "实际输出是什么？与预测有什么不同？哪些事情仍未被证明？", 6000,
+        value => { state.observations[item.id] = value; });
+      byId("experiments").append(card);
+    }
+  }
+  function runExperiment(item, code) {
+    if (activeWorkers.has(item.id)) return;
+    const output = byId("output-" + item.id);
+    const button = byId("run-" + item.id);
+    const status = byId("run-state-" + item.id);
+    output.textContent = ""; output.classList.remove("error");
+    button.disabled = true; status.textContent = "运行中…";
+    let worker, blobUrl, timer, finished = false, lineCount = 0;
+    const finish = (message, failure = false, completed = false) => {
+      if (finished) return;
+      finished = true; clearTimeout(timer); worker?.terminate();
+      if (blobUrl) URL.revokeObjectURL(blobUrl);
+      activeWorkers.delete(item.id);
+      button.disabled = false; status.textContent = message;
+      output.classList.toggle("error", failure);
+      if (completed && !state.ran.includes(item.id)) { state.ran.push(item.id); persist(); }
+      if (!output.textContent) output.textContent = completed ? "执行结束（没有 console 输出）。" : message;
+    };
+    try {
+      blobUrl = URL.createObjectURL(new Blob(["(" + classroomWorker.toString() + ")()"], { type: "text/javascript" }));
+      worker = new Worker(blobUrl);
+      activeWorkers.set(item.id, () => finish("已停止"));
+      timer = setTimeout(() => {
+        output.textContent += "\n超过 3 秒，已终止实验。检查循环或未完成的等待。";
+        finish("运行超时", true);
+      }, 3000);
+      worker.onmessage = event => {
+        const message = event.data;
+        if (!message || typeof message.type !== "string") return;
+        if (message.type === "log" && lineCount++ < 80)
+          output.textContent += String(message.text).slice(0, 4000) + "\n";
+        if (message.type === "error") {
+          output.textContent += String(message.text).slice(0, 4000);
+          finish("有错误 · 可修改后再试", true);
+        }
+        if (message.type === "done") finish("执行结束", false, true);
+      };
+      worker.onerror = event => {
+        event.preventDefault();
+        output.textContent += event.message || "Worker 无法执行；可尝试本地服务方式打开。";
+        finish("运行失败", true);
+      };
+      worker.postMessage(code);
+    } catch (error) {
+      output.textContent = error.name + ": " + error.message + "\n若浏览器限制 file:// Worker，请用仓库本地服务打开。";
+      finish("运行器不可用", true);
+    }
+  }
+
+  function renderCheckpoints() {
+    byId("checkpoints").replaceChildren();
+    for (const item of checkpoints) {
+      const card = textElement("article", undefined, "checkpoint");
+      const meta = textElement("div", undefined, "question-meta");
+      meta.append(textElement("span", item.id), textElement("span", item.badge, "tag"));
+      card.append(meta, textElement("h3", item.title), textElement("p", item.text));
+      if (item.code) card.append(textElement("pre", item.code));
+      addHint(card, item.hint);
+      const caption = textElement("label", undefined, "answer-label");
+      caption.htmlFor = "answer-" + item.id;
+      caption.append(textElement("b", "你的回答"), textElement("span", "待作答"));
+      caption.lastChild.id = "draft-status-" + item.id;
+      const answer = document.createElement("textarea");
+      answer.id = "answer-" + item.id; answer.rows = 5; answer.maxLength = 12000;
+      answer.placeholder = "结论：\n依据：\n还需要补查的证据：";
+      answer.value = state.drafts[item.id] || "";
+      answer.addEventListener("input", () => { state.drafts[item.id] = answer.value; persist(); });
+      card.append(caption, answer); byId("checkpoints").append(card);
+    }
+  }
+  function renderQuiz() {
+    byId("quiz-questions").replaceChildren();
+    quiz.forEach((item, index) => {
+      const fieldset = textElement("fieldset", undefined, "quiz-question");
+      const legend = textElement("legend");
+      legend.append(textElement("span", "0" + (index + 1)), document.createTextNode(item.question));
+      fieldset.append(legend);
+      const options = textElement("div", undefined, "quiz-options");
+      item.options.forEach((option, optionIndex) => {
+        const label = textElement("label", undefined, "quiz-option");
+        const input = document.createElement("input");
+        input.type = "radio"; input.name = item.id; input.value = String(optionIndex);
+        input.checked = state.answers[item.id] === optionIndex;
+        input.addEventListener("change", () => {
+          state.answers[item.id] = optionIndex;
+          // Invalidate the old result until the learner explicitly submits the new attempt.
+          state.submitted = false; renderQuizResults(); persist();
+        });
+        label.append(input, textElement("span", String.fromCharCode(65 + optionIndex) + ".", "option-letter"),
+          textElement("span", option));
+        options.append(label);
+      });
+      const explanation = textElement("p", undefined, "quiz-explanation");
+      explanation.id = "explanation-" + item.id; explanation.hidden = true;
+      fieldset.append(options, explanation); byId("quiz-questions").append(fieldset);
+    });
+    renderQuizResults();
+  }
+  function renderQuizResults() {
+    const grade = gradeQuiz(state.answers, quiz);
+    byId("quiz-result").hidden = !state.submitted;
+    for (const item of quiz) {
+      const explanation = byId("explanation-" + item.id);
+      explanation.hidden = !state.submitted;
+      if (!state.submitted) continue;
+      const correct = state.answers[item.id] === item.answer;
+      explanation.classList.toggle("incorrect", !correct);
+      explanation.textContent = (correct ? "回答正确。" : "再想一想。") + "参考选择：" +
+        String.fromCharCode(65 + item.answer) + "。" + item.explanation;
+    }
+    if (state.submitted) {
+      byId("quiz-result").replaceChildren(
+        textElement("h3", "本次自测 " + grade.correct + " / " + grade.total),
+        textElement("p", grade.correct === grade.total
+          ? "基础选择题全对。接下来请完成开放作答，用自己的话解释；正式考试仍待阶段交卷与老师评阅。"
+          : "按题目解析回到讲义或实验补学，再修改选项重新提交。这个结果不计入正式成绩。"));
+    }
+  }
+  byId("quiz-form").addEventListener("submit", event => {
+    event.preventDefault();
+    const grade = gradeQuiz(state.answers, quiz);
+    if (grade.answered !== quiz.length) {
+      const unanswered = grade.items.find(item => !item.answered);
+      toast("还有 " + (quiz.length - grade.answered) + " 道题未选择，请先完成。");
+      document.querySelector('input[name="' + unanswered.id + '"]').focus(); return;
+    }
+    state.submitted = true; renderQuizResults(); persist();
+    byId("quiz-result").scrollIntoView({ block: "center", behavior: "auto" });
+  });
+
+  function download(name, content, type) {
+    const url = URL.createObjectURL(new Blob([content], { type }));
+    const link = document.createElement("a");
+    link.href = url; link.download = name; document.body.append(link);
+    link.click(); link.remove(); setTimeout(() => URL.revokeObjectURL(url), 10000);
+    toast("已生成下载文件，请在浏览器下载列表中查看。");
+  }
+  function downloadAnswers() {
+    download("S1-L01-课堂作答.md", exportAnswers(state, experiments, checkpoints, quiz), "text/markdown;charset=utf-8");
+  }
+  ["export-top", "export-answers", "export-notes"].forEach(id =>
+    byId(id).addEventListener("click", downloadAnswers));
+  byId("backup").addEventListener("click", () =>
+    download("S1-L01-progress.json", JSON.stringify(state, null, 2), "application/json;charset=utf-8"));
+  byId("personal-notes").addEventListener("input", event => {
+    state.personalNotes = event.target.value; persist();
+  });
+  byId("print-notes").addEventListener("click", () => window.print());
+  function askConfirmation(title, message) {
+    const dialog = byId("confirm-dialog");
+    byId("dialog-title").textContent = title; byId("dialog-message").textContent = message;
+    return new Promise(resolve => {
+      let answer = false;
+      const finish = () => {
+        byId("dialog-confirm").removeEventListener("click", confirm);
+        byId("dialog-cancel").removeEventListener("click", cancel);
+        resolve(answer);
+      };
+      const confirm = () => { answer = true; dialog.close(); };
+      const cancel = () => dialog.close();
+      byId("dialog-confirm").addEventListener("click", confirm);
+      byId("dialog-cancel").addEventListener("click", cancel);
+      dialog.addEventListener("close", finish, { once: true });
+      dialog.showModal();
+    });
+  }
+  function stopWorkers() {
+    for (const stop of activeWorkers.values()) stop();
+  }
+  function restoreControls() {
+    renderExperiments(); renderCheckpoints(); renderQuiz();
+    byId("read-complete").checked = state.read;
+    byId("personal-notes").value = state.personalNotes;
+    selectTab(state.tab);
+  }
+  byId("import-file").addEventListener("change", async event => {
+    const file = event.target.files[0]; event.target.value = "";
+    if (!file) return;
+    try {
+      if (file.size > 500000) throw new Error("进度文件过大，上限为 500 KB。");
+      const imported = normalizeState(JSON.parse(await file.text()), experiments, checkpoints, quiz);
+      if (!await askConfirmation("导入学习记录？", "将替换当前浏览器的答案、笔记与活动记录。建议先备份当前记录。导入内容不会作为老师已验证的成绩。")) return;
+      stopWorkers(); state = imported; restoreControls(); toast("进度已导入本机；运行输出需重新执行查看。");
+    } catch (error) { toast("导入失败：" + error.message); }
+  });
+  byId("reset-progress").addEventListener("click", async () => {
+    if (!await askConfirmation("清空本机学习记录？", "将清空当前浏览器中本课的答案、代码修改、笔记和活动记录。请先备份；这不会修改仓库或老师的评阅记录。")) return;
+    stopWorkers(); state = emptyState(); restoreControls(); toast("本机学习记录已清空。");
+  });
+  window.addEventListener("pagehide", stopWorkers);
+  restoreControls();
+})();
+</script>
+</body>
+</html>
