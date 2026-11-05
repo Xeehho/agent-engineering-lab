@@ -1,13 +1,13 @@
 # 单文件互动课堂
 
-八阶段 31 课的讲义、34 个本地机制实验、95 道开放题、96 道公开自测、速记与个人笔记，统一在 [public/learn.html](../public/learn.html)。[知识体系](../course/knowledge-map.md) · [全部课程](../course/README.md)。
+八阶段31课讲义、34个可编辑网页实验、95道开放题、96道公开自测、速记与笔记，统一在 [public/learn.html](../public/learn.html)。默认在网站内完成学习，不要求启动项目。[知识体系](../course/knowledge-map.md) · [全部课程](../course/README.md)。
 
 ## 打开
 
 - 下载 learn.html 后，用现代浏览器直接打开；所有样式、脚本和教材均内嵌，无需安装或 API Key。
-- 也可以运行 npm run dev，访问 http://127.0.0.1:5173/learn.html 。
+- 开发和选做进阶时才需要本地项目；普通学习者直接使用网站或单文件。
 - 部分浏览器可能限制 file:// 下的存储或 Worker。运行器会明确提示，改用本地服务即可。
-- 当前只交付本地页面与仓库文件，没有创建在线托管。
+- 仓库保留既有托管适配；是否在线更新以部署状态为准，课堂学习不依赖后端。
 
 ## 使用
 
@@ -29,7 +29,7 @@ powershell -NoProfile -File scripts/run.ps1 check
 ~~~
 
 - 第一课讲义与速记来自原 Markdown，互动题来自 classroom/content.mjs。
-- 后续教材源是 course/content/ 与 course/curriculum.mjs，统一生成对应讲义/速记/题目/实验、阶段计划、考试蓝图和提交模板。
+- 后续讲义在course/tutorials/，可读代码在code/，执行拆解在walkthrough/；网页实验在course/browser-demos/。元数据在course/content/与curriculum.mjs，构建统一同步配套文件。
 - classroom/core.mjs：进度格式、评分与导出。
 - classroom/app.js、classroom.css、index.template.html：交互、样式与页面结构。
 - scripts/build-classroom.mjs、scripts/course-materials.mjs：生成全部内嵌的 public/learn.html 和配套资料；--check 检测所有生成文件是否同步。
@@ -37,5 +37,7 @@ powershell -NoProfile -File scripts/run.ps1 check
 - Vite 构建把 public/learn.html 原样复制到 dist/learn.html。
 
 代码实验在独立 Worker 中执行，限制三秒，日志数量与长度有上限；通过 CSP 禁用网络连接，不读取页面答案或本地存储。它是本机课堂运行器，不是面向恶意代码的安全服务。TypeScript 题只供阅读，运行实验明确使用等价 JavaScript。
+
+运行器提供assert.equal/deepEqual/ok/throws/rejects教学子集，失败会立即提示，完成时显示实际检查数。它不是完整Node assert。完整本地实操代码默认折叠，带行号和复制按钮，下载入口是选做。数据库、MCP、Python的网页部分逐课注明推演与真实执行的范围。
 
 交互参考 [learn-py.org](https://learn-py.org/) 的课程导航与读、练、测流程；教材、示例与视觉设计由本项目编写，没有复用第三方课程正文、图片或源码。教材已准备不等于学习者已经掌握。仓库保持既有可见性，未新增发行许可证。

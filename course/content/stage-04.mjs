@@ -4,7 +4,7 @@ L("04",1,"任务状态与持久化", "刷新页面、重启服务后，业务任
 ["区分请求、任务与执行尝试", "一次浏览器请求可以创建一个持续更久的任务；任务又可能被 worker 尝试多次。requestId、taskId、attemptId 分别回答哪次通信、哪个业务任务、哪次执行。不能把关闭页面等同于任务删除，也不能把连接断开直接记成业务失败。"],
 ["用状态转换表达约束", "为 queued、running、waiting_approval、succeeded、failed、cancelled 定义允许转换与执行条件。终态不能被重放事件任意改回运行中。需要暂停时持久化可恢复的业务状态、输入/版本、已完成步骤和下一动作；只保存一份自然语言聊天摘要通常不足以恢复副作用边界。"],
 ["把并发更新当作正常情况", "两个 worker 都读到 queued 时可能同时抢任务。使用事务、条件更新或版本号等方式争抢执行权，并验证冲突处理。数据库事务不能自动覆盖外部 API；外部写入仍需要幂等和恢复对账。课堂内存对象没有持久化、锁或真实并发保证。"]
-],["拒绝非法状态跳转",'const allowed = {queued:["running","cancelled"],running:["waiting_approval","succeeded","failed","cancelled"],waiting_approval:["running","cancelled"]};\nfunction transition(from,to) {\n  if (!allowed[from]?.includes(to)) throw new Error("INVALID_TRANSITION");\n  return to;\n}\nconsole.log(transition("queued","running"));\ntry { console.log(transition("succeeded","running")); } catch(e) {console.log(e.message);}',
+],["拒绝非法状态跳转",null /* code: course/browser-demos/ */,
 "合法跳转成功，终态回到 running 被拒绝；数据库并发控制还没有被验证。","状态名不够，还需要允许边和前置条件。"],
 ["同一任务重试三次，为 requestId/taskId/attemptId 各给一个用途。",
 "服务在工具写入成功后、保存 checkpoint 前崩溃，会发生什么？怎样恢复？",
@@ -18,7 +18,7 @@ L("04",2,"队列、重试、租约与幂等", "接受消息可能重复到达，
 ["先选交付语义", "队列把请求与执行解耦，但不能仅凭“用了队列”就声称恰好一次。确认丢失、worker 崩溃或可见性超时都可能使任务再次出现。对业务设计按可能重复交付处理，并把持久幂等结果与稳定意图键关联；不要把消息出队当成业务已完成。"],
 ["把重试限定在安全范围", "临时故障可有次数和总期限受限的退避，并加入抖动避免同时冲击服务；参数非法、无权限等不可恢复错误不应机械重试。超过上限进入可观察的失败/死信路径。重试计划应持久化，重启之后不能把计数重新归零。"],
 ["理解租约不等于永不并发", "worker 租约过期后，旧 worker 仍可能继续工作，新 worker 又获得任务。续租、取消和 fencing token 等机制需结合存储与下游是否检查版本设计。单纯给任务加 locked=true 没有到期恢复，也可能造成永久卡住。用故障注入测续租失败、重复消息与完成确认丢失。"]
-],["重复交付如何去重",'const processed = new Set();\nlet writes = 0;\nfor (const message of [{intent:"i-1"},{intent:"i-1"},{intent:"i-2"}]) {\n  if (processed.has(message.intent)) {console.log("重复");continue;}\n  processed.add(message.intent); writes++;\n}\nconsole.log({writes});\nconsole.log("示例没有数据库原子性，也不证明故障恢复");',
+],["重复交付如何去重",null /* code: course/browser-demos/ */,
 "三次交付对应两个不同意图；换进程或并发时还需持久原子机制。","重复交付与重复业务意图不是同一个维度。"],
 ["为什么队列确认丢失会导致重复执行？你会把确认放在哪个业务边界？",
 "为限流、非法参数、无权限、连接中断分别写重试策略与理由。",
@@ -32,7 +32,7 @@ L("04",3,"人工确认与前端任务工作台", "把你的前端优势用在 AI
 ["把确认设计成状态与证据", "AI 建议发送回复时，页面应展示接收对象、具体内容、影响范围和执行来源，用户确认后再让后端验证绑定内容与版本。确认不是随便一个 confirm 按钮；过期、权限变化、内容修改都可能使它失效。只在前端禁用操作挡不住伪造请求。"],
 ["设计暂停、恢复与取消的产品语义", "暂停可能只阻止后续步骤，并不撤销已经完成的写入。用户刷新后，应从服务读取持久任务状态，再恢复事件观察；不能靠 localStorage 中的 running 一直展示执行中。区分“已请求取消”“执行已终止”“已完成副作用待处理”，使反馈与真实行为对应。"],
 ["处理列表、详情与实时事件的一致性", "列表快照与事件可能乱序到达，用任务版本或单调事件序号防止旧快照覆盖新状态。按 taskId 隔离多个并行任务，错误事件保留可操作的恢复提示。提供键盘可达、屏幕阅读提示与明确进度，不用不断闪烁的全文替换模拟流式体验。"]
-],["旧快照不应覆盖新状态",'let task = {version:4,status:"waiting_approval"};\nconst updates = [{version:3,status:"running"},{version:5,status:"succeeded"}];\nfor (const update of updates) {\n  if (update.version > task.version) task = update;\n  else console.log("忽略旧快照",update.version);\n}\nconsole.log(task);',
+],["旧快照不应覆盖新状态",null /* code: course/browser-demos/ */,
 "版本 3 被忽略，最终采用版本 5；真实多源事件仍需统一版本约定。","别用消息到达顺序替代业务版本。"],
 ["设计一个发送草稿的确认面板，至少列出六个用户需要判断的信息。",
 "页面显示 cancelled，但后台已经成功发送，产品应该如何解释与恢复？",
@@ -46,7 +46,7 @@ L("04",4,"SQL、索引与事务：存储工程基础", "让状态、权限与幂
 ["先为访问路径建数据模型", "任务、执行尝试、事件、幂等记录和文档版本有不同生命周期，不能只用一个超大 JSON 列取代所有约束。明确主键、外键、租户字段、唯一约束、创建/更新时间和保留规则。针对“按租户取最近任务”“按任务回放事件”写查询，再决定索引。"],
 ["区别索引、约束与授权", "索引帮助某些访问路径，也有写入与存储成本；唯一索引/约束可参与保证唯一性，但普通索引不自动检查业务规则。带 tenant 条件的查询还需要可信身份与完整执行路径。动态值使用数据库库支持的参数绑定，不能拼接用户输入；动态标识符则另用受控白名单。"],
 ["用事务处理竞争而不是掩盖竞争", "多个 worker 读取同一状态并同时写入，需要条件更新、版本号、唯一约束或适当锁等策略。选择隔离级别并理解可能冲突，必要时安全重试。事务内完成的数据库变更不包含第三方写入；可用 outbox 等模式协调提交后的动作，但消费者仍需幂等。"]
-],["先读后写的竞争窗口",'let version=1;\nfunction conditionalUpdate(expected) {\n if(version!==expected) return false;\n version++; return true;\n}\nconst workerARead=version,workerBRead=version;\nconsole.log("A",conditionalUpdate(workerARead));\nconsole.log("B",conditionalUpdate(workerBRead));\nconsole.log("同步 JS 示意 CAS；真实数据库需原子条件更新");',
+],["先读后写的竞争窗口",null /* code: course/browser-demos/ */,
 "A 成功，B 因旧版本失败。普通应用层先检查再写并不能自动复制这种原子性。","检查与写入要在真正的原子边界完成。"],
 ["画 tasks、attempts、events、idempotency 四类表的主键和关联，说明租户字段位置。",
 "为按租户查最近任务设计查询与候选索引，怎样用真实执行计划验证？",

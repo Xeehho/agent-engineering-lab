@@ -27,8 +27,18 @@ export function renderMarkdown(markdown, sourcePath) {
       index++;
       while (index < lines.length && !lines[index].startsWith("~~~")) code.push(lines[index++]);
       if (index === lines.length) throw new Error("Unclosed code fence");
-      html += '<figure class="code-block"><figcaption>' + escapeHtml(language || "text") +
-        '</figcaption><pre><code>' + escapeHtml(code.join("\n")) + "</code></pre></figure>";
+      const metadata = language.match(/^(\S+?)(?: (file|expect)=([A-Za-z0-9._-]+))?$/);
+      const codeLanguage = metadata?.[1] || "text";
+      const sourceFile = metadata?.[3];
+      const caption = (sourceFile ? sourceFile + " · " : "") + codeLanguage + " · " + code.length + " 行";
+      const codeLines = code.map(line => '<span class="code-line">' + escapeHtml(line) + "</span>").join("");
+      const figure = '<figure class="code-block"><figcaption><span>' + escapeHtml(caption) +
+        '</span><button type="button" class="copy-code">复制代码</button></figcaption>' +
+        '<pre tabindex="0" aria-label="' + escapeHtml(caption) + '"><code>' + codeLines + "</code></pre></figure>";
+      const setupCommand = ["powershell","bash","sh","shell"].includes(codeLanguage);
+      html += sourceFile || setupCommand ? '<details class="optional-code"><summary>' +
+        (setupCommand ? "选做实操：运行命令" : metadata[2] === "expect" ? "选做实操：预期输出" : "选做实操：完整本地代码") +
+        " · " + escapeHtml(sourceFile || codeLanguage) + "</summary>" + figure + "</details>" : figure;
       index++; continue;
     }
     const title = line.match(/^(#{1,3}) (.+)$/);

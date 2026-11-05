@@ -1,0 +1,138 @@
+// 直接在网页运行。assert 是课堂提供的检查工具，失败会中断本次实验。
+
+// 让调用方在取消时结束等待。操作本身是否停止，仍取决于它是否响应 signal。
+function awaitUntilAborted(startOperation, signal) {
+  signal.throwIfAborted();
+
+  return new Promise((resolve, reject) => {
+    const handleAbort = () => reject(signal.reason);
+    signal.addEventListener("abort", handleAbort, { once: true });
+
+    Promise.resolve()
+      .then(() => {
+        signal.throwIfAborted();
+        return startOperation();
+      })
+      .then(resolve, reject)
+      .finally(() => signal.removeEventListener("abort", handleAbort));
+  });
+}
+
+async function runAgentLoop(decide, options = {}) {
+  const {
+    maxRounds = 3,
+    maxTools = 2,
+    timeoutMs = 1000,
+    signal: callerSignal = new AbortController().signal,
+  } = options;
+
+  const state = { rounds: 0, tools: 0, history: [] };
+  const deadlineController = new AbortController();
+  const deadlineTimer = setTimeout(() => {
+    deadlineController.abort(new Error("DEADLINE_EXCEEDED"));
+  }, timeoutMs);
+  const executionSignal = AbortSignal.any([callerSignal, deadlineController.signal]);
+
+  function stoppedResult(reason) {
+    return { ...state, reason };
+  }
+
+  try {
+    while (true) {
+      executionSignal.throwIfAborted();
+      if (state.rounds >= maxRounds) {
+        return stoppedResult("model_budget");
+      }
+
+      state.rounds += 1;
+      // 传副本，防止决策器改写应用持有的计数与历史。
+      const decision = await awaitUntilAborted(
+        () => decide(structuredClone(state), { signal: executionSignal }),
+        executionSignal,
+      );
+      executionSignal.throwIfAborted();
+
+      if (!decision || typeof decision !== "object") {
+        return stoppedResult("invalid_decision");
+      }
+      if (decision.type === "final" && typeof decision.text === "string") {
+        return { ...state, reason: "succeeded", answer: decision.text };
+      }
+      if (decision.type !== "tools" || !Array.isArray(decision.calls)) {
+        return stoppedResult("invalid_decision");
+      }
+      if (decision.calls.length === 0) {
+        return stoppedResult("no_progress");
+      }
+
+      const remainingTools = maxTools - state.tools;
+      if (decision.calls.length > remainingTools) {
+        return stoppedResult("tool_budget");
+      }
+
+      // 整个批次先检查，避免前半批执行后才发现后半批不允许。
+      if (decision.calls.some((call) => !call || call.name !== "searchDocs")) {
+        return stoppedResult("unknown_tool");
+      }
+
+      for (const call of decision.calls) {
+        executionSignal.throwIfAborted();
+        state.tools += 1;
+        state.history.push({ callId: call.id, result: "local evidence" });
+      }
+    }
+  } catch (error) {
+    if (!executionSignal.aborted) {
+      throw error;
+    }
+    return stoppedResult(deadlineController.signal.aborted ? "deadline" : "cancelled");
+  } finally {
+    clearTimeout(deadlineTimer);
+  }
+}
+
+// 决策器一：第一次提议检索，看到结果后结束。它是固定夹具，不是模型。
+async function decideSearchThenFinish(state) {
+  if (state.tools > 0) {
+    return { type: "final", text: "基于本地证据的草稿" };
+  }
+  return { type: "tools", calls: [{ id: "c1", name: "searchDocs" }] };
+}
+const successfulRun = await runAgentLoop(decideSearchThenFinish);
+assert.equal(successfulRun.reason, "succeeded");
+
+// 决策器二：不停检索，最终由程序的工具预算终止。
+const repeatedRun = await runAgentLoop(
+  async (state) => ({
+    type: "tools",
+    calls: [{ id: "c" + state.rounds, name: "searchDocs" }],
+  }),
+  { maxRounds: 10 },
+);
+assert.equal(repeatedRun.reason, "tool_budget");
+assert.equal(repeatedRun.tools, 2);
+
+const oversizedRun = await runAgentLoop(async () => ({
+  type: "tools",
+  calls: [1, 2, 3].map((id) => ({ id, name: "searchDocs" })),
+}));
+assert.equal(oversizedRun.tools, 0);
+
+const preCancelledController = new AbortController();
+preCancelledController.abort();
+const cancelledRun = await runAgentLoop(
+  async () => {
+    throw new Error("should not call");
+  },
+  { signal: preCancelledController.signal },
+);
+assert.equal(cancelledRun.rounds, 0);
+
+// 决策器永远不返回，调用方依然必须按总期限停止等待。
+const hangingRun = await runAgentLoop(() => new Promise(() => {}), { timeoutMs: 5 });
+assert.equal(hangingRun.reason, "deadline");
+const invalidRun = await runAgentLoop(async () => null);
+assert.equal(invalidRun.reason, "invalid_decision");
+
+console.log("success=succeeded; repeat=tool_budget; oversized batch executed=0");
+console.log("pre-cancel model rounds=0");

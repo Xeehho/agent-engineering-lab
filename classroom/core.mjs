@@ -102,14 +102,50 @@ export function classroomWorker() {
   };
   self.onmessage = async event => {
     let lines = 0;
+    let checks = 0;
     const output = (...values) => {
       if (lines++ < 80) send({ type: "log", text: values.map(format).join(" ") });
     };
     self.console = { log: output, info: output, warn: output, error: output, debug: output, table: output };
+    const sameValue = (left, right) => {
+      if (Object.is(left, right)) return true;
+      if (!left || !right || typeof left !== "object" || typeof right !== "object") return false;
+      if (Array.isArray(left) !== Array.isArray(right)) return false;
+      const keys = Object.keys(left);
+      return keys.length === Object.keys(right).length &&
+        keys.every(key => Object.hasOwn(right, key) && sameValue(left[key], right[key]));
+    };
+    const verify = (condition, message) => {
+      if (!condition) throw new Error("检查失败：" + message);
+      checks++;
+    };
+    const matchesError = (error, expected) => {
+      if (!expected) return true;
+      if (expected instanceof RegExp) return expected.test(error.message);
+      if (typeof expected === "function") return expected(error) === true;
+      return Object.entries(expected).every(([key,value]) => error[key] === value);
+    };
+    // 网页只提供本课程用到的断言子集，不把它冒充完整 node:assert。
+    const assert = {
+      equal: (actual, expected, message) => verify(Object.is(actual, expected), message || format(actual) + " 应等于 " + format(expected)),
+      deepEqual: (actual, expected, message) => verify(sameValue(actual, expected), message || "结构或字段不一致"),
+      ok: (value, message) => verify(Boolean(value), message || "预期条件成立"),
+      throws: (operation, expected) => {
+        let caught;
+        try { operation(); } catch (error) { caught = error; }
+        verify(!!caught && matchesError(caught, expected), "预期抛出匹配的异常");
+      },
+      rejects: async (operation, expected) => {
+        let caught;
+        try { await (typeof operation === "function" ? operation() : operation); }
+        catch (error) { caught = error; }
+        verify(!!caught && matchesError(caught, expected), "预期异步操作被拒绝");
+      },
+    };
     try {
       const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
-      await new AsyncFunction(event.data)();
-      send({ type: "done" });
+      await new AsyncFunction("assert", event.data)(assert);
+      send({ type: "done", checks });
     } catch (error) {
       send({ type: "error", text: error.name + ": " + error.message });
     }

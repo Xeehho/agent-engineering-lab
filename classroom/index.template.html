@@ -79,7 +79,7 @@
           <article class="paper">
             <div class="section-kicker"><span class="tag">课堂讲义</span><span>阅读 → 判断 → 验证</span></div>
             <div class="article-body" id="lecture-content">__LECTURE__</div>
-            <div class="tutorial-files" id="tutorial-files" hidden></div>
+            <details class="tutorial-files" id="tutorial-files" hidden></details>
             <div class="completion-row"><label><input type="checkbox" id="read-complete"> 我已通读本课讲义</label><button class="button primary" data-go="lab">开始动手实验 <span aria-hidden="true">→</span></button></div>
           </article>
           <aside class="right-rail" aria-label="学习指引">
@@ -92,7 +92,8 @@
 
       <section id="panel-lab" class="tab-panel" role="tabpanel" aria-labelledby="tab-lab" tabindex="0" hidden>
         <div class="panel-heading"><div><span class="eyebrow green">LEARN BY OBSERVING</span><h2>先预测，再运行。</h2><p id="lab-description">可编辑的 JavaScript 小实验。全部在本机运行，不调用模型，无需 API Key。</p></div><span class="pill">Browser · JavaScript</span></div>
-        <div class="notice">运行器在独立 Worker 中执行，3 秒后终止；不支持 TypeScript、安装依赖或网络请求。这里只运行你理解的课堂代码。</div>
+        <div class="notice">在网站里完成：先预测 → 运行 → 改一个条件 → 记录观察。实验使用浏览器 JavaScript，无需项目、依赖或 Key；3 秒后终止，不访问网络。</div>
+        <details class="hint"><summary>第一次见到 assert？先看检查语句</summary><p>assert.equal(实际, 预期) 检查单个值；deepEqual 检查对象与数组；ok 检查条件成立；throws 与 rejects 分别检查同步、异步失败。检查不成立会停止并指出错误；通过表示当前案例符合约定，不是阶段考试成绩。</p></details>
         <div id="experiments"></div>
         <div class="next-row"><p>看到输出之后，用自己的话写清它证明了什么。</p><button class="button primary" data-go="practice">去做随堂练习 →</button></div>
       </section>

@@ -14,7 +14,7 @@ export const foundations = [
   { id: 'javascript', title: 'JavaScript 基础', detail: '能读懂函数、对象、数组、模块，以及 Promise / async / await。', review: '先补函数、对象与异步，再尝试第一课的运行示例。' },
   { id: 'react', title: 'React 与 TypeScript 阅读能力', detail: '了解组件、状态、事件与基本类型，能顺着代码追踪一次页面请求。', review: '先熟悉组件、状态和基础类型；不要求已经精通框架。' },
   { id: 'web', title: '基本的 Web 请求知识', detail: '知道浏览器与服务端如何通过 HTTP / JSON 交换数据，会看状态码。', review: '先弄清请求、响应、状态码和 JSON 的关系。' },
-  { id: 'tools', title: 'Git、终端与本地项目', detail: '能克隆仓库、安装依赖、运行命令，并提交一次代码修改。', review: '先练习克隆、启动和提交一个小项目。' },
+  { id: 'tools', title: '进阶项目工具（选做）', detail: '做真实项目时再准备 Git、编辑器与本地环境；不影响网站内学习。', review: '选择进阶实操后，再练习克隆、运行与提交项目。' },
   { id: 'verification', title: '愿意亲自阅读与验证', detail: '可以继续用 AI 写代码，但愿意说明预期、运行结果和失败原因。', review: '从一个小实验开始：先预测，再运行，最后解释差异。' },
 ] as const;
 
@@ -26,6 +26,7 @@ export const outcomes = [
 ] as const;
 
 export const faqs = [
+  { question: '学习前需要下载和启动项目吗？', answer: '不需要。打开互动课堂即可完成阅读、网页实验、随堂练习、自测与笔记，下载单文件 HTML 也可离线学习。真实 Python、数据库、MCP 与完整项目保留为选做进阶；需要验证真实系统能力时再准备本地环境。' },
   { question: '零基础可以直接学吗？', answer: '这套课程面向有编程基础的开发者，尤其适合有前端经验、希望进入 AI 应用开发的人。如果还不能读懂基本 JavaScript 和一次 HTTP 请求，建议先补这些基础，再进入项目练习。' },
   { question: '可以继续使用 AI Coding 吗？', answer: '可以。课程不按手写代码行数评分，而是检查你能否定义正确结果、阅读关键实现、亲自验证并解释失败。项目允许 AI 协作；概念答辩要求本人作答。' },
   { question: '开始前必须会 Python、机器学习或高等数学吗？', answer: '不需要先精通这些内容。主线采用 React / TypeScript，课程内补充模型机制、Python 后端桥接与数据工程。模型训练、CUDA 和深入算法研究属于后续深化方向。' },

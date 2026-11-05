@@ -1,36 +1,87 @@
+// 状态快照与事件在同一事务提交；用版本拒绝旧写者。
 import assert from "node:assert/strict";
 import { DatabaseSync } from "node:sqlite";
-import { mkdtempSync,rmSync,rmdirSync } from "node:fs";
+import { mkdtempSync, rmSync, rmdirSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-const dir = mkdtempSync(join(tmpdir(),"agent-task-"));
-const path = join(dir,"tasks.sqlite");
-let db = new DatabaseSync(path);
-db.exec("CREATE TABLE tasks(id TEXT PRIMARY KEY,state TEXT,version INTEGER); CREATE TABLE events(task_id TEXT,version INTEGER,state TEXT,PRIMARY KEY(task_id,version))");
-db.prepare("INSERT INTO tasks VALUES(?,?,?)").run("task-1","queued",0);
-const allowed = {queued:["running","cancelled"],running:["succeeded","failed","cancelled"]};
-function transition(id,expectedVersion,to) {
-  db.exec("BEGIN IMMEDIATE");
+const temporaryDirectory = mkdtempSync(join(tmpdir(), "agent-task-"));
+const databasePath = join(temporaryDirectory, "tasks.sqlite");
+let database = new DatabaseSync(databasePath);
+database.exec(
+  `
+CREATE TABLE tasks (id TEXT PRIMARY KEY, state TEXT, version INTEGER);
+
+CREATE TABLE events (
+  task_id TEXT,
+  version INTEGER,
+  state TEXT,
+  PRIMARY KEY (task_id, version)
+)
+`,
+);
+database.prepare("INSERT INTO tasks VALUES(?,?,?)").run("task-1", "queued", 0);
+const allowedTransitions = {
+  queued: ["running", "cancelled"],
+  running: ["succeeded", "failed", "cancelled"],
+};
+// 输入任务、调用方看到的版本、目标状态；非法转换或旧版本都拒绝。
+function transitionTask(taskId, expectedVersion, nextState) {
+  database.exec("BEGIN IMMEDIATE");
   try {
-    const row = db.prepare("SELECT * FROM tasks WHERE id=?").get(id);
-    if (!row || row.version !== expectedVersion) throw new Error("STALE_VERSION");
-    if (!allowed[row.state]?.includes(to)) throw new Error("ILLEGAL_TRANSITION");
-    const changed = db.prepare("UPDATE tasks SET state=?,version=version+1 WHERE id=? AND version=?")
-      .run(to,id,expectedVersion);
-    if (changed.changes !== 1) throw new Error("CONFLICT");
-    db.prepare("INSERT INTO events VALUES(?,?,?)").run(id,expectedVersion+1,to);
-    db.exec("COMMIT");
-  } catch (error) { db.exec("ROLLBACK"); throw error; }
+    const currentTask = database.prepare("SELECT * FROM tasks WHERE id=?").get(taskId);
+    if (!currentTask || currentTask.version !== expectedVersion) {
+      throw new Error("STALE_VERSION");
+    }
+    if (!allowedTransitions[currentTask.state]?.includes(nextState)) {
+      throw new Error("ILLEGAL_TRANSITION");
+    }
+    const updateResult = database
+      .prepare(
+        `
+UPDATE tasks
+SET
+  state = ?,
+  version = version + 1
+WHERE
+  id = ?
+  AND version = ?
+`,
+      )
+      .run(nextState, taskId, expectedVersion);
+    if (updateResult.changes !== 1) {
+      throw new Error("CONFLICT");
+    }
+    database
+      .prepare("INSERT INTO events VALUES(?,?,?)")
+      .run(taskId, expectedVersion + 1, nextState);
+    database.exec("COMMIT");
+  } catch (error) {
+    database.exec("ROLLBACK");
+    throw error;
+  }
 }
 try {
-  transition("task-1",0,"running");
-  db.close(); db = new DatabaseSync(path);
-  assert.equal(db.prepare("SELECT state FROM tasks").get().state,"running");
-  assert.throws(() => transition("task-1",0,"succeeded"),/STALE/);
-  transition("task-1",1,"succeeded");
-  assert.throws(() => transition("task-1",2,"failed"),/ILLEGAL/);
-  const events = db.prepare("SELECT version,state FROM events ORDER BY version").all();
-  assert.deepEqual(events.map(e => [e.version,e.state]),[[1,"running"],[2,"succeeded"]]);
+  transitionTask("task-1", 0, "running");
+  database.close();
+  database = new DatabaseSync(databasePath);
+  assert.equal(database.prepare("SELECT state FROM tasks").get().state, "running");
+  assert.throws(() => transitionTask("task-1", 0, "succeeded"), /STALE/);
+  transitionTask("task-1", 1, "succeeded");
+  assert.throws(() => transitionTask("task-1", 2, "failed"), /ILLEGAL/);
+  const persistedEvents = database
+    .prepare("SELECT version,state FROM events ORDER BY version")
+    .all();
+  assert.deepEqual(
+    persistedEvents.map((event) => [event.version, event.state]),
+    [
+      [1, "running"],
+      [2, "succeeded"],
+    ],
+  );
   console.log("reopen: running; stale writer rejected; terminal protected");
   console.log("state and two versioned events committed together");
-} finally { db.close(); rmSync(path); rmdirSync(dir); }
+} finally {
+  database.close();
+  rmSync(databasePath);
+  rmdirSync(temporaryDirectory);
+}

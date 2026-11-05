@@ -1,0 +1,86 @@
+import assert from "node:assert/strict";
+
+// 标注与运行分开保存，评分不能根据输出临时改变答案。
+const goldCases = [
+  { id: "q1", relevant: ["a", "b"], answerable: true },
+  { id: "q2", relevant: ["c"], answerable: true },
+  { id: "q3", relevant: [], answerable: false },
+];
+const runByQuestionId = {
+  q1: { retrieved: ["a", "x", "b"], abstained: false },
+  q2: { retrieved: ["x", "c", "c"], abstained: true },
+  q3: { retrieved: ["x"], abstained: true },
+};
+
+// 无可计算样本时返回 null，不能把 NaN 或0假装成确定指标。
+function meanOrNull(values) {
+  if (values.length === 0) {
+    return null;
+  }
+  return values.reduce((sum, value) => sum + value, 0) / values.length;
+}
+
+function evaluateRetrieval(goldCases, runByQuestionId, topK) {
+  if (!Number.isInteger(topK) || topK < 1) {
+    throw new Error("INVALID_K");
+  }
+  if (new Set(goldCases.map((sample) => sample.id)).size !== goldCases.length) {
+    throw new Error("DUPLICATE_QUESTION_ID");
+  }
+
+  const caseRows = goldCases.map((goldCase) => {
+    const actualRun = runByQuestionId[goldCase.id];
+    if (!actualRun) {
+      throw new Error("MISSING_RUN:" + goldCase.id);
+    }
+
+    const relevantIds = new Set(goldCase.relevant);
+    const uniqueCandidates = [...new Set(actualRun.retrieved)].slice(0, topK);
+    const hitCount = uniqueCandidates.filter((id) => relevantIds.has(id)).length;
+    const firstRelevantIndex = uniqueCandidates.findIndex((id) => relevantIds.has(id));
+
+    let recall = null;
+    let reciprocalRank = null;
+    if (relevantIds.size > 0) {
+      recall = hitCount / relevantIds.size;
+      reciprocalRank = firstRelevantIndex < 0 ? 0 : 1 / (firstRelevantIndex + 1);
+    }
+    return {
+      id: goldCase.id,
+      recall,
+      rr: reciprocalRank,
+      correctAbstention: actualRun.abstained === !goldCase.answerable,
+    };
+  });
+
+  const retrievalRows = caseRows.filter((row) => row.recall !== null);
+  return {
+    rows: caseRows,
+    recall: meanOrNull(retrievalRows.map((row) => row.recall)),
+    mrr: meanOrNull(retrievalRows.map((row) => row.rr)),
+    abstentionAccuracy: meanOrNull(
+      caseRows.map((row) => (row.correctAbstention ? 1 : 0)),
+    ),
+    retrievalDenominator: retrievalRows.length,
+    total: caseRows.length,
+  };
+}
+
+const report = evaluateRetrieval(goldCases, runByQuestionId, 2);
+assert.equal(report.recall, 0.75);
+assert.equal(report.mrr, 0.75);
+assert.equal(report.abstentionAccuracy, 2 / 3);
+assert.equal(report.rows[2].recall, null);
+assert.throws(
+  () => evaluateRetrieval(goldCases, { q1: runByQuestionId.q1 }, 2),
+  /MISSING/,
+);
+assert.deepEqual(
+  report.rows.filter((row) => !row.correctAbstention).map((row) => row.id),
+  ["q2"],
+);
+assert.equal(evaluateRetrieval([goldCases[2]], runByQuestionId, 2).recall, null);
+assert.equal(evaluateRetrieval([], {}, 2).abstentionAccuracy, null);
+assert.throws(() => evaluateRetrieval(goldCases, runByQuestionId, 0), /INVALID_K/);
+console.log("Recall@2=0.75; MRR@2=0.75; retrieval denominator=2");
+console.log("abstention decisions=2/3; q2 false refusal; q3 retrieval N/A");

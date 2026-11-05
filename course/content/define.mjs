@@ -1,13 +1,17 @@
-// Authoring format: original teaching cases, explicit limits, runnable local demonstrations.
+import { readFileSync } from "node:fs";
+import { browserGuidance } from "../browser-guidance.mjs";
+// Metadata stays here; readable browser code lives in separate executable files.
 export function lesson(stage, number, title, summary, sections, demo, questions, checks, project, sources) {
   const id = "S" + Number(stage) + "-L" + String(number).padStart(2, "0");
   return {
     id, stage, title, summary, duration: "35–60 分钟 + 项目练习",
     sections, project, sources,
     goals: sections.map(section => section[0]),
-    experiments: [{ id: "demo", label: id + " / 本地机制演示", title: demo[0],
-      intro: "先预测输出，再运行并修改一个条件。这是教学用的 JavaScript 机制演示，不是真实模型、数据库、协议 SDK 或生产系统。",
-      code: demo[1], expected: demo[2], hint: demo[3] }],
+    experiments: [{ id: "demo", label: id + " / 网页实验", title: browserGuidance[id].title,
+      intro: "无需安装或启动项目。先预测，再运行，再按小任务修改一个条件。",
+      code: readFileSync(new URL("../browser-demos/" + id + ".mjs", import.meta.url), "utf8"),
+      expected: browserGuidance[id].scope, hint: demo[3],
+      challenge: browserGuidance[id].challenge }],
     checkpoints: questions.map((text, index) => ({ id: "C" + (index + 1),
       title: ["解释关键机制", "定位一个反例", "定义验证证据"][index], badge: "开放作答",
       text, hint: "结合本课案例回答，写出结论、边界、证据和仍未验证的事项；不要只列术语。" })),
@@ -27,8 +31,8 @@ export const sources = {
   schema: ["OpenAI Structured outputs", "https://developers.openai.com/api/docs/guides/structured-outputs"],
   evals: ["OpenAI Evaluation best practices", "https://developers.openai.com/api/docs/guides/evaluation-best-practices"],
   agents: ["Anthropic Building effective agents", "https://www.anthropic.com/research/building-effective-agents"],
-  mcp: ["MCP 架构（2026-07-28）", "https://modelcontextprotocol.io/docs/2026-07-28/learn/architecture"],
-  mcpSecurity: ["MCP 安全实践（2026-07-28）", "https://modelcontextprotocol.io/docs/2026-07-28/tutorials/security/security_best_practices"],
+  mcp: ["MCP 架构（实验采用2025-11-25）", "https://modelcontextprotocol.io/specification/2025-11-25/architecture"],
+  mcpSecurity: ["MCP 安全实践（2025-11-25）", "https://modelcontextprotocol.io/specification/2025-11-25/basic/security_best_practices"],
   python: ["Python 官方教程", "https://docs.python.org/3/tutorial/"],
   fastapi: ["FastAPI 并发与 async", "https://fastapi.tiangolo.com/async/"],
   pg: ["PostgreSQL 事务隔离", "https://www.postgresql.org/docs/current/transaction-iso.html"],

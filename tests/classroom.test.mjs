@@ -86,7 +86,7 @@ test("committed single-file HTML matches teaching sources, parses, and embeds al
   assert.ok(html.includes("JSON.parse只解决JSON语法解析"));
 });
 
-async function runDemo(code) {
+async function runDemo(code, includeMetrics = false) {
   const worker = new Worker(
     'const {parentPort} = require("node:worker_threads"); global.self = global;' +
     'self.postMessage = value => parentPort.postMessage(value);' +
@@ -101,7 +101,7 @@ async function runDemo(code) {
       worker.on("message", message => {
         if (message.type === "log") lines.push(message.text);
         if (message.type === "error") { clearTimeout(timer); reject(new Error(message.text)); }
-        if (message.type === "done") { clearTimeout(timer); resolve(lines.join("\n")); }
+        if (message.type === "done") { clearTimeout(timer); resolve(includeMetrics ? {output:lines.join("\n"),checks:message.checks} : lines.join("\n")); }
       });
       worker.postMessage(code);
     });
@@ -166,10 +166,46 @@ test("multi-lesson backup isolates identical question IDs and restores migrated 
 test("all course demonstrations really run without network, keys or external dependencies", async () => {
   for (const item of lessons) {
     for (const demo of item.experiments) {
-      const output = await runDemo(demo.code);
-      assert.ok(output.trim().length > 0, item.id + ":" + demo.id);
+      const result = await runDemo(demo.code, true);
+      assert.ok(result.output.trim().length > 0, item.id + ":" + demo.id);
+      if (item.id !== "S1-L01") assert.ok(result.checks > 0,item.id+" checks really executed");
       assert.ok(!/\b(fetch|XMLHttpRequest)\s*\(/.test(demo.code), item.id);
     }
+  }
+});
+
+test("browser assertion failures and rejection mismatches stop the exercise",async () => {
+  await assert.rejects(runDemo("assert.equal(1,2);"),/检查失败/);
+  await assert.rejects(runDemo('await assert.rejects(Promise.resolve("ok"));'),/检查失败/);
+  const result = await runDemo('assert.deepEqual({a:[1,2]},{a:[1,2]}); await assert.rejects(Promise.reject(new Error("EXPECTED")),/EXPECTED/); console.log("done");',true);
+  assert.equal(result.checks,2);
+});
+
+test("generated optional Node companions import their assertion dependency and execute",() => {
+  for (const item of lessons) {
+    const output = execFileSync(process.execPath,["examples/course/"+item.id+".mjs"],{
+      cwd:new URL("../",import.meta.url),encoding:"utf8",timeout:5000,
+      stdio:["ignore","pipe","pipe"],
+    });
+    assert.ok(output.trim(),item.id+" Node companion output");
+  }
+});
+
+test("teaching code has file labels, copy controls, optional local blocks and correct table-of-contents anchors",async () => {
+  const html = await readFile(new URL("../public/learn.html",import.meta.url),"utf8");
+  const catalog = JSON.parse(html.match(/const material = (.+);\n  const catalog/)[1]).lessons;
+  for (const item of catalog) {
+    const headings = new Map([...item.lectureHtml.matchAll(/<h2 id="(section-\d+)">([^<]+)<\/h2>/g)].map(match=>[match[1],match[2]]));
+    for (const anchor of item.tocHtml.matchAll(/href="#(section-\d+)">([^<]+)<\/a>/g)) {
+      assert.equal(headings.get(anchor[1]),anchor[2],item.id+" matching heading");
+    }
+    if (item.id==="S1-L01") continue;
+    assert.ok(item.lectureHtml.includes('class="optional-code"'));
+    assert.ok(!item.lectureHtml.includes('class="optional-code" open'));
+    assert.ok(item.lectureHtml.includes('class="copy-code"'));
+    assert.ok(item.lectureHtml.includes("代码阅读"));
+    assert.ok(item.lectureHtml.includes("网页主线"));
+    assert.ok(item.experiments[0].challenge);
   }
 });
 

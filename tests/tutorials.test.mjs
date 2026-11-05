@@ -5,6 +5,7 @@ import { execFileSync } from "node:child_process";
 import { lessons } from "../course/curriculum.mjs";
 import { tutorials } from "../course/tutorials/catalog.mjs";
 import { parseTutorial } from "../scripts/tutorial-materials.mjs";
+import { loadTutorial } from "../scripts/load-tutorial.mjs";
 
 const root = new URL("../",import.meta.url);
 const read = path => readFile(new URL(path,root),"utf8");
@@ -23,7 +24,7 @@ test("compiled classroom preserves tutorial introductions, quick notes and downl
   const catalog = JSON.parse(match[1]).lessons;
   assert.equal(catalog.filter(item => item.contentLevel==="detailed").length,31);
   for (const [id,entry] of Object.entries(tutorials)) {
-    const raw = await read(entry.path);
+    const raw = await loadTutorial(entry, id);
     const files = parseTutorial(raw,id);
     const compiled = catalog.find(item => item.id===id);
     assert.ok(compiled.lectureHtml.includes("不代表学习者"),id+" scope introduction");
@@ -40,7 +41,7 @@ test("compiled classroom preserves tutorial introductions, quick notes and downl
 
 for (const [id,entry] of Object.entries(tutorials)) {
   test(id+" local practical executes assertions and matches documented output",async () => {
-    const files = parseTutorial(await read(entry.path),id);
+    const files = parseTutorial(await loadTutorial(entry,id),id);
     const primary = files.find(file => file.name===entry.primary);
     assert.ok(primary?.expected,id+" expected stdout");
     const output = execFileSync(process.execPath,["scripts/run-tutorial.mjs",id],{

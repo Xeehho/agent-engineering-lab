@@ -1,9 +1,57 @@
 // S1-L04 local teaching demo. No model API calls; not a complete homework solution.
+import assert from "node:assert/strict";
 {
-console.log("实验 1：证据矩阵缺了什么？");
-const evidence = [
- {claim:"输入校验", expected:400, actual:400, environment:"local"},
- {claim:"模型准确率", expected:"有标注评测集", actual:null, environment:"mock"}
+console.log("实验 1：让证据来自实际执行");
+// 直接在网页运行。assert 是课堂提供的检查工具，失败会中断本次实验。
+
+// 被测逻辑：从外部 JSON 文本读取非负整数，不负责工单业务。
+function parseNonNegativeCount(jsonText) {
+  const parsedValue = JSON.parse(jsonText);
+  const isObject =
+    parsedValue !== null &&
+    typeof parsedValue === "object" &&
+    !Array.isArray(parsedValue);
+
+  if (!isObject) {
+    throw new Error("NOT_OBJECT");
+  }
+  if (!Number.isInteger(parsedValue.count) || parsedValue.count < 0) {
+    throw new Error("INVALID_COUNT");
+  }
+  return parsedValue.count;
+}
+
+// 预期先按契约写好；actual 必须来自实际执行，不能复制 expected。
+const testCases = [
+  { id: "normal", input: '{"count":2}', expected: 2 },
+  { id: "string", input: '{"count":"2"}', expected: "INVALID_COUNT" },
+  { id: "null", input: "null", expected: "NOT_OBJECT" },
+  { id: "negative", input: '{"count":-1}', expected: "INVALID_COUNT" },
 ];
-for (const item of evidence) console.log(item.claim, item.actual === item.expected ? "有对应观察" : "证据不足");
+
+function runContractCase(testCase) {
+  let actualResult;
+  try {
+    actualResult = parseNonNegativeCount(testCase.input);
+  } catch (error) {
+    actualResult = error.message;
+  }
+
+  return {
+    ...testCase,
+    actual: actualResult,
+    passed: Object.is(actualResult, testCase.expected),
+    environment: "Node/local",
+    provider: "none",
+  };
+}
+
+const evidenceRows = testCases.map(runContractCase);
+assert.equal(evidenceRows.filter((row) => row.passed).length, testCases.length);
+
+for (const row of evidenceRows) {
+  console.log(row.id + ": " + row.passed + " (" + row.actual + ")");
+}
+console.log("scope: four local contract cases; no model accuracy claim");
+
 }

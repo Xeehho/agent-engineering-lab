@@ -40,6 +40,22 @@ main{padding-top:84px;margin-left:254px;outline:none}.page-container{max-width:1
 .map-step b {max-width:210px}
 .hero-copy h1 {text-wrap:balance}
 .content-status {font-size:10px;color:var(--green);margin-top:13px}
+.article-body{font-size:15px;line-height:1.95}
+.code-block figcaption{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:11px;padding:9px 14px}
+.copy-code{font:11px var(--mono);padding:4px 9px;background:var(--paper);border:1px solid var(--line);border-radius:4px;white-space:nowrap;color:var(--green)}
+.code-block pre{padding:14px 0;font-size:13px}
+.code-block code{display:block;counter-reset:code-line;min-width:max-content}
+.code-line{display:block;position:relative;min-height:1.8em;white-space:pre;padding:0 18px 0 54px;counter-increment:code-line}
+.code-line:before{content:counter(code-line);position:absolute;left:10px;width:28px;text-align:right;color:#8b9b8d;font-size:11px;user-select:none}
+.optional-code{margin:18px 0;border:1px solid var(--line);border-radius:7px;background:#f7f9f5}
+.optional-code>summary,.tutorial-files>summary{cursor:pointer;padding:13px 15px;font-size:13px;font-weight:600;color:var(--green)}
+.optional-code>.code-block{margin:0;border:0;border-top:1px solid var(--line);border-radius:0 0 7px 7px}
+.tutorial-files>summary{padding:0}
+.tutorial-files>p{margin-top:15px}
+.browser-challenge{padding:13px 16px;background:var(--pale);border-left:3px solid var(--green);font-size:13px!important}
+.code-editor{font-size:13px;line-height:1.8;min-height:340px}
+.toc{max-height:68vh;overflow:auto}
+@media(max-width:650px){.article-body{font-size:14px}.code-block pre,.code-editor{font-size:12px}.code-block figcaption{font-size:10px;align-items:flex-start}.code-line{padding-left:43px}.code-line:before{left:5px;width:25px;font-size:10px}.copy-code{font-size:10px}.optional-code>summary{font-size:12px}.browser-challenge{font-size:12px!important}}
 .tutorial-files {margin-top:30px;border-top:1px solid var(--line);padding-top:22px}
 .tutorial-files h3 {font-size:14px}
 .tutorial-files p {font-size:11px;color:var(--muted);line-height:1.9}

@@ -2,9 +2,11 @@
 
 从AI Coding交付，进阶到能设计、验证、排错的AI应用工程。课程针对有前端经验、长期使用AI写代码的学习者，按能力验收推进。
 
-**当前版本：原第一课保留，后续30课已补写分步教程、可运行实操、预期输出、故障练习与速记。个人作业与考试仍待真实提交。**
+**默认在网站里学：31课讲解、34个可编辑网页实验、随堂题、自测与笔记，无需启动项目、安装依赖或提供 Key。真实组件实操与完整项目另作进阶。**
 
-本地实操：Node.js 24 下执行 npm ci，再运行 npm run tutorial -- S3-L01 等课号。Python 课先创建 .venv 并安装 examples/tutorial-requirements.txt。教程源在 course/tutorials/，构建自动提取脚本到 examples/tutorials/；网页提供逐课下载。真实组件、合成夹具与未做的模型/生产验证均在各课标明。
+本轮重新梳理全部课程：补充术语、输入输出、函数阅读顺序、执行追踪和渐进练习；代码改为独立文件、明确变量名、中文注释和分段逻辑。网页完整本地代码默认折叠，可选下载。实际执行与推演边界逐课标明。
+
+选做实操：Node.js 24 下执行 npm ci，再运行 npm run tutorial -- S3-L01。Python 课需 .venv 与 examples/tutorial-requirements.txt。教材源在 course/tutorials/，代码在 code/，阅读拆解在 walkthrough/；网页实验源在 course/browser-demos/。构建统一同步讲义、脚本与单页课堂。个人作业和考试状态保持真实提交记录。
 本仓库的Mock不会理解工单内容。绿色CI只证明骨架正常，不能证明模型效果、作业完成或考试通过。
 
 ## 从这里开始

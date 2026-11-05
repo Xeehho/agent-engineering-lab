@@ -1,0 +1,68 @@
+// 把排序与引用检查分开，最后用反例证明真实引文不等于结论受支持。
+import assert from "node:assert/strict";
+const fixtureChunks = [
+  { id: "c1", version: 2, text: "未发货订单可以申请退款。" },
+  { id: "c2", version: 2, text: "已发货订单需先完成退货，再审核退款。" },
+  { id: "c3", version: 1, text: "旧版：所有订单立即退款。" },
+];
+// 先排除旧版本，再调用题目给定评分函数排序，未使用真实重排模型。
+function rerankCurrentChunks(candidateChunks, scoreCandidate) {
+  return candidateChunks
+    .filter((chunk) => chunk.version === 2)
+    .map((chunk) => ({ ...chunk, score: scoreCandidate(chunk) }))
+    .sort((a, b) => b.score - a.score || a.id.localeCompare(b.id));
+}
+// 仅核对来源版本和引文存在，不判断自然语言结论是否被蕴含。
+function validateCitation(generatedClaim, availableChunks) {
+  const chunk = availableChunks.find(
+    (x) => x.id === generatedClaim.chunkId && x.version === generatedClaim.version,
+  );
+  if (!chunk) {
+    return { ok: false, reason: "MISSING_OR_STALE_SOURCE" };
+  }
+  if (!generatedClaim.quote || !chunk.text.includes(generatedClaim.quote)) {
+    return { ok: false, reason: "QUOTE_NOT_FOUND" };
+  }
+  return { ok: true, scope: "quote-exists-only" };
+}
+// 固定规则用于观察答复与拒答路径，不模拟通用语言理解能力。
+function answerWithFixtureRule(questionText, rankedChunks) {
+  // 固定业务规则夹具，用来验证证据路径，不是自然语言生成器。
+  if (questionText !== "已发货如何退款" || rankedChunks[0]?.id !== "c2") {
+    return { kind: "abstain", reason: "INSUFFICIENT_SUPPORTED_RULE" };
+  }
+  return {
+    kind: "answer",
+    claim: "已发货需先退货",
+    chunkId: "c2",
+    version: 2,
+    quote: "需先完成退货",
+  };
+}
+const rankedChunks = rerankCurrentChunks(
+  fixtureChunks,
+  (chunk) => ({ c1: 0.2, c2: 0.9 })[chunk.id],
+);
+assert.equal(rankedChunks[0].id, "c2");
+assert.equal(
+  rankedChunks.some((chunk) => chunk.id === "c3"),
+  false,
+);
+const fixtureAnswer = answerWithFixtureRule("已发货如何退款", rankedChunks);
+assert.equal(validateCitation(fixtureAnswer, rankedChunks).ok, true);
+assert.equal(
+  validateCitation({ ...fixtureAnswer, quote: "无需退货" }, rankedChunks).ok,
+  false,
+);
+assert.equal(
+  validateCitation({ ...fixtureAnswer, version: 1 }, rankedChunks).ok,
+  false,
+);
+assert.equal(answerWithFixtureRule("多久到银行卡", rankedChunks).kind, "abstain");
+// 反例：真实引用存在，但与答案无关；机械校验仍会通过。
+const unsupportedClaim = { ...fixtureAnswer, claim: "所有订单都能立即到账" };
+assert.equal(validateCitation(unsupportedClaim, rankedChunks).ok, true);
+console.log("current candidates reranked; missing/stale/fabricated quote rejected");
+console.log(
+  "unsupported question abstained; valid quote alone did not prove entailment",
+);

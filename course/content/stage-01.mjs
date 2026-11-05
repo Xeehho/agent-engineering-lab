@@ -4,7 +4,7 @@ L("01", 2, "超时与取消：请求结束了吗？", "从前端取消按钮，�
   ["区分超时、主动取消与上游故障", "用户切换页面后，旧请求仍占用模型并发；页面显示“已取消”不等于后台已停止。超时是达到截止时间，主动取消是调用方撤回，网络错误是另一类原因。先为每种情况定义错误码、UI 状态和日志字段，再讨论实现。不要把所有失败都返回 HTTP 200 加空结果。"],
   ["让取消信号沿数据流传播", "AbortController 发出信号，需要下游操作接收并响应。Promise.race 可以停止等待，却不会自动终止输掉竞赛的任务。浏览器断开到服务端的传播还取决于服务器如何处理连接事件，不能只给浏览器 fetch 加 signal 就宣布上游已取消。演示只证明协作式任务响应了本地信号。"],
   ["验证资源是否释放", "用已经取消的信号、执行中取消、截止时间到达、刚完成时取消四种顺序验证。检查是否调用过 provider、监听器与 timer 是否清理、晚到响应会不会覆盖新状态。请求取消不保证服务商未计费；计费与上游执行状态需服务协议和实际证据。"]
-], ["停止等待与停止工作", 'const controller = new AbortController();\nlet working = true;\nconst task = new Promise(resolve => {\n  const timer = setTimeout(() => { working = false; resolve("完成"); }, 80);\n  controller.signal.addEventListener("abort", () => {\n    clearTimeout(timer); working = false; resolve("已响应取消");\n  }, { once: true });\n});\ncontroller.abort();\nconsole.log(await task, "仍在工作:", working);',
+], ["停止等待与停止工作", null /* code: course/browser-demos/ */,
 "应看到已响应取消和 false。删去监听器后再比较：abort 本身不会替你清理任意任务。", "观察清理 timer 的代码实际位于哪里。"],
 ["为什么 Promise.race 超时后，模型任务还可能继续？画出取消信号的完整路径。",
 "旧请求 A 比新请求 B 更晚返回，UI 被旧内容覆盖，分别从请求标识和取消角度修复。",
@@ -18,7 +18,7 @@ L("01",3,"流式事件与 React 状态", "把碎片化网络字节，变成可�
 ["区分字节、消息与任务事件", "流式传输一次 read 得到的 chunk 不是完整业务事件：一个事件可能被拆开，多个事件也可能合并到一个 chunk。UTF-8 字符也可能跨 chunk，要使用流式解码器并缓存未完成的消息。SSE 的空行分隔与字段语法需按协议解析；课堂事件列表不是网络解析器。"],
 ["设计可验证的 UI 状态机", "从 idle 到 running，再到 succeeded、failed 或 cancelled，终态之后拒绝旧 delta。连接还开着不等于任务还执行，拿到部分文字也不等于完整结果可提交。用 requestId / runId 关联事件；重连或重放还需 eventId、去重和恢复约定。不要用一个 loading 布尔值表示所有状态。"],
 ["选择传输与处理失败", "原生 EventSource 的用法与 fetch 流式读取不同；需要 POST 请求体或特定头时，应依据接口契约选传输。HTTP 头写出前可以返回错误状态；写出后一般要用协议内 error 事件和日志说明，不能假装重新发送一份 JSON 500。取消按钮还要接上服务端取消路径。"]
-], ["终态之后的文字能进来吗？",'let state = "running", text = "";\nfor (const event of [{type:"delta",text:"订单"}, {type:"cancelled"}, {type:"delta",text:"旧结果"}]) {\n  if (state !== "running") { console.log("忽略晚到事件", event.type); continue; }\n  if (event.type === "delta") text += event.text;\n  else state = event.type;\n}\nconsole.log({state, text});',
+], ["终态之后的文字能进来吗？",null /* code: course/browser-demos/ */,
 "取消后的 delta 被忽略，text 只有订单。这只是 reducer 示例，未验证真实 SSE、断网和重连。","先检查是否处于终态，再消费事件。"],
 ["为什么不能对每个 reader.read() 的结果直接 JSON.parse？给一个拆包反例。",
 "一个失败发生在响应头发出之前，另一个发生在 delta 之后，错误展示与服务返回有何差别？",
@@ -32,7 +32,7 @@ L("01",4,"验证证据与第一阶段交卷", "让“我跑过了”变成别人
 ["把主张与证据一一对应", "“接口可靠”过于宽泛。把它拆成非法输入被拒绝、非法输出被识别、超时不悬挂、取消传递、终态正确等主张，每条写出输入、预期、实际结果、命令和 commit。截图只能证明截图出现的状态，不能替代服务日志、断言或源码追踪。"],
 ["用失败路径证明你读懂代码", "先运行一次你知道会失败的案例，解释失败发生在哪个边界，再做最小修复并跑相关回归。如果修复只是把 expected 改成 actual，必须证明原来的业务约定确实需要修改。使用 AI 后仍需说明哪一段由你判断、哪一段由 AI 生成、你检查了哪些假设。"],
 ["形成可审阅的提交", "提交 README、数据流图、契约、运行命令、失败复盘、AI 协作记录和未验证项。Mock 与真实模型分开列；没有授权 Key 时可以交离线阶段，但真实接入待补。公开自测满分不替代阶段项目和答辩，本课不预先暴露正式变式题。"]
-], ["证据矩阵缺了什么？",'const evidence = [\n {claim:"输入校验", expected:400, actual:400, environment:"local"},\n {claim:"模型准确率", expected:"有标注评测集", actual:null, environment:"mock"}\n];\nfor (const item of evidence) console.log(item.claim, item.actual === item.expected ? "有对应观察" : "证据不足");',
+], ["证据矩阵缺了什么？",null /* code: course/browser-demos/ */,
 "第二条证据不足。第一条也只证明这一条本地案例，不代表所有输入。","检查证据支持的范围和环境。"],
 ["把“我的 Agent 很稳定”改写成至少三条可验证主张。",
 "CI 通过但全部是 Mock；写一句准确的项目能力描述和一句不应出现在简历里的描述。",
@@ -46,7 +46,7 @@ L("01",5,"模型基础：Token、上下文与推理边界", "为工程取舍建�
 ["理解生成与训练的区别", "语言模型将文本表示为 token，并在上下文条件下产生后续 token；常见 Transformer 架构利用注意力整合位置之间的信息。它不会因为输出语气自信就拥有事实依据。预训练学习广泛统计规律，后训练调整任务与指令行为，推理则使用已有权重处理这次输入；一次聊天不会自动更新模型权重。"],
 ["管理上下文而不是无限追加", "上下文窗口是一次请求可处理信息的容量约束，不能用字符数精确等同 token 数；工具描述、历史、检索片段和输出预算都要考虑。长对话需要选择、摘要或外部状态，但摘要可能丢失否定、权限和关键事实。把可靠业务状态存入数据库，不能只保留在自然语言历史里。"],
 ["选择改进手段并做对照", "采样设置影响输出分布，低 temperature 不构成业务正确或跨版本完全复现保证。RAG 补充可更新的外部证据，微调调整行为或特定分布，二者都需要评测；不要把微调当作任意最新知识库。比较模型时固定任务集、Prompt 和规则，记录质量、延迟、上下文及实际费用来源，不给模型排行榜背书。"]
-], ["上下文预算是怎样超掉的？",'const budget = 12000;\nconst usage = {system:1000, tools:1800, history:5000, evidence:2800, outputReserve:2000};\nconst planned = Object.values(usage).reduce((a,b) => a+b,0);\nconsole.log({planned,budget,excess:Math.max(0,planned-budget)});\nconsole.log("数值是假设的 token 计数，不是分词器结果");',
+], ["上下文预算是怎样超掉的？",null /* code: course/browser-demos/ */,
 "计划总量为 12600，超出 600；真实计数与限制必须依据实际模型协议。","输出预留也会占容量规划；不能把字符数冒充计费 token。"],
 ["用自己的话区分训练、推理、RAG 和微调，分别给出工单系统中的适用问题。",
 "把历史压缩成摘要后漏掉“不能外发”，为什么这是工程问题？你会把哪些状态移出 Prompt？",
@@ -60,7 +60,7 @@ L("01",6,"Python 后端桥接：读懂服务边界", "把已有 TypeScript 经�
 ["对照两种语言的边界", "重点迁移 dict/list、函数与异常、类型提示、包与虚拟环境。Python 类型提示本身也不是所有外部 JSON 的运行时校验器。读取接口时先找路由、请求模型、依赖与返回契约，再读实现。不要因为类型注解看起来正确，就跳过真实数据验证。"],
 ["辨认异步与阻塞操作", "async 是协作式并发的接口表达，不会把任意阻塞 I/O 或 CPU 计算自动变快。阅读 FastAPI 文档了解普通 def 与 async def 的执行方式，并检查所用数据库/HTTP 库是否支持异步。同步阻塞操作放错位置会影响同一事件循环里的其他任务，需按库和工作负载处理。"],
 ["做一条可验证的最小迁移", "迁移目标是保留契约、错误码和取消语义，而不是逐行翻译语法。先在本机虚拟环境中实现 health 与一个校验接口，再让 React 调用。安装版本需锁定并写可复现步骤。网页实验仅演示队列顺序；Python 实际服务必须在本地环境单独运行和验证。"]
-], ["await 表达的是等待点",'const events = [];\nasync function handle(name) {\n  events.push(name + ":start");\n  await Promise.resolve();\n  events.push(name + ":resume");\n}\nawait Promise.all([handle("A"),handle("B")]);\nconsole.log(events);',
+], ["await 表达的是等待点",null /* code: course/browser-demos/ */,
 "先出现两个 start，再出现两个 resume；这不是 Python 运行，也没有 CPU 并行。","区分任务可交错推进和同时使用多个 CPU 核心。"],
 ["找到一份 Python 路由代码时，你会先追踪哪四个边界？与 TS 服务如何对应？",
 "如果 async def 内调用阻塞 HTTP 客户端，可能出现什么现象？怎样用并发请求验证？",

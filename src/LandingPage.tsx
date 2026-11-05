@@ -11,7 +11,7 @@ export function LandingPage() {
   const [prepared, setPrepared] = useState<string[]>([]);
   const [avatarFailed, setAvatarFailed] = useState(false);
   const { stats, stages } = courseOverview;
-  const remaining = foundations.filter(item => !prepared.includes(item.id));
+  const remaining = foundations.filter(item => item.id !== 'tools' && !prepared.includes(item.id));
   const togglePrepared = (id: string) => setPrepared(current => current.includes(id) ? current.filter(item => item !== id) : [...current, id]);
   return (
     <div className="landing">
@@ -40,7 +40,7 @@ export function LandingPage() {
             <h1 id="home-title">从 AI Coding，<br />走向 <em>AI 应用工程。</em></h1>
             <p className="hero-description">把会用 AI 写代码，变成能设计、能解释、能验证的工程能力。用一个持续演进的项目，建立你的 AI 应用知识体系。</p>
             <div className="hero-cta"><a className="home-button primary" href={firstLesson}>开始第一课 <Icon name="arrow" /></a><a className="hero-secondary" href="#prerequisites">先看看适不适合我 <span aria-hidden="true">↓</span></a></div>
-            <p className="hero-footnote">允许 AI Coding <span>·</span> 按能力推进 <span>·</span> 浏览器实验无需 API Key</p>
+            <p className="hero-footnote">网站内直接学 <span>·</span> 无需启动项目 <span>·</span> 无需 API Key</p>
             <a className="resume-learning" href="/learn.html">已有学习记录？继续学习 <span aria-hidden="true">↗</span></a>
           </div>
           <div className="hero-classroom-preview" aria-label="第一课教学示意：HTTP 200 不代表业务正确">
@@ -60,7 +60,7 @@ export function LandingPage() {
         <div className="course-stats home-container" aria-label="课程内容规模">
           <div><strong>{stats.stages}<small>个</small></strong><span>递进阶段</span></div>
           <div><strong>{stats.lessons}<small>课</small></strong><span>系统讲义与速记</span></div>
-          <div><strong>{stats.experiments}<small>个</small></strong><span>可运行机制实验</span></div>
+          <div><strong>{stats.experiments}<small>个</small></strong><span>网页内可运行实验</span></div>
           <div><strong>{stats.quizzes}<small>道</small></strong><span>公开自测与解析</span></div>
         </div>
 
@@ -86,7 +86,7 @@ export function LandingPage() {
         <section className="prerequisites-section" id="prerequisites" aria-labelledby="prerequisites-title"><div className="home-container home-section">
           <div className="section-editorial"><div><p className="home-eyebrow">BEFORE YOU START</p><h2 id="prerequisites-title">不必先懂 AI，<br />带上这些基础就好。</h2></div><p>勾选已经熟悉的内容，做一次学习准备自查。不熟悉的基础可以先补一遍，再进入项目练习。</p></div>
           <div className="prerequisites-layout"><div className="foundation-list">{foundations.map((item,index) => <label className={'foundation-item' + (prepared.includes(item.id) ? ' checked' : '')} key={item.id}><input type="checkbox" checked={prepared.includes(item.id)} onChange={() => togglePrepared(item.id)} /><span className="foundation-number">0{index+1}</span><span className="foundation-copy"><b>{item.title}</b><span>{item.detail}</span></span><span className="foundation-check" aria-hidden="true"><Icon name="check" /></span></label>)}
-          <div className="readiness-result" role="status"><b>准备自查 {prepared.length} / {foundations.length}</b><p>{prepared.length === foundations.length ? '基础准备已确认，可以从第一课开始。' : prepared.length === 0 ? '勾选熟悉的基础，看看从哪里开始。' : '还可以先补：' + remaining.map(item => item.title).join('、') + '。'}</p>{prepared.length > 0 && remaining.length > 0 && <small>{remaining[0]?.review}</small>}</div></div>
+          <div className="readiness-result" role="status"><b>准备自查 {prepared.length} / {foundations.length}</b><p>{remaining.length === 0 ? '网页学习基础已确认，可以从第一课开始；本地工具可在进阶时准备。' : prepared.length === 0 ? '勾选熟悉的基础，看看从哪里开始。' : '还可以先补：' + remaining.map(item => item.title).join('、') + '。'}</p>{prepared.length > 0 && remaining.length > 0 && <small>{remaining[0]?.review}</small>}</div></div>
           <aside className="readiness-aside"><div><span className="aside-label">可以在课程里学</span><h3>这些，不用提前精通。</h3><ul><li>模型机制、Token 与上下文</li><li>Prompt、工具调用、MCP 与 RAG</li><li>Python 后端桥接、SQL 与任务队列</li><li>评测、Trace、部署与工程取舍</li></ul></div><div className="environment-note"><span className="aside-label">环境准备</span><p>先学讲义和浏览器实验，只需现代浏览器。做本地项目时，再准备 Git、编辑器和 Node.js 24。</p><a href={firstLesson}>从第一课开始 <Icon name="arrow" /></a></div></aside></div>
         </div></section>
 

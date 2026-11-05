@@ -1,36 +1,89 @@
 import assert from "node:assert/strict";
-function cosine(a,b) {
-  if (a.length !== b.length || !a.length || [...a,...b].some(x => !Number.isFinite(x)))
+
+// 本课向量来自题目，不是 embedding 模型。先读公式，再读排名与融合。
+function cosineSimilarity(leftVector, rightVector) {
+  const sameDimension =
+    leftVector.length > 0 && leftVector.length === rightVector.length;
+  const allFinite = [...leftVector, ...rightVector].every(Number.isFinite);
+  if (!sameDimension || !allFinite) {
     throw new Error("INVALID_VECTOR");
-  const norm = v => Math.sqrt(v.reduce((s,x) => s+x*x,0));
-  if (!norm(a) || !norm(b)) throw new Error("ZERO_VECTOR");
-  return a.reduce((s,x,i) => s+x*b[i],0)/(norm(a)*norm(b));
-}
-const docs = [
-  {id:"refund",words:["refund","arrival"],vector:[1,0]},
-  {id:"error",words:["E_CONN_RESET","retry"],vector:[0,1]},
-  {id:"shipping",words:["shipping","arrival"],vector:[0.8,0.2]}
-];
-const terms = ["refund","arrival"];
-const lexical = docs.map(d => ({
-  id:d.id,score:terms.filter(t => d.words.includes(t)).length
-})).filter(d => d.score>0).sort((a,b) => b.score-a.score || a.id.localeCompare(b.id)).map(d => d.id);
-const vector = docs.map(d => ({id:d.id,score:cosine([1,0],d.vector)}))
-  .sort((a,b) => b.score-a.score || a.id.localeCompare(b.id)).map(d => d.id);
-function rrf(rankings,k=60) {
-  const scores = new Map();
-  for (const ranking of rankings) {
-    if (new Set(ranking).size !== ranking.length) throw new Error("DUPLICATE_RANK");
-    ranking.forEach((id,i) => scores.set(id,(scores.get(id)||0)+1/(k+i+1)));
   }
-  return [...scores].sort((a,b) => b[1]-a[1] || a[0].localeCompare(b[0])).map(([id]) => id);
+
+  let dotProduct = 0;
+  let leftSquaredLength = 0;
+  let rightSquaredLength = 0;
+  for (let index = 0; index < leftVector.length; index += 1) {
+    dotProduct += leftVector[index] * rightVector[index];
+    leftSquaredLength += leftVector[index] ** 2;
+    rightSquaredLength += rightVector[index] ** 2;
+  }
+  const denominator = Math.sqrt(leftSquaredLength) * Math.sqrt(rightSquaredLength);
+  if (denominator === 0) {
+    throw new Error("ZERO_VECTOR");
+  }
+  return dotProduct / denominator;
 }
-assert.equal(cosine([1,0],[1,0]),1);
-assert.equal(cosine([1,0],[0,1]),0);
-assert.throws(() => cosine([0,0],[1,0]),/ZERO/);
-assert.throws(() => cosine([1],[1,2]),/INVALID/);
-assert.deepEqual(lexical,["refund","shipping"]);
-assert.deepEqual(rrf([lexical,vector]),["refund","shipping","error"]);
-assert.deepEqual(rrf([["a","b"],["b","a"]]),["a","b"]);
+
+const fixtureDocuments = [
+  { id: "refund", words: ["refund", "arrival"], vector: [1, 0] },
+  { id: "error", words: ["E_CONN_RESET", "retry"], vector: [0, 1] },
+  { id: "shipping", words: ["shipping", "arrival"], vector: [0.8, 0.2] },
+];
+
+function sortByScore(scoredDocuments) {
+  return scoredDocuments.sort((left, right) => {
+    return right.score - left.score || left.id.localeCompare(right.id);
+  });
+}
+
+const queryTerms = ["refund", "arrival"];
+const keywordScores = fixtureDocuments.map((document) => ({
+  id: document.id,
+  score: queryTerms.filter((term) => document.words.includes(term)).length,
+}));
+const lexicalRanking = sortByScore(
+  keywordScores.filter((document) => document.score > 0),
+).map((document) => document.id);
+
+const vectorScores = fixtureDocuments.map((document) => ({
+  id: document.id,
+  score: cosineSimilarity([1, 0], document.vector),
+}));
+const vectorRanking = sortByScore(vectorScores).map((document) => document.id);
+
+// 接收排名而非原始分数，每一路同一文档只能贡献一次。
+function reciprocalRankFusion(rankings, rankConstant = 60) {
+  const fusedScores = new Map();
+  for (const ranking of rankings) {
+    if (new Set(ranking).size !== ranking.length) {
+      throw new Error("DUPLICATE_RANK");
+    }
+    ranking.forEach((documentId, zeroBasedIndex) => {
+      const rank = zeroBasedIndex + 1;
+      const previousScore = fusedScores.get(documentId) ?? 0;
+      fusedScores.set(documentId, previousScore + 1 / (rankConstant + rank));
+    });
+  }
+  const scoredDocuments = [...fusedScores].map(([id, score]) => ({ id, score }));
+  return sortByScore(scoredDocuments).map((document) => document.id);
+}
+
+assert.equal(cosineSimilarity([1, 0], [1, 0]), 1);
+assert.equal(cosineSimilarity([1, 0], [0, 1]), 0);
+assert.throws(() => cosineSimilarity([0, 0], [1, 0]), /ZERO/);
+assert.throws(() => cosineSimilarity([1], [1, 2]), /INVALID/);
+assert.deepEqual(lexicalRanking, ["refund", "shipping"]);
+assert.deepEqual(reciprocalRankFusion([lexicalRanking, vectorRanking]), [
+  "refund",
+  "shipping",
+  "error",
+]);
+assert.deepEqual(
+  reciprocalRankFusion([
+    ["a", "b"],
+    ["b", "a"],
+  ]),
+  ["a", "b"],
+);
 console.log("cosine checks + lexical ranking + reciprocal-rank fusion: passed");
 console.log("top=refund; vectors synthetic; no trained embedding model executed");

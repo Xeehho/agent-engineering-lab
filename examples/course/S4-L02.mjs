@@ -1,12 +1,45 @@
 // S4-L02 local teaching demo. No model API calls; not a complete homework solution.
+import assert from "node:assert/strict";
 {
-console.log("实验 1：重复交付如何去重");
-const processed = new Set();
-let writes = 0;
-for (const message of [{intent:"i-1"},{intent:"i-1"},{intent:"i-2"}]) {
-  if (processed.has(message.intent)) {console.log("重复");continue;}
-  processed.add(message.intent); writes++;
+console.log("实验 1：拒绝过期工作者");
+// 逻辑时钟 + 内存状态，观察 fencing；不是分布式队列或数据库原子性测试。
+let job = { state: "queued", owner: null, token: 0, leaseUntil: 0 };
+function claimJob(workerId, now) {
+  const available =
+    job.state === "queued" || (job.state === "running" && job.leaseUntil <= now);
+  if (!available) {
+    return null;
+  }
+  job = {
+    ...job,
+    state: "running",
+    owner: workerId,
+    token: job.token + 1,
+    leaseUntil: now + 10,
+  };
+  return job.token;
 }
-console.log({writes});
-console.log("示例没有数据库原子性，也不证明故障恢复");
+function completeJob(workerId, token, now) {
+  if (
+    job.state !== "running" ||
+    job.owner !== workerId ||
+    job.token !== token ||
+    job.leaseUntil <= now
+  ) {
+    return false;
+  }
+  job = { ...job, state: "succeeded" };
+  return true;
+}
+const oldToken = claimJob("W1", 0);
+assert.equal(oldToken, 1);
+assert.equal(claimJob("W2", 5), null);
+const newToken = claimJob("W2", 11);
+assert.equal(newToken, 2);
+assert.equal(completeJob("W1", oldToken, 12), false);
+assert.equal(completeJob("W2", newToken, 12), true);
+assert.equal(claimJob("W3", 100), null);
+console.log("W1租约到10，W2在11取得token=2；旧token=1被拒绝。");
+console.log(job);
+
 }

@@ -30,6 +30,22 @@
     byId("toast").hidden = false;
     toastTimer = setTimeout(() => { byId("toast").hidden = true; }, 4200);
   }
+  document.addEventListener("click", async event => {
+    const button = event.target.closest?.(".copy-code");
+    if (!button) return;
+    const code = button.closest(".code-block").querySelector("code");
+    const source = Array.from(code.querySelectorAll(".code-line"),line => line.textContent).join("\n");
+    try {
+      await navigator.clipboard.writeText(source);
+      toast("代码已复制。");
+    } catch {
+      const range = document.createRange();
+      range.selectNodeContents(code);
+      const selection = window.getSelection();
+      selection.removeAllRanges(); selection.addRange(range);
+      toast("已选中代码，可按 Ctrl / ⌘ + C 复制。");
+    }
+  });
   try {
     const saved = localStorage.getItem(storageKey) || localStorage.getItem("agent-engineering-lab:classroom:S1-L01:v1");
     if (saved) book = normalizeBook(JSON.parse(saved), catalog);
@@ -103,7 +119,7 @@
     byId("lesson-duration").textContent = "◷ " + current.duration;
     byId("lab-meta").textContent = experiments.length + " 个实验";
     byId("practice-meta").textContent = checkpoints.length + " 道随堂题";
-    byId("lab-description").textContent = experiments.length + " 个可编辑 JavaScript 实验。只教机制，不代替真实服务、协议、Python 或生产验证。";
+    byId("lab-description").textContent = "直接在网站里预测、修改、运行和观察。每个实验标明实际执行与模拟的范围，无需启动项目。";
     byId("quiz-description").textContent = quiz.length + " 道公开单选题。提交后显示解析，可修改后重测。";
     byId("progress-lab").textContent = "运行 " + experiments.length + " 个实验";
     byId("progress-practice").textContent = "填写 " + checkpoints.length + " 道随堂题";
@@ -113,12 +129,14 @@
     byId("lecture-content").innerHTML = current.lectureHtml;
     byId("notes-content").innerHTML = current.notesHtml;
     byId("lecture-toc").innerHTML = '<span class="eyebrow">本课目录</span>' + current.tocHtml;
-    byId("mission-text").textContent = current.project;
+    byId("mission-title").textContent = "本课网页任务";
+    byId("mission-text").textContent = current.experiments[0].challenge || "预测实验输出，再修改一个条件，用自己的话解释检查通过和未证明的事项。";
     byId("tutorial-files").replaceChildren();
+    byId("tutorial-files").open = false;
     byId("tutorial-files").hidden = !current.practicalFiles?.length;
     if (current.practicalFiles?.length) {
-      byId("tutorial-files").append(textElement("h3","本课本地实操文件"),
-        textElement("p","文件已随仓库提供，也可在这里单独下载。保存到 examples/tutorials/，按讲义命令运行；Node/Python 等本地能力不在网页 Worker 内执行。"));
+      byId("tutorial-files").append(textElement("summary","选做：下载本地与真实组件实操"),
+        textElement("p","网页主线不需要这些文件。想验证真实 Node/Python、SQLite 或 MCP 时，可下载到仓库 examples/tutorials/，按讲义命令运行。"));
       for (const file of current.practicalFiles) {
         const button = textElement("button","下载 " + file.name,"button small");
         button.type="button";
@@ -218,6 +236,7 @@
       const card = textElement("article", undefined, "experiment");
       card.append(textElement("span", item.label, "eyebrow green"), textElement("h3", item.title),
         textElement("p", item.intro));
+      if (item.challenge) card.append(textElement("p","这次只改一件事：" + item.challenge,"browser-challenge"));
       textareaField(card, "predict-" + item.id, "运行前预测", state.predictions[item.id],
         "先写下你预期的输出，再用运行结果验证。", 6000,
         value => { state.predictions[item.id] = value; }, "prediction");
@@ -254,7 +273,7 @@
       const output = textElement("pre", "等待运行。先写预测，再点击运行。", "output");
       output.id = "output-" + item.id; output.setAttribute("role", "log");
       output.setAttribute("aria-label", item.title + " 运行输出"); output.setAttribute("aria-live", "polite");
-      shell.append(header, editor, toolbar, textElement("div", "CONSOLE / 本地实际运行", "output-label"), output);
+      shell.append(header, editor, toolbar, textElement("div", "CONSOLE / 浏览器实际运行", "output-label"), output);
       card.append(shell);
       addHint(card, item.hint);
       card.append(textElement("div", "观察方向：" + item.expected, "expected"));
@@ -299,7 +318,7 @@
           output.textContent += String(message.text).slice(0, 4000);
           finish("有错误 · 可修改后再试", true);
         }
-        if (message.type === "done") finish("执行结束", false, true);
+        if (message.type === "done") finish(message.checks ? "执行结束 · " + message.checks + " 项检查通过" : "执行结束", false, true);
       };
       worker.onerror = event => {
         event.preventDefault();

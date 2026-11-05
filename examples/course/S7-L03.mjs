@@ -1,11 +1,40 @@
 // S7-L03 local teaching demo. No model API calls; not a complete homework solution.
+import assert from "node:assert/strict";
 {
-console.log("实验 1：队列也需要容量上限");
-const max=2;
-let queued=0;
-for (const id of [1,2,3,4]) {
- if (queued>=max) console.log(id,"拒绝/提示稍后重试");
- else {queued++;console.log(id,"已入队");}
+console.log("实验 1：明确区分降级、等待与拒绝");
+// 用纯函数验证故障策略，不启动HTTP服务，不发送请求。
+function chooseRecovery(status) {
+  if (status === 503) {
+    return { action: "retrieval-only", degraded: true };
+  }
+  if (status === 429) {
+    return { action: "wait", degraded: false };
+  }
+  if (status === 403) {
+    return { action: "reject", degraded: false };
+  }
+  return { action: "fail", degraded: false };
 }
-console.log("内存示例，不是分布式限流");
+const requestCounts = new Map();
+function allowRequest(subject, limit) {
+  const count = requestCounts.get(subject) ?? 0;
+  if (count >= limit) {
+    return false;
+  }
+  requestCounts.set(subject, count + 1);
+  return true;
+}
+let activeConfig = Object.freeze({ version: "v2", mode: "primary" });
+const previousConfig = Object.freeze({ version: "v1", mode: "retrieval-only" });
+assert.equal(chooseRecovery(503).degraded, true);
+assert.equal(chooseRecovery(403).action, "reject");
+assert.equal(chooseRecovery(429).action, "wait");
+assert.equal(allowRequest("alice", 2), true);
+assert.equal(allowRequest("alice", 2), true);
+assert.equal(allowRequest("alice", 2), false);
+activeConfig = previousConfig;
+assert.equal(activeConfig.mode, "retrieval-only");
+console.log("503降级、403拒绝、429等待；第三次请求限流；配置切回v1。");
+console.log("限流是内存计数，真实发布和回滚见选做实操。");
+
 }

@@ -1,13 +1,13 @@
 # 详细教程与本地实操
 
-本版保留 S1-L01 原讲义，补写其余30课。catalog.mjs 注册教材状态；每课包含场景、机制、步骤、可运行代码、预期输出、故障练习、项目迁移和速记。阅读与公开例题不代替个人项目和考试。
+本轮复核31课。默认直接在网站内阅读、运行实验、作答、自测和记笔记，不需要clone、安装依赖、启动项目或提供Key。真实组件与完整作品保留为进阶路径。
 
-Node.js 24：先 npm ci，再 npm run tutorial -- S3-L01（替换为目标课号）。Windows 可使用 powershell -NoProfile -File scripts/run.ps1 tutorial S3-L01。
+讲义写问题与机制；walkthrough/写术语、输入输出、函数拆解、执行追踪和有提示的练习；code/存放可读的进阶源码。网页源码在../browser-demos/，任务与范围在../browser-guidance.mjs。catalog.mjs注册材料，不证明个人掌握。
 
-Python 课先创建 .venv，使用该解释器 pip install -r examples/tutorial-requirements.txt。CI 使用 Python 3.12；可通过 COURSE_PYTHON 指定解释器。
+选做本地实操：Node24下先npm ci，再npm run tutorial -- S3-L01。Windows可使用scripts/run.ps1 tutorial S3-L01。Python课另建.venv并安装examples/tutorial-requirements.txt，CI固定Python3.12。
 
-Markdown 是源，npm run classroom:build 提取 examples/tutorials/ 文件并同步课程讲义、速记与 public/learn.html。课堂支持逐课下载本地文件；浏览器 Worker 只执行原有 JavaScript 机制实验，不安装 MCP 或 Python 依赖。
+维护时先npm run teaching:format，再classroom:build。构建展开include代码引用与walkthrough，生成完整Markdown讲义、速记、examples/tutorials/和单文件课堂；不要编辑生成副本。网页本地代码默认折叠，带行号、复制与选做下载。
 
-验证：2026-11-05，npm run check 本地通过50项检查（含全部30份新增实操、提取一致性与原有课堂/骨架检查）、TypeScript 和 Vite 构建。真实 MCP 子进程、SQLite、FastAPI ASGI、回环 HTTP 均按对应课程运行。
+验证记录见[课堂验证](../../classroom/VERIFICATION.md)与[本轮修订](../REVISION-2026-11-05.md)。自动检查执行全部网页代码与30份进阶实操，并核对生成同步、目录锚点、错误反馈和进度隔离。实际浏览器另验网页实验与阅读流程，代码通过不替代教学审阅。
 
-边界：embedding/reranker/模型裁判使用合成夹具；未调用付费模型，未做云部署或生产压测。浏览器外观与交互回归尚待本版复核。脚本通过不证明个人已掌握或实际系统生产可用。
+边界：网页的Python、SQL与MCP部分标明推演范围，真实组件在进阶实操验证。embedding/reranker/模型裁判仍使用合成夹具；没有付费模型调用、云部署或生产压测结论。个人作业和正式考试须真实提交。

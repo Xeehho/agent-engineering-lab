@@ -5,13 +5,14 @@ import { renderMarkdown, escapeHtml } from "../classroom/markdown.mjs";
 import { lessons, stages } from "../course/curriculum.mjs";
 import { courseMaterials } from "./course-materials.mjs";
 import { parseTutorial } from "./tutorial-materials.mjs";
+import { loadTutorial } from "./load-tutorial.mjs";
 
 const root = fileURLToPath(new URL("../", import.meta.url));
 const read = path => readFile(resolve(root, path), "utf8");
 const generated = courseMaterials(lessons, stages);
 const practicalFiles = new Map();
 for (const item of lessons.filter(item => item.tutorial)) {
-  const detailed = await read(item.tutorial.path);
+  const detailed = await loadTutorial(item.tutorial, item.id);
   const reference = item.sources.map(source=>"- ["+source[0]+"]("+source[1]+")").join("\n");
   generated.set(item.lecturePath, detailed.trimEnd() + "\n\n## 原阶段项目约定\n\n" + item.project + "\n\n## 补充官方来源\n\n" + reference + "\n");
   const files = parseTutorial(detailed, item.id);
@@ -67,12 +68,15 @@ for (const item of lessons) {
   const withoutTitle = text => text.replace(/^# [^\n]*\n/,"").trim();
   const lectureBody = withoutTitle(lecture);
   const notesBody = withoutTitle(notes);
-  const headings = [...lectureBody.matchAll(/^## (.+)$/gm)].map(match => match[1]);
+  // renderMarkdown 为 h2/h3 都分配编号；目录只展示 h2，但使用相同的实际编号。
+  const headings = [...lectureBody.matchAll(/^(#{2,3}) (.+)$/gm)]
+    .map((match,index) => ({level:match[1].length,title:match[2],index}))
+    .filter(heading => heading.level === 2);
   catalog.push({ ...item,
     practicalFiles: practicalFiles.get(item.id) || [],
     lectureHtml: renderMarkdown(lectureBody, item.lecturePath),
     notesHtml: renderMarkdown(notesBody, item.notesPath).replaceAll('id="section-', 'id="note-section-'),
-    tocHtml: headings.map((title, index) => '<a href="#section-' + index + '">' + escapeHtml(title) + "</a>").join("\n"),
+    tocHtml: headings.map(heading => '<a href="#section-' + heading.index + '">' + escapeHtml(heading.title) + "</a>").join("\n"),
   });
 }
 const stageNav = stages.map(stage => '<details class="stage-group"' + (stage.id === "01" ? " open" : "") +

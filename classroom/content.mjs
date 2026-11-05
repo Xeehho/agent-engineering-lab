@@ -1,30 +1,31 @@
+import { readFileSync } from "node:fs";
 // Public, low-stakes classroom material. Formal exam variants are generated after submission.
 export const experiments = [
   {
     id: "assertion", title: "类型写对了，值就对了吗？", label: "01 / 类型与运行时",
     intro: "先预测 typeof 的输出，再运行。这里是去除 TypeScript 类型后的等价 JavaScript；浏览器不会执行 as 语法。",
-    code: 'const reading = JSON.parse(\'{"value":"8"}\');\nconsole.log("实际类型：", typeof reading.value);\ntry {\n  console.log(reading.value.toFixed(1));\n} catch (error) {\n  console.log(error.name + ": " + error.message);\n}',
+    code: readFileSync(new URL("../course/browser-demos/S1-L01-assertion.mjs", import.meta.url), "utf8"),
     expected: "观察 string 和捕获的 TypeError。试着把 JSON 中的字符串改成数字，再运行比较。",
     hint: "双引号里的 8 是字符串。类型声明不负责转换它。",
   },
   {
     id: "json", title: "合法 JSON，一定是业务对象吗？", label: "02 / 解析与契约",
     intro: "这些文本都能被 JSON.parse 解析。记录每个值的类型、是否为数组，以及它是否具有完整的工单字段。",
-    code: 'for (const text of [\'null\', \'[]\', \'"done"\', \'42\', \'{"category":"bug"}\']) {\n  const value = JSON.parse(text);\n  console.log(text, "=>", typeof value, "数组:", Array.isArray(value));\n}',
+    code: readFileSync(new URL("../course/browser-demos/S1-L01-json.mjs", import.meta.url), "utf8"),
     expected: "注意 typeof null 的历史行为。typeof 为 object 仍不能证明是完整业务对象。",
     hint: "分别检查 null、数组、缺少字段的对象；不要只检查 typeof。",
   },
   {
     id: "http", title: "HTTP 503，会直接进入 catch 吗？", label: "03 / 调用边界",
     intro: "这是本地构造的 Response，不是一次远程 Fetch。用它观察 status 与 ok，真实 Fetch 的行为参见讲义中的 MDN 来源。",
-    code: 'const response = new Response(\'{"error":"unavailable"}\', {\n  status: 503,\n  headers: { "Content-Type": "application/json" }\n});\nconsole.log("status:", response.status);\nconsole.log("ok:", response.ok);\nconsole.log("body:", await response.json());',
+    code: readFileSync(new URL("../course/browser-demos/S1-L01-http.mjs", import.meta.url), "utf8"),
     expected: "503 对应 ok: false。把 status 改为 200，再比较；这仍不能证明业务内容正确。",
     hint: "Response.ok 只根据 200–299 状态范围判断。",
   },
   {
     id: "mock", title: "固定 Mock，到底证明了什么？", label: "04 / 证据范围",
     intro: "这个 Mock 无论输入什么都返回同一结果。尝试更换输入，再描述它能验证和不能验证的事情。",
-    code: 'function mockProvider(input) {\n  return { category: "bug", priority: "medium",\n    summary: "订单页白屏", missingInformation: [] };\n}\nfor (const input of ["订单页白屏", "请增加深色模式"]) {\n  console.log("输入：", input);\n  console.log("输出：", mockProvider(input));\n}',
+    code: readFileSync(new URL("../course/browser-demos/S1-L01-mock.mjs", import.meta.url), "utf8"),
     expected: "能观察到固定返回与处理路径；不能据此评价真实模型的理解能力或分类准确率。",
     hint: "第二条输入是否被输出忠实描述？一次工程演示与模型效果证据要分开。",
   },

@@ -2,7 +2,7 @@ export function courseMaterials(lessons, stages) {
   const files = new Map();
   files.set("course/README.md", [
     "# 课堂资料目录", "",
-    lessons.length + " 课、" + stages.length + " 阶段。详细教程 " + lessons.filter(item=>item.contentLevel==="detailed").length + " 课，其余为简版待扩写。全部可阅读；材料状态与学习者掌握/考试分开。", "",
+    lessons.length + " 课、" + stages.length + " 阶段。详细教程 " + lessons.filter(item=>item.contentLevel==="detailed").length + " 课，简版 " + lessons.filter(item=>item.contentLevel==="brief").length + " 课。网站内直接阅读、实验、作答和自测，无需启动项目；材料状态与学习者掌握/考试分开。", "",
     "[互动课堂](../public/learn.html) · [知识地图](knowledge-map.md) · [阶段路线](roadmap.md) · [求职证据](../docs/career/job-readiness.md)", "",
     "## 课程目录", "", "|课号|主题|材料状态|讲义|速记|随堂题|公开自测|", "|---|---|---|---|---|---|---|",
     ...lessons.map(item => "|" + item.id + "|" + item.title + "|" + (item.contentLevel==="detailed"?"详细教程":"简版待扩写") + "|[阅读](" + item.lecturePath.replace(/^course\//,"") +
@@ -10,9 +10,9 @@ export function courseMaterials(lessons, stages) {
       ")|[自测](stage-" + item.stage + "/exercises/" + item.id + "-self-check.md)|"),
     "", "## 项目与考核", "",
     ...stages.map(stage => "- [" + stage.id + " " + stage.title + "](stage-" + stage.id + "/plan.md)： " + stage.deliverable),
-    "", "每课的可运行 JavaScript 机制示例见 examples/course/ 的同名 .mjs。Python、真实数据库、MCP、真实模型和部署任务需学习者按要求独立实现并提交实测；网页模拟不替代实际系统。", "",
+    "", "网页实验源码在 course/browser-demos/，任务和边界在 browser-guidance.mjs；生成副本见 examples/course/。网站内即可完成核心学习。真实 Python、SQLite、MCP 等选做实操在 examples/tutorials/；完整作品与真实系统考核另交证据。", "",
     "阶段公开考试蓝图均已准备；正式概念与故障变式在交卷后生成，个人评阅和成绩不预先填写。", "",
-    "## 维护", "", "course/content/ 与 course/curriculum.mjs 是后续教材的内容源，npm run classroom:build 生成配套 Markdown、示例与单文件 HTML。第一课原有讲义和速记保留为源文件。", "",
+    "## 维护", "", "course/content/ 与 course/curriculum.mjs 提供元数据，tutorials/ 提供讲义，tutorials/code/ 提供实操，tutorials/walkthrough/ 提供函数拆解，browser-demos/ 提供网页实验。先 npm run teaching:format，再 npm run classroom:build 生成配套文件。第一课讲义和速记仍是源文件。", "",
     "[资料沉淀约定](TEACHING.md) · [贡献约定](../CONTRIBUTING.md) · [继续找老师](continue-with-teacher.md)", "",
   ].join("\n"));
   const stageById = new Map(stages.map(stage => [stage.id, stage]));
@@ -63,9 +63,10 @@ export function courseMaterials(lessons, stages) {
       ["# " + item.id + " 公开自测与解析", "", "这是公开练习，不是正式考试。HTML 默认在提交后显示解析；此文件公开保留课程内容。", "", quiz, ""].join("\n"));
     files.set("examples/course/" + item.id + ".mjs",
       "// " + item.id + " local teaching demo. No model API calls; not a complete homework solution.\n" +
+      "import assert from \"node:assert/strict\";\n" +
       item.experiments.map((demo, index) => "{\nconsole.log(" + JSON.stringify("实验 " + (index + 1) + "：" + demo.title) + ");\n" + demo.code + "\n}\n").join("\n"));
     files.set("examples/course/" + item.id + ".md", ["# " + item.id + " 实验记录指导", "",
-      "可在互动课堂运行，或在 Node 24 下运行同名 .mjs。Python、数据库、MCP、部署练习还需按项目任务独立实现并实测。", "", experimentText, ""].join("\n"));
+      "默认在互动课堂运行，assert由网页提供。也可在Node24下运行同名.mjs，文件已导入Node断言。真实Python、数据库、MCP和部署另做进阶，推演不替代实际系统。", "", experimentText, ""].join("\n"));
   }
   for (const stage of stages) {
     if (stage.id === "01") continue; // Existing first-stage assignment and public tests remain authoritative.
