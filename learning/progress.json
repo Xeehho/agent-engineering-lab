@@ -1,14 +1,14 @@
 {
   "schemaVersion": 1,
   "currentStage": "01",
-  "status": "not_started",
+  "status": "learning",
   "diagnostic": {
     "status": "not_submitted",
     "score": null
   },
   "stages": {
     "01": {
-      "status": "not_started",
+      "status": "learning",
       "assignmentCommit": null,
       "practiceResult": null,
       "providerEvidence": "mock_only",
@@ -17,6 +17,14 @@
         "score": null,
         "attempts": 0,
         "teacherReview": null
+      },
+      "lessons": {
+        "S1-L01": {
+          "status": "in_progress",
+          "notes": "course/stage-01/lessons/01-success-contracts.md",
+          "checkpoint": "not_submitted",
+          "masteryVerified": false
+        }
       }
     },
     "02": {

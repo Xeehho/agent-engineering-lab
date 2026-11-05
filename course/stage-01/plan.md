@@ -8,6 +8,8 @@
 
 先读lesson.md第1–3节和assignment.md契约。
 
+当前授课材料：[S1-L01完整讲义](lessons/01-success-contracts.md)、[随堂题](exercises/01-checkpoint.md)；先完成C1–C3，再推进本单元实现。
+
 - 完成S1-T1输入校验、S1-T2 Prompt与输出契约。
 - 为正常、缺失、非法JSON、字段错误分别写出预期，再让AI实现。
 - 画出浏览器 → API → provider → 校验 → UI的数据流。

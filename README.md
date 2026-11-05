@@ -2,10 +2,12 @@
 
 从AI Coding交付，进阶到能设计、验证、排错的AI应用工程。课程针对有前端经验、长期使用AI写代码的学习者，按能力验收推进。
 
-**当前状态：课程与工程骨架就绪，第一阶段作业待开始，尚未考试。**
+**当前状态：第一课已开讲，第一阶段作业待提交，尚未考试。**
 本仓库的Mock不会理解工单内容。绿色CI只证明骨架正常，不能证明模型效果、作业完成或考试通过。
 
 ## 从这里开始
+
+先在聊天中上课，配套资料保存在[课堂目录](course/README.md)。当前课：[完整讲义](course/stage-01/lessons/01-success-contracts.md) · [速记](course/stage-01/notes/01-quick-reference.md) · [随堂题](course/stage-01/exercises/01-checkpoint.md) · [离线实验](examples/lesson-01/README.md)。
 
 1. [起点诊断：先凭自己的理解回答](course/diagnostic.md)
 2. [第一阶段计划](course/stage-01/plan.md)

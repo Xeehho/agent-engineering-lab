@@ -1,5 +1,7 @@
 # 第一课：理解一次模型调用
 
+本文件保留第一阶段的讲义概要。当前完整课堂材料为[S1-L01：一次模型请求怎样才算成功](lessons/01-success-contracts.md)，配套[速记](notes/01-quick-reference.md)、[随堂题](exercises/01-checkpoint.md)与[离线实验](../../examples/lesson-01/README.md)。超时、取消和流式部分将在后续课展开。
+
 这份讲义给你判断框架和实验方向，核心业务实现留在作业中。
 
 ## 1. 一次请求有三层正确性

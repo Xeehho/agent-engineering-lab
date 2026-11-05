@@ -18,7 +18,8 @@
     "practice:stage1": "node --test assessments/stage-01/practice.test.ts",
     "build": "vite build",
     "check": "npm run typecheck && npm test && npm run build",
-    "doctor": "node scripts/doctor.mjs"
+    "doctor": "node scripts/doctor.mjs",
+    "lesson:01": "node examples/lesson-01/boundaries.ts"
   },
   "dependencies": {
     "react": "19.3.1",

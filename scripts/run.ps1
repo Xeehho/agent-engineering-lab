@@ -1,5 +1,5 @@
 param(
-  [ValidateSet('install', 'dev', 'check', 'doctor', 'practice:stage1')]
+  [ValidateSet('install', 'dev', 'check', 'doctor', 'practice:stage1', 'lesson:01')]
   [string]$Task = 'dev'
 )
 $ErrorActionPreference = 'Stop'
