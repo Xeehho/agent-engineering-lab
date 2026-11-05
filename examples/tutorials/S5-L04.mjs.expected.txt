@@ -1,0 +1,2 @@
+Recall@2=0.75; MRR@2=0.75; retrieval denominator=2
+abstention decisions=2/3; q2 false refusal; q3 retrieval N/A

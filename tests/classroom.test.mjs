@@ -116,7 +116,7 @@ test("all four editable demos execute the actual runner protocol", async () => {
   assert.match(output[3], /请增加深色模式[\s\S]*订单页白屏/);
 });
 
-test("all 31 lessons have distinct complete content, valid quizzes and stage coverage", () => {
+test("all 31 lesson overviews have distinct topics, valid quizzes and stage coverage", () => {
   assert.equal(lessons.length, 31);
   assert.equal(stages.length, 8);
   assert.equal(new Set(lessons.map(item => item.id)).size, lessons.length);

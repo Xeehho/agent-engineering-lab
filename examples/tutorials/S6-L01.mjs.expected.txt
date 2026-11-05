@@ -1,0 +1,2 @@
+waves=ticket+docs -> draft; cycle rejected before execution
+missing dependency and upstream failure surfaced; no model agents executed

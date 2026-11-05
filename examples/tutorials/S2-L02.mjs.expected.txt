@@ -1,0 +1,2 @@
+success=succeeded; repeat=tool_budget; oversized batch executed=0
+pre-cancel model rounds=0

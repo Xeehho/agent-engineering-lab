@@ -1,0 +1,2 @@
+supported claims=2/4; fixture cannot justify production metric
+gaps: frontend-ai=evaluation; agent-app=SQL,evaluation; jobs are synthetic

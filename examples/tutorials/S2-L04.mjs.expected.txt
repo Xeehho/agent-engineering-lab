@@ -1,0 +1,2 @@
+selected=guide,inject; stale/private/over-budget excluded
+provenance + deterministic digest passed; no model quality claim

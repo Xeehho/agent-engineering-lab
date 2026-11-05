@@ -1,0 +1,2 @@
+tenant query + scoped cache + field allowlist: passed
+model tenant rejected; permission checked before cached replay

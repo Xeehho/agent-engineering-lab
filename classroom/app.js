@@ -59,8 +59,8 @@
     for (const button of document.querySelectorAll("[data-lesson]")) {
       const item = catalog.find(item => item.id === button.dataset.lesson);
       const saved = book.lessons[item.id];
-      button.querySelector("small").textContent = item.id + " · " +
-        (saved ? summarizeProgress(saved, item.experiments, item.checkpoints, item.quiz).completed + "/4 活动" : "教材已备");
+      button.querySelector("small").textContent = item.id + " · " + (item.contentLevel==="detailed"?"详细教程":"简版待扩写") +
+        (saved ? " · " + summarizeProgress(saved, item.experiments, item.checkpoints, item.quiz).completed + "/4" : "");
     }
   }
   function selectTab(name, focus = false) {
@@ -99,6 +99,7 @@
     byId("lesson-badge").textContent = current.id + " · BUILD YOUR JUDGMENT";
     byId("lesson-title").textContent = current.title;
     byId("lesson-summary").textContent = current.summary;
+    byId("content-status").textContent = current.contentLevel==="detailed" ? "详细教程 · 含步骤、实操、排错与验收" : "简版材料 · 详细教程正在补写";
     byId("lesson-duration").textContent = "◷ " + current.duration;
     byId("lab-meta").textContent = experiments.length + " 个实验";
     byId("practice-meta").textContent = checkpoints.length + " 道随堂题";
@@ -113,6 +114,18 @@
     byId("notes-content").innerHTML = current.notesHtml;
     byId("lecture-toc").innerHTML = '<span class="eyebrow">本课目录</span>' + current.tocHtml;
     byId("mission-text").textContent = current.project;
+    byId("tutorial-files").replaceChildren();
+    byId("tutorial-files").hidden = !current.practicalFiles?.length;
+    if (current.practicalFiles?.length) {
+      byId("tutorial-files").append(textElement("h3","本课本地实操文件"),
+        textElement("p","文件已随仓库提供，也可在这里单独下载。保存到 examples/tutorials/，按讲义命令运行；Node/Python 等本地能力不在网页 Worker 内执行。"));
+      for (const file of current.practicalFiles) {
+        const button = textElement("button","下载 " + file.name,"button small");
+        button.type="button";
+        button.addEventListener("click",()=>download(file.name,file.code,"text/plain;charset=utf-8"));
+        byId("tutorial-files").append(button);
+      }
+    }
     byId("exam-link").href = "https://github.com/Xeehho/agent-engineering-lab/blob/main/assessments/stage-" + current.stage + "/exam-blueprint.md";
     const maps = document.querySelectorAll(".map-step");
     maps.forEach((node, index) => {

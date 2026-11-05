@@ -1,0 +1,2 @@
+current-commit isolation evidenced; stale recovery rejected then refreshed
+fixture did not satisfy live-model quality; artifact content still needs review

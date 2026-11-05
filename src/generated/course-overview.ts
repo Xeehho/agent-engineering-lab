@@ -5,7 +5,9 @@ export const courseOverview = {
     "lessons": 31,
     "experiments": 34,
     "checkpoints": 95,
-    "quizzes": 96
+    "quizzes": 96,
+    "detailed": 31,
+    "brief": 0
   },
   "stages": [
     {
@@ -15,27 +17,33 @@ export const courseOverview = {
       "lessons": [
         {
           "id": "S1-L01",
-          "title": "一次模型请求怎样才算成功"
+          "title": "一次模型请求怎样才算成功",
+          "contentLevel": "detailed"
         },
         {
           "id": "S1-L02",
-          "title": "超时与取消：请求结束了吗？"
+          "title": "超时与取消：请求结束了吗？",
+          "contentLevel": "detailed"
         },
         {
           "id": "S1-L03",
-          "title": "流式事件与 React 状态"
+          "title": "流式事件与 React 状态",
+          "contentLevel": "detailed"
         },
         {
           "id": "S1-L04",
-          "title": "验证证据与第一阶段交卷"
+          "title": "验证证据与第一阶段交卷",
+          "contentLevel": "detailed"
         },
         {
           "id": "S1-L05",
-          "title": "模型基础：Token、上下文与推理边界"
+          "title": "模型基础：Token、上下文与推理边界",
+          "contentLevel": "detailed"
         },
         {
           "id": "S1-L06",
-          "title": "Python 后端桥接：读懂服务边界"
+          "title": "Python 后端桥接：读懂服务边界",
+          "contentLevel": "detailed"
         }
       ]
     },
@@ -46,19 +54,23 @@ export const courseOverview = {
       "lessons": [
         {
           "id": "S2-L01",
-          "title": "工具调用：模型提议，应用执行"
+          "title": "工具调用：模型提议，应用执行",
+          "contentLevel": "detailed"
         },
         {
           "id": "S2-L02",
-          "title": "有限 Agent 循环与预算"
+          "title": "有限 Agent 循环与预算",
+          "contentLevel": "detailed"
         },
         {
           "id": "S2-L03",
-          "title": "副作用、幂等与提示注入"
+          "title": "副作用、幂等与提示注入",
+          "contentLevel": "detailed"
         },
         {
           "id": "S2-L04",
-          "title": "Prompt 与上下文工程"
+          "title": "Prompt 与上下文工程",
+          "contentLevel": "detailed"
         }
       ]
     },
@@ -69,15 +81,18 @@ export const courseOverview = {
       "lessons": [
         {
           "id": "S3-L01",
-          "title": "MCP 的边界：Host、Client、Server"
+          "title": "MCP 的边界：Host、Client、Server",
+          "contentLevel": "detailed"
         },
         {
           "id": "S3-L02",
-          "title": "MCP 发现、传输与错误"
+          "title": "MCP 发现、传输与错误",
+          "contentLevel": "detailed"
         },
         {
           "id": "S3-L03",
-          "title": "MCP 权限与服务信任"
+          "title": "MCP 权限与服务信任",
+          "contentLevel": "detailed"
         }
       ]
     },
@@ -88,19 +103,23 @@ export const courseOverview = {
       "lessons": [
         {
           "id": "S4-L01",
-          "title": "任务状态与持久化"
+          "title": "任务状态与持久化",
+          "contentLevel": "detailed"
         },
         {
           "id": "S4-L02",
-          "title": "队列、重试、租约与幂等"
+          "title": "队列、重试、租约与幂等",
+          "contentLevel": "detailed"
         },
         {
           "id": "S4-L03",
-          "title": "人工确认与前端任务工作台"
+          "title": "人工确认与前端任务工作台",
+          "contentLevel": "detailed"
         },
         {
           "id": "S4-L04",
-          "title": "SQL、索引与事务：存储工程基础"
+          "title": "SQL、索引与事务：存储工程基础",
+          "contentLevel": "detailed"
         }
       ]
     },
@@ -111,19 +130,23 @@ export const courseOverview = {
       "lessons": [
         {
           "id": "S5-L01",
-          "title": "RAG 数据入口：切分、版本与权限"
+          "title": "RAG 数据入口：切分、版本与权限",
+          "contentLevel": "detailed"
         },
         {
           "id": "S5-L02",
-          "title": "Embedding、向量与混合检索"
+          "title": "Embedding、向量与混合检索",
+          "contentLevel": "detailed"
         },
         {
           "id": "S5-L03",
-          "title": "重排、引用与拒答"
+          "title": "重排、引用与拒答",
+          "contentLevel": "detailed"
         },
         {
           "id": "S5-L04",
-          "title": "RAG 评测与数据治理"
+          "title": "RAG 评测与数据治理",
+          "contentLevel": "detailed"
         }
       ]
     },
@@ -134,15 +157,18 @@ export const courseOverview = {
       "lessons": [
         {
           "id": "S6-L01",
-          "title": "路由与分工：先证明需要多 Agent"
+          "title": "路由与分工：先证明需要多 Agent",
+          "contentLevel": "detailed"
         },
         {
           "id": "S6-L02",
-          "title": "交接、证据包与冲突处理"
+          "title": "交接、证据包与冲突处理",
+          "contentLevel": "detailed"
         },
         {
           "id": "S6-L03",
-          "title": "协作评测：质量、延迟与成本"
+          "title": "协作评测：质量、延迟与成本",
+          "contentLevel": "detailed"
         }
       ]
     },
@@ -153,19 +179,23 @@ export const courseOverview = {
       "lessons": [
         {
           "id": "S7-L01",
-          "title": "评测集、评分器与回归门槛"
+          "title": "评测集、评分器与回归门槛",
+          "contentLevel": "detailed"
         },
         {
           "id": "S7-L02",
-          "title": "Trace、日志与费用观测"
+          "title": "Trace、日志与费用观测",
+          "contentLevel": "detailed"
         },
         {
           "id": "S7-L03",
-          "title": "部署、限流、降级与运维"
+          "title": "部署、限流、降级与运维",
+          "contentLevel": "detailed"
         },
         {
           "id": "S7-L04",
-          "title": "真实模型接入与可复现证据"
+          "title": "真实模型接入与可复现证据",
+          "contentLevel": "detailed"
         }
       ]
     },
@@ -176,15 +206,18 @@ export const courseOverview = {
       "lessons": [
         {
           "id": "S8-L01",
-          "title": "毕业项目：从需求到验收"
+          "title": "毕业项目：从需求到验收",
+          "contentLevel": "detailed"
         },
         {
           "id": "S8-L02",
-          "title": "系统设计与陌生故障答辩"
+          "title": "系统设计与陌生故障答辩",
+          "contentLevel": "detailed"
         },
         {
           "id": "S8-L03",
-          "title": "作品集、简历与求职演练"
+          "title": "作品集、简历与求职演练",
+          "contentLevel": "detailed"
         }
       ]
     }

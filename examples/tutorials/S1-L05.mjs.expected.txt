@@ -1,0 +1,3 @@
+lower temperature: sharper distribution, not a truth guarantee
+planned=12600; assumed budget=12000; excess=600
+synthetic numbers; not a tokenizer or provider invoice

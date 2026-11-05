@@ -1,0 +1,2 @@
+whole packet = byte-by-byte packet
+text=订单; terminal protected; truncated frame rejected

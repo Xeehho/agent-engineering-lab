@@ -1,0 +1,2 @@
+two parallel tasks: isolated traces, two children each
+allowlist logs omitted key; error span closed; durations measured locally

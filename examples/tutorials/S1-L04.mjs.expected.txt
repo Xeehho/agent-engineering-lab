@@ -1,0 +1,5 @@
+normal: true (2)
+string: true (INVALID_COUNT)
+null: true (NOT_OBJECT)
+negative: true (INVALID_COUNT)
+scope: four local contract cases; no model accuracy claim

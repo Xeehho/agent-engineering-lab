@@ -1,0 +1,2 @@
+local Responses-shaped HTTP: text/usage/request-id normalized
+429 + empty output + pre-cancel + unauthorized live call rejected; live calls=0

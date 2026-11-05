@@ -1,0 +1,2 @@
+localhost HTTP: temporary failure degraded; forbidden stayed 403; third request=429
+config pointer rolled back v2 -> v1; no cloud deployment performed

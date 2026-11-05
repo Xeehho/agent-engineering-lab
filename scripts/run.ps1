@@ -1,6 +1,7 @@
 param(
-  [ValidateSet('install', 'dev', 'dev:web', 'check', 'doctor', 'practice:stage1', 'lesson:01', 'classroom:build')]
-  [string]$Task = 'dev'
+  [ValidateSet('install', 'dev', 'dev:web', 'check', 'doctor', 'practice:stage1', 'lesson:01', 'classroom:build', 'tutorial')]
+  [string]$Task = 'dev',
+  [string]$Lesson = ''
 )
 $ErrorActionPreference = 'Stop'
 $taskProjectRoot = Split-Path -Parent $PSScriptRoot
@@ -19,7 +20,8 @@ try {
   $taskNpmCommand = Get-Command npm.cmd -ErrorAction Stop
   $taskNpmCli = Join-Path (Split-Path -Parent $taskNpmCommand.Source) 'node_modules\npm\bin\npm-cli.js'
   if (!(Test-Path -LiteralPath $taskNpmCli)) { throw 'Could not locate npm CLI; use a standard Node.js 24 installation.' }
-  if ($Task -eq 'install') { & node $taskNpmCli install }
+  if ($Task -eq 'tutorial') { & node scripts/run-tutorial.mjs $Lesson }
+  elseif ($Task -eq 'install') { & node $taskNpmCli install }
   else { & node $taskNpmCli run $Task }
   $taskExitCode = $LASTEXITCODE
 } finally { Pop-Location }

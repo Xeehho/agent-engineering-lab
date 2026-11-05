@@ -1,0 +1,2 @@
+current candidates reranked; missing/stale/fabricated quote rejected
+unsupported question abstained; valid quote alone did not prove entailment

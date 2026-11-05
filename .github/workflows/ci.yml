@@ -11,6 +11,12 @@ jobs:
         with:
           node-version: '24'
           cache: npm
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: examples/tutorial-requirements.txt
+      - run: python -m pip install -r examples/tutorial-requirements.txt
       - run: npm ci
       - run: npm run check
       - run: npm run lesson:01

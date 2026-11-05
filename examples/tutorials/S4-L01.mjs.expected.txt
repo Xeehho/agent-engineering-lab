@@ -1,0 +1,2 @@
+reopen: running; stale writer rejected; terminal protected
+state and two versioned events committed together

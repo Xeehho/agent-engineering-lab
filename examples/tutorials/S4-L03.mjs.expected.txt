@@ -1,0 +1,2 @@
+changed action / wrong subject / expired / replay / tamper: rejected
+one exact approved action accepted; no real message sent

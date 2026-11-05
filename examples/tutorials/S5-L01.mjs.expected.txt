@@ -1,0 +1,2 @@
+line provenance=1-3,3-5; overlap preserved
+A v1 replaced by v2 then deleted; B remained isolated

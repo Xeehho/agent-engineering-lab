@@ -1,0 +1,2 @@
+broken replay reproduced old-result overwrite and terminal regression
+guarded replay kept new run/version 2/succeeded; upstream cancellation unverified

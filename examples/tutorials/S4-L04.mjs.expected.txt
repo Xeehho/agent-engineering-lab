@@ -1,0 +1,2 @@
+query plan uses idx_task_feed; stable top IDs=997,995,991,989,985
+foreign-key failure rolled back state; SQL-looking value stayed data

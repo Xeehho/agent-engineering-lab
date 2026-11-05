@@ -2,10 +2,10 @@ export function courseMaterials(lessons, stages) {
   const files = new Map();
   files.set("course/README.md", [
     "# 课堂资料目录", "",
-    lessons.length + " 课、" + stages.length + " 阶段，教材已编写并全部开放阅读。第一课已开始讲授，其余可提前学习；教材准备不等于学习者已经掌握或通过考试。", "",
+    lessons.length + " 课、" + stages.length + " 阶段。详细教程 " + lessons.filter(item=>item.contentLevel==="detailed").length + " 课，其余为简版待扩写。全部可阅读；材料状态与学习者掌握/考试分开。", "",
     "[互动课堂](../public/learn.html) · [知识地图](knowledge-map.md) · [阶段路线](roadmap.md) · [求职证据](../docs/career/job-readiness.md)", "",
-    "## 课程目录", "", "|课号|主题|讲义|速记|随堂题|公开自测|", "|---|---|---|---|---|---|",
-    ...lessons.map(item => "|" + item.id + "|" + item.title + "|[阅读](" + item.lecturePath.replace(/^course\//,"") +
+    "## 课程目录", "", "|课号|主题|材料状态|讲义|速记|随堂题|公开自测|", "|---|---|---|---|---|---|---|",
+    ...lessons.map(item => "|" + item.id + "|" + item.title + "|" + (item.contentLevel==="detailed"?"详细教程":"简版待扩写") + "|[阅读](" + item.lecturePath.replace(/^course\//,"") +
       ")|[速记](" + item.notesPath.replace(/^course\//,"") + ")|[作答](" + item.checkpointPath.replace(/^course\//,"") +
       ")|[自测](stage-" + item.stage + "/exercises/" + item.id + "-self-check.md)|"),
     "", "## 项目与考核", "",

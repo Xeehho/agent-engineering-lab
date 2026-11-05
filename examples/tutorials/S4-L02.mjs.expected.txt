@@ -1,0 +1,2 @@
+lease expiry -> token 2; stale token 1 rejected
+retry delayed until 17; attempt 3 succeeded; terminal not reclaimed

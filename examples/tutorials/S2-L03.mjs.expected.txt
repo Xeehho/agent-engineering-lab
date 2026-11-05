@@ -1,0 +1,2 @@
+reopen + retry: one draft; changed payload: conflict; viewer: forbidden
+tenant A/B isolated; SQLite transaction only, no external side effect

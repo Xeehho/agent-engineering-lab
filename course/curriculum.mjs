@@ -7,6 +7,7 @@ import collaboration from "./content/stage-06.mjs";
 import production from "./content/stage-07.mjs";
 import graduation from "./content/stage-08.mjs";
 import { experiments, checkpoints, quiz } from "../classroom/content.mjs";
+import { tutorials } from "./tutorials/catalog.mjs";
 
 export const stages = [
   { id:"01", title:"模型应用基础", prerequisites:"能阅读 JavaScript / TypeScript",
@@ -48,6 +49,8 @@ const first = {
 };
 export const lessons = [first,...foundation,...tools,...mcp,...workflow,...rag,...collaboration,...production,...graduation]
   .map(item => ({...item,
+    contentLevel: item.id === "S1-L01" || tutorials[item.id] ? "detailed" : "brief",
+    tutorial: tutorials[item.id] || null,
     lecturePath:item.lecturePath || "course/stage-" + item.stage + "/lessons/" + item.id + ".md",
     notesPath:item.notesPath || "course/stage-" + item.stage + "/notes/" + item.id + ".md",
     checkpointPath:item.checkpointPath || "course/stage-" + item.stage + "/exercises/" + item.id + ".md",

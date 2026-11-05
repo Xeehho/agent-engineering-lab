@@ -1,0 +1,2 @@
+both success=3/4; candidate wins=b, regressions=c; cost=8 -> 17
+nearest-rank p95=150 -> 180; parallel wall=90 vs total work=130

@@ -1,0 +1,2 @@
+handoff schema/version/evidence scope: passed
+conflict blocked; same-source agreement not treated as independent proof

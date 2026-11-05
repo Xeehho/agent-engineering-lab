@@ -1,0 +1,2 @@
+stdio initialize + tools/list + tools/call: passed
+SDK default proposal=2025-11-25; server=ticket-classroom; T-42=open
