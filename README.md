@@ -1,0 +1,71 @@
+# Agent Engineering Lab
+
+从AI Coding交付，进阶到能设计、验证、排错的AI应用工程。课程针对有前端经验、长期使用AI写代码的学习者，按能力验收推进。
+
+**当前状态：课程与工程骨架就绪，第一阶段作业待开始，尚未考试。**  
+本仓库的Mock不会理解工单内容。绿色CI只证明骨架正常，不能证明模型效果、作业完成或考试通过。
+
+## 从这里开始
+
+1. [起点诊断：先凭自己的理解回答](course/diagnostic.md)
+2. [第一阶段计划](course/stage-01/plan.md)
+3. [第一课：理解一次模型调用](course/stage-01/lesson.md)
+4. [第一阶段任务与接口契约](course/stage-01/assignment.md)
+5. [练习题与排错题](course/stage-01/questions.md)
+6. [考试与评分规则](assessments/stage-01/exam-blueprint.md)
+7. [提交模板](submissions/stage-01/README.md)
+
+## 项目
+
+最终做成一个“研发知识与工单Agent工作台”：
+
+~~~text
+React工作台 → 应用服务 → Agent/Workflow → 模型
+                          ↓
+                       MCP工具 → 文档/工单
+                          ↓
+                   状态、评测与执行记录
+~~~
+
+第一阶段只完成工单分诊：输入校验、模型调用、结构化输出、异常、超时、流式响应与取消。核心代码在server/learning/中留作作业。前端骨架、HTTP入口、Mock和故障情境已提供。
+
+## 启动
+
+使用Node.js 24 LTS；Windows默认Node若较旧，可使用仓库脚本。脚本只为当前进程选择已有Node 24，不更改系统配置。
+
+~~~powershell
+git clone git@github.com:Xeehho/agent-engineering-lab.git
+cd agent-engineering-lab
+powershell -NoProfile -File scripts/run.ps1 install
+powershell -NoProfile -File scripts/run.ps1 dev
+~~~
+
+浏览器打开 http://127.0.0.1:5173 ，API在127.0.0.1:8787。若已使用Node 24，直接npm install、npm run dev即可。
+
+~~~powershell
+powershell -NoProfile -File scripts/run.ps1 doctor
+powershell -NoProfile -File scripts/run.ps1 check
+powershell -NoProfile -File scripts/run.ps1 practice:stage1
+~~~
+
+- check：TypeScript、骨架测试、前端构建，初始应通过。
+- practice:stage1：11条公开的作业验收，初始应失败；流式和真实模型另行检查。
+- doctor：环境与验证范围，不给学习者打分。
+- .env.example：真实接入练习预留字段；骨架不读取这些字段，也不发模型API请求。
+
+## 课程与老师
+
+[阶段路线](course/roadmap.md) · [AI协作与考试制度](course/learning-contract.md) · [当前进度](learning/progress.json) · [回到新聊天继续学习](course/continue-with-teacher.md)
+
+你的老师会根据诊断、当前提交和实际表现调整速度。你可以跳过已经用证据证明掌握的内容；每阶段仍需要作业评阅和变式考试。AI使用范围会与个人掌握程度分别记录。
+
+## 岗位依据
+
+[岗位能力与学习路线](docs/career/ai-agent-skills.md) · [20个岗位初筛来源](docs/career/beijing-jobs.md)
+
+这些是公开信息初筛，部分来自索引或转载，并非20份完整JD。来源材料中的建议不能当作招聘方硬要求。具体能力抽取与证据限制保留在文档内。
+
+## 工程范围
+
+默认离线Mock；没有真实模型验证、后端生产运行、部署或岗位录用结论。仓库不含作业答案和提前固定的正式考卷。所有任务均使用样例数据。
+

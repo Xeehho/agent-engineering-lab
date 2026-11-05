@@ -1,0 +1,109 @@
+{
+  "schemaVersion": 1,
+  "currentStage": "01",
+  "status": "not_started",
+  "diagnostic": {
+    "status": "not_submitted",
+    "score": null
+  },
+  "stages": {
+    "01": {
+      "status": "not_started",
+      "assignmentCommit": null,
+      "practiceResult": null,
+      "providerEvidence": "mock_only",
+      "exam": {
+        "status": "not_scheduled",
+        "score": null,
+        "attempts": 0,
+        "teacherReview": null
+      }
+    },
+    "02": {
+      "status": "locked",
+      "assignmentCommit": null,
+      "practiceResult": null,
+      "providerEvidence": "mock_only",
+      "exam": {
+        "status": "not_scheduled",
+        "score": null,
+        "attempts": 0,
+        "teacherReview": null
+      }
+    },
+    "03": {
+      "status": "locked",
+      "assignmentCommit": null,
+      "practiceResult": null,
+      "providerEvidence": "mock_only",
+      "exam": {
+        "status": "not_scheduled",
+        "score": null,
+        "attempts": 0,
+        "teacherReview": null
+      }
+    },
+    "04": {
+      "status": "locked",
+      "assignmentCommit": null,
+      "practiceResult": null,
+      "providerEvidence": "mock_only",
+      "exam": {
+        "status": "not_scheduled",
+        "score": null,
+        "attempts": 0,
+        "teacherReview": null
+      }
+    },
+    "05": {
+      "status": "locked",
+      "assignmentCommit": null,
+      "practiceResult": null,
+      "providerEvidence": "mock_only",
+      "exam": {
+        "status": "not_scheduled",
+        "score": null,
+        "attempts": 0,
+        "teacherReview": null
+      }
+    },
+    "06": {
+      "status": "locked",
+      "assignmentCommit": null,
+      "practiceResult": null,
+      "providerEvidence": "mock_only",
+      "exam": {
+        "status": "not_scheduled",
+        "score": null,
+        "attempts": 0,
+        "teacherReview": null
+      }
+    },
+    "07": {
+      "status": "locked",
+      "assignmentCommit": null,
+      "practiceResult": null,
+      "providerEvidence": "mock_only",
+      "exam": {
+        "status": "not_scheduled",
+        "score": null,
+        "attempts": 0,
+        "teacherReview": null
+      }
+    },
+    "08": {
+      "status": "locked",
+      "assignmentCommit": null,
+      "practiceResult": null,
+      "providerEvidence": "mock_only",
+      "exam": {
+        "status": "not_scheduled",
+        "score": null,
+        "attempts": 0,
+        "teacherReview": null
+      }
+    }
+  },
+  "note": "CI通过与作业完成均不自动代表考试通过。由老师评阅证据并记录。后续locked为教学状态，不是权限限制。"
+}
+
