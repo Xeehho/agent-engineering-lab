@@ -239,7 +239,7 @@ scripts/              教材构建、环境检查等工具
 
 ## 作者与参与方式
 
-由 **[Xeehho](https://github.com/Xeehho)** 发起维护：一名有 4 年前端经验、持续使用 AI Coding 并探索 AI 应用工程的开发者。项目将学习与开发过程整理成公开的讲义、实验和验收路径，并在 AI 辅助下持续完善。
+由 **[Xeehho](https://github.com/Xeehho)** 发起维护：一名有 4 年前端经验、持续使用 AI Coding 并探索 AI 应用工程的开发者。项目将学习与开发过程整理成公开的讲义、实验和验收路径，并使用 **[Codex](https://github.com/codex)** 辅助课程编写、代码开发与验证。后续由 Codex 协助完成并创建的提交保留共同作者署名，约定见[贡献指南](CONTRIBUTING.md#codex共同作者)。
 
 如果这套课程帮助你读懂了某个概念、排查了一次故障，欢迎 **[给项目点个 Star](https://github.com/Xeehho/agent-engineering-lab)**。也欢迎提交具体的术语疑问、错误案例、教学改进或 PR；参与方式见 [贡献指南](CONTRIBUTING.md)。
 

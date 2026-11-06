@@ -25,3 +25,13 @@
 提交说明写清学了什么、增加了什么可验证示例、有哪些限制。不要因公开练习已经通过就修改考试结果。AI可参与写作和代码，但贡献者需要核对事实、引用和执行结果。
 
 更多规则见[课堂资料沉淀约定](course/TEACHING.md)。
+
+## Codex共同作者
+
+本项目使用[Codex](https://github.com/codex)辅助课程编写、代码开发与验证。按维护者要求，后续由Codex协助完成并创建的提交统一保留共同作者署名；提交说明末尾空一行，再加入：
+
+```text
+Co-authored-by: Codex <noreply@openai.com>
+```
+
+保留实际开发者的作者身份与已有共同作者。GitHub按提交中的姓名、邮箱关联贡献者，规则见[多作者提交说明](https://docs.github.com/en/pull-requests/how-tos/commit-changes/creating-a-commit-with-multiple-authors)。仅使用AI工具不自动证明技术正确，提交者仍需核对内容和验证结果。
