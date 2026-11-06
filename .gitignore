@@ -11,3 +11,6 @@ submissions/private/
 learning/private/
 learning/progress.json
 .venv/
+
+# 作者本地宣传素材，不随公共仓库发布。
+/docs/promotion/

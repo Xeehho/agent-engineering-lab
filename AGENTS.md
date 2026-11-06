@@ -42,3 +42,7 @@ Co-authored-by: Codex <noreply@openai.com>
 ## 宣传截图
 
 用户要求后续用于README、X/Twitter与抖音的截图均不出现滚动条。截图仅包含页面内容区域；课堂内的目录、标签或代码区域也需检查，不能只裁掉最外层滚动条。保留真实页面内容和网站正常滚动行为，不展示个人作答、分数或笔记。宣传排版图与真实页面截图应明确区分，不能用排版图冒充实际产品功能。
+
+宣传图片、排版源、发布文案和素材包仅保留在仓库之外的本机outputs/agent-engineering-lab-promotion目录，不再提交到GitHub；docs/promotion/设为忽略。README本身使用的课程展示图仍属公开项目资料。正式在线体验统一使用https://www.xeehho-ai.com，不再宣传旧Vercel域名。
+
+项目初衷首先是Xeehho自己的学习，以BOSS直聘上20个北京30K+公开岗位样本为参照。样本按岗位计数，不写成20家互不重复公司或20份已完整核验的JD；保留招聘清单原有来源与核验边界。

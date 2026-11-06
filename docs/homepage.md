@@ -21,7 +21,9 @@
 - 2026-11-05 通过 GitHub 官方 API 核对公开账号、主页和头像；头像保存为本地 JPEG，页面不依赖实时请求 GitHub 数据。
 - Star 按钮链接 https://github.com/Xeehho/agent-engineering-lab ，不会自动替访客点 Star，也未展示模拟的 Star 数。
 
-项目首页已部署至https://agent-engineering-lab.vercel.app。项目所有者授权公开仓库，代码MIT、课程CC BY 4.0。仓库实际可见性以GitHub当前状态为准。
+正式在线体验入口为https://www.xeehho-ai.com，由项目所有者配置域名部署。项目所有者授权公开仓库，代码MIT、课程CC BY 4.0。仓库实际可见性以GitHub当前状态为准。
+
+项目初衷是维护者自己的系统学习：以BOSS直聘上20个北京30K+公开岗位样本为参照，整理React前端转AI应用工程需要补齐的知识，再开源学习资料。样本按岗位计数，来源与核验范围保留在docs/career/中。
 
 ## 验证
 

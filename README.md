@@ -7,8 +7,8 @@
 <p align="center"><strong>从 AI Coding，走向能设计、能解释、能验证的 AI 应用工程。</strong></p>
 <p align="center">中文开源课程 · 8 个阶段 · 31 节课 · 65 个网页实验 · 完整参考答案</p>
 <p align="center">
-  <a href="https://agent-engineering-lab.vercel.app/">课程首页</a> ·
-  <a href="https://agent-engineering-lab.vercel.app/learn.html">开始学习</a> ·
+  <a href="https://www.xeehho-ai.com/">课程首页</a> ·
+  <a href="https://www.xeehho-ai.com/learn.html">开始学习</a> ·
   <a href="course/README.md">课程目录</a> ·
   <a href="#本地启动">本地启动</a> ·
   <a href="https://github.com/Xeehho/agent-engineering-lab/issues">反馈问题</a>
@@ -23,6 +23,16 @@
 课程围绕一个持续演进的「研发知识与工单 Agent 工作台」，把模型调用、工具、MCP、任务状态、RAG、评测、观测和前端交互串成完整系统。React / TypeScript 是主线，Python 和 SQL 等知识会在需要时逐步补齐。
 
 **打开网站就能开始。** 讲义、可编辑代码实验、随堂练习、自测、老师讲评、脑图和笔记都在网页里。学习这些内容无需克隆仓库、启动服务或准备 API Key；真实组件实操与完整项目作为后续进阶。
+
+## 为什么做这个项目？
+
+**最初的目的，是给我自己的学习建立一条有方向、能实践的路线。**
+
+我有 4 年前端开发经验，也在大量使用 AI Coding，希望进一步转向 AI 应用开发。为了弄清应该补什么，我整理了 BOSS 直聘上真实企业的 **20 个北京、公布月薪区间下限 30K 起的岗位样本**：5 个 React 前端方向，15 个 AI 应用 / Agent 方向，以能取得的公开招聘要求作为学习参照。
+
+我把岗位相关的模型接入、Agent、MCP、RAG、任务状态、评测与交付等能力，逐步整理成自己的学习计划、讲义、实验和项目验收，再开源分享给有相似学习需求的开发者。项目由此而来，首先服务于自己的理解与实践，也欢迎大家一起完善。
+
+岗位样本、原始链接与采集范围保留在[招聘信息清单](docs/career/beijing-jobs.md)和[能力分析](docs/career/ai-agent-skills.md)中。清单按岗位计数；部分材料来自公开列表、搜索索引或关联转载，完整JD与当前在招状态需要另行核对。
 
 ## 学这套课程能得到什么？
 
@@ -94,7 +104,7 @@ Python、模型机制、MCP、RAG 和 SQL 会在课程中补充。网页学习�
 
 ### 方式一：直接在线学习
 
-打开 **[互动课堂](https://agent-engineering-lab.vercel.app/learn.html)**，无需安装环境。
+打开 **[互动课堂](https://www.xeehho-ai.com/learn.html)**，无需安装环境。
 
 1. 阅读本课问题、概念与字段来源，知道这节课要解决什么。
 2. 在「动手实验」中先写预测，再运行和修改一个条件。
@@ -239,11 +249,9 @@ scripts/              教材构建、环境检查等工具
 
 ## 作者与参与方式
 
-由 **[Xeehho](https://github.com/Xeehho)** 发起维护：一名有 4 年前端经验、持续使用 AI Coding 并探索 AI 应用工程的开发者。项目将学习与开发过程整理成公开的讲义、实验和验收路径，并使用 **[Codex](https://github.com/codex)** 辅助课程编写、代码开发与验证。后续由 Codex 协助完成并创建的提交保留共同作者署名，约定见[贡献指南](CONTRIBUTING.md#codex共同作者)。
+由 **[Xeehho](https://github.com/Xeehho)** 发起维护：一名有 4 年前端经验、持续使用 AI Coding 并探索 AI 应用工程的开发者。项目最初为自己的学习而做，以北京 30K+ 目标岗位的公开要求为参照，再将学习资料开源分享，并使用 **[Codex](https://github.com/codex)** 辅助课程编写、代码开发与验证。后续由 Codex 协助完成并创建的提交保留共同作者署名，约定见[贡献指南](CONTRIBUTING.md#codex共同作者)。
 
 如果这套课程帮助你读懂了某个概念、排查了一次故障，欢迎 **[给项目点个 Star](https://github.com/Xeehho/agent-engineering-lab)**。也欢迎提交具体的术语疑问、错误案例、教学改进或 PR；参与方式见 [贡献指南](CONTRIBUTING.md)。
-
-想分享项目，可以取用[无滚动条截图、竖版分享图与发布文案](docs/promotion/README.md)，包含X/Twitter短文和串文、抖音图文说明与口播稿。
 
 岗位材料见 [岗位能力与学习路线](docs/career/ai-agent-skills.md)、[北京岗位初筛来源](docs/career/beijing-jobs.md)。这些材料保留采集来源与限制，实际求职时请重新核对当前 JD。
 
