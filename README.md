@@ -1,90 +1,253 @@
-# Agent Engineering Lab
+<p align="center">
+  <img src="public/brand/logo.svg" alt="Agent Engineering Lab Logo" width="76" height="76" />
+</p>
 
-从AI Coding交付，进阶到能设计、验证、排错的AI应用工程。课程针对有前端经验、长期使用AI写代码的学习者，按能力验收推进。
+<h1 align="center">Agent Engineering Lab</h1>
 
-**默认在网站里学：31课入门与进阶讲解、65个可编辑网页实验（31入门+34进阶）、31份脑图与3张工程架构图、随堂题、自测与笔记，无需启动项目、安装依赖或提供 Key。真实组件实操与完整项目另作进阶。**
+<p align="center"><strong>从 AI Coding，走向能设计、能解释、能验证的 AI 应用工程。</strong></p>
+<p align="center">中文开源课程 · 8 个阶段 · 31 节课 · 65 个网页实验 · 完整参考答案</p>
+<p align="center">
+  <a href="https://agent-engineering-lab.vercel.app/">课程首页</a> ·
+  <a href="https://agent-engineering-lab.vercel.app/learn.html">开始学习</a> ·
+  <a href="course/README.md">课程目录</a> ·
+  <a href="#本地启动">本地启动</a> ·
+  <a href="https://github.com/Xeehho/agent-engineering-lab/issues">反馈问题</a>
+</p>
 
-每课从具体问题和概念定义开始，解释名字与字段的来源，再用最小代码、预期输出和逐步追踪连接机制。先完成1个入门实验、3道开放题和2道自测，再按需展开完整进阶。脑图标注先修和后续课程，工程架构提供请求、知识管道与质量交付三个视角。
+![课程首页：学习目标、课程体系与第一课入口](docs/images/course-home.png)
 
-选做实操：Node.js 24 下执行 npm ci，再运行 npm run tutorial -- S3-L01。Python 课需 .venv 与 examples/tutorial-requirements.txt。教材源在 course/tutorials/，代码在 code/，阅读拆解在 walkthrough/；网页实验源在 course/browser-demos/。构建统一同步讲义、脚本与单页课堂。个人作业和考试状态保持真实提交记录。
-本仓库的Mock不会理解工单内容。绿色CI只证明骨架正常，不能证明模型效果、作业完成或考试通过。
+## 这是一套什么课程？
 
-31课配套[老师讲评与参考答案](course/teacher/README.md)：188道开放题逐题解释参考回答、推导/反例和自查，158道公开选择题补充判断依据。网页“随堂练习”可展开每题讲评并下载本课完整Markdown；查看答案不代填作答、不自动认证掌握。
+这是一套面向有编程基础开发者的 **AI 应用工程课程与项目实验室**，尤其适合有前端经验、经常使用 AI Coding、希望转向 AI 应用开发的学习者。
 
-## 从这里开始
+课程围绕一个持续演进的「研发知识与工单 Agent 工作台」，把模型调用、工具、MCP、任务状态、RAG、评测、观测和前端交互串成完整系统。React / TypeScript 是主线，Python 和 SQL 等知识会在需要时逐步补齐。
 
-**[课程首页](https://agent-engineering-lab.vercel.app/)**：直接在线查看课程体系、学习成果、前置条件与准备自查；有开发者 Xeehho 的介绍及 GitHub Star 入口。[项目实验台](https://agent-engineering-lab.vercel.app/lab.html)与课堂各有独立入口。
+**打开网站就能开始。** 讲义、可编辑代码实验、随堂练习、自测、老师讲评、脑图和笔记都在网页里。学习这些内容无需克隆仓库、启动服务或准备 API Key；真实组件实操与完整项目作为后续进阶。
 
-**[在线互动课堂](https://agent-engineering-lab.vercel.app/learn.html)**（[单文件离线版](public/learn.html)）：下载 HTML 后直接用浏览器打开，或启动项目访问 http://127.0.0.1:5173/learn.html 。八阶段31课、65个实验、188道开放题（93入门+95进阶）、158道公开自测（62入门+96进阶）与笔记集中在一页；支持搜索、逐课记录、旧版迁移和全课程备份。[使用与维护说明](classroom/README.md)。
+## 学这套课程能得到什么？
 
-[知识体系与学习投入](course/knowledge-map.md) · [全部课程](course/README.md) · [求职作品与面试训练](docs/career/job-readiness.md)。React/TypeScript 为主线，补 Python、模型机制、工具、MCP、SQL/状态、RAG、多角色、评测、观测与部署。
+|你想解决的问题|课程怎样帮助你|完成后可以展示的证据|
+|---|---|---|
+|会让 AI 写代码，但难以判断结果是否正确|从输入输出契约、反例与逐步执行开始，练习读代码和验证结果|能解释的实现、失败用例和回归结果|
+|听过 Agent、MCP、RAG，却不知道它们如何连接|每课先讲具体问题和概念，解释字段来源，再放回总架构|脑图、请求链路和架构决策记录|
+|做过演示，但遇到超时、重复执行、状态丢失就卡住|逐步练习取消、预算、幂等、队列、持久化和人工确认|故障复盘、恢复演练与任务工作台|
+|想转 AI 应用开发，缺少能深入介绍的作品|围绕同一项目积累代码、评测、执行记录和面试表达|可复现作品集、项目 README 与答辩材料|
 
-聊天中继续由老师讲解、追问和评阅，配套资料保存在[课堂目录](course/README.md)。当前课：[完整讲义](course/stage-01/lessons/01-success-contracts.md) · [速记](course/stage-01/notes/01-quick-reference.md) · [随堂题](course/stage-01/exercises/01-checkpoint.md) · [离线实验](examples/lesson-01/README.md)。
+你可以继续使用 AI Coding。课程重点是让你能定义预期、读懂关键代码、亲自验证结果，并解释工程取舍。完成项目、真实接入与阶段考核后，目标是具备独立构建和排查一套 AI 应用的能力；岗位匹配仍由实际能力与招聘过程检验。
 
-1. [起点诊断：先凭自己的理解回答](course/diagnostic.md)
-2. [第一阶段计划](course/stage-01/plan.md)
-3. [第一课：理解一次模型调用](course/stage-01/lesson.md)
-4. [第一阶段任务与接口契约](course/stage-01/assignment.md)
-5. [练习题与排错题](course/stage-01/questions.md)
-6. [考试与评分规则](assessments/stage-01/exam-blueprint.md)
-7. [提交模板](submissions/stage-01/README.md)
+## 课程里有什么？
 
-## 项目
+|内容|规模与用途|
+|---|---|
+|递进讲义|8 阶段、31 课，均含入门与进阶内容|
+|网页实验|65 个：31 个入门实验 + 34 个进阶实验，可编辑、运行并观察输出|
+|开放练习|188 道：93 道入门题 + 95 道进阶题，逐题提供参考回答、推导与反例、自查要点|
+|公开自测|158 道：62 道入门题 + 96 道进阶题，提交后显示参考选择与详细讲评|
+|知识关联|31 份课程脑图，标注先修、后续及跨课关系|
+|工程总览|一次请求、知识入库与回答、评测与发布三个交互架构视角|
+|学习记录|逐课草稿、笔记、实验观察、自测记录，支持导出/导入备份|
+|进阶实操|Python、SQLite、本地 MCP 等可运行示例，配套项目契约、验收与交卷模板|
 
-最终做成一个“研发知识与工单Agent工作台”：
+### 八阶段学习路线
 
-~~~text
-React工作台 → 应用服务 → Agent/Workflow → 模型
-                          ↓
-                       MCP工具 → 文档/工单
-                          ↓
-                   状态、评测与执行记录
-~~~
+|阶段|主要学习内容|逐步构建的项目能力|
+|---|---|---|
+|01 · 模型应用基础（6 课）|运行时校验、错误、超时/取消、流式事件、模型机制、Python 桥接|可信的工单分诊接口与 React 界面|
+|02 · 工具与 Agent（4 课）|工具调用、有限循环、预算、幂等、Prompt 与上下文|能受限调用工具的应用|
+|03 · MCP（3 课）|Host / Client / Server、发现与传输、错误与权限|可互通且有权限边界的工具服务|
+|04 · 状态与工作流（4 课）|状态机、SQL/事务、队列、重试、租约、人工确认|可暂停、恢复、取消的任务工作台|
+|05 · RAG 与知识数据（4 课）|切分与版本、Embedding、混合检索、重排、引用、拒答和治理|带权限与来源的知识问答|
+|06 · 多 Agent（3 课）|路由与分工、交接、冲突、质量/成本对比|有证据支持的协作方案与架构取舍|
+|07 · 评测与交付（4 课）|评测集、回归、Trace、费用、限流、降级、真实模型适配|可观测、可评测、可复现的应用|
+|08 · 毕业与求职（3 课）|需求验收、系统设计、陌生故障、作品集和面试表达|完整毕业作品与可审阅的求职证据|
 
-第一阶段只完成工单分诊：输入校验、模型调用、结构化输出、异常、超时、流式响应与取消。核心代码在server/learning/中留作作业。前端骨架、HTTP入口、Mock和故障情境已提供。
+[查看全部 31 课](course/README.md) · [知识体系与投入参考](course/knowledge-map.md) · [阶段交付要求](course/roadmap.md)
 
-## 启动
+### 讲解与参考答案长什么样？
 
-使用Node.js 24 LTS；Windows默认Node若较旧，可使用仓库脚本。脚本只为当前进程选择已有Node 24，不更改系统配置。
+每课按照「具体问题 → 概念和角色 → 字段来源 → 最小代码 → 预期输出与执行追踪 → 完整机制」展开。先完成一个入门实验、三道入门开放题和两道入门自测，再按需要展开进阶内容。
 
-~~~powershell
-git clone git@github.com:Xeehho/agent-engineering-lab.git
+![随堂练习：展开参考答案，阅读推导、反例和自查要点](docs/images/course-teacher.png)
+
+随堂练习中的「参考答案与老师讲评」可以直接展开；「下载本课完整讲评 Markdown」包含当前题面、代码、选择题参考选项和完整解析。查看讲评会保留你的草稿，学习记录与正式能力评阅分开保存。
+
+### 怎样把知识串成一个系统？
+
+![工程架构：一次请求如何连接模型、工具、任务状态与界面](course/maps/architecture-request.svg)
+
+在「工程架构」中选择场景并逐步推进，可以查看组件的职责、输入输出、失败边界和关联课程。在「本课脑图」中复习问题、机制与验证方式，也可以下载 SVG 和 Markdown。
+
+[一次请求](course/maps/architecture-request.md) · [知识管道](course/maps/architecture-knowledge.md) · [质量交付闭环](course/maps/architecture-quality.md)
+
+## 适合谁？需要什么基础？
+
+适合希望转向 AI 应用开发的前端开发者，以及想系统补齐工程知识的其他开发者。建议具备：
+
+- JavaScript 基础：函数、对象、数组、模块，能阅读 Promise / async / await。
+- React / TypeScript 基本阅读能力：能理解组件、状态、事件和基础类型。
+- Web 请求常识：知道 HTTP、状态码和 JSON 如何连接浏览器与服务端。
+- 亲自验证的习惯：愿意先预测结果、运行实验，再解释差异。
+
+Python、模型机制、MCP、RAG 和 SQL 会在课程中补充。网页学习只需现代浏览器；选择本地项目实操时，再准备 Git、编辑器、Node.js 和相应组件。
+
+## 怎么开始学习？
+
+### 方式一：直接在线学习
+
+打开 **[互动课堂](https://agent-engineering-lab.vercel.app/learn.html)**，无需安装环境。
+
+1. 阅读本课问题、概念与字段来源，知道这节课要解决什么。
+2. 在「动手实验」中先写预测，再运行和修改一个条件。
+3. 用自己的话回答 F1–F3，再展开老师讲评对照。
+4. 提交 FQ1–FQ2 公开自测，阅读错题的详细解析。
+5. 用脑图、工程架构和复习速记串联知识，按需选做进阶。
+6. 定期导出学习记录；需要个别反馈时，导出作答交给老师或 AI 教学助手。
+
+记录保存在当前浏览器、当前网站来源下。更换浏览器、设备或从本地切换到线上之前，请先导出备份，再在新环境中导入。
+
+### 方式二：单文件离线学习
+
+下载仓库中的 **[public/learn.html](public/learn.html)**，保存后用浏览器打开。课堂的教学内容、样式、代码运行器与图标均内嵌，无需另外启动服务。
+
+若浏览器限制本地文件的存储或下载，可使用在线版，或按下方命令启动本地网页。离线学习记录同样建议定期导出。
+
+## 本地启动
+
+### 1. 准备环境
+
+- **Node.js 24.x** 与 npm（项目需要 Node 24）。
+- Git。
+- Python 3.12 用于选做 Python 实操和完整工程检查，单纯启动网页不需要。
+
+### 2. 克隆、安装并启动
+
+在终端执行，Windows / macOS / Linux 均可使用：
+
+```bash
+git clone https://github.com/Xeehho/agent-engineering-lab.git
 cd agent-engineering-lab
+
+node --version
+npm --version
+
+npm ci
+npm run dev
+```
+
+`node --version` 应显示 `v24.x.x`。`npm run dev` 同时启动网页和本地 Mock API；停止服务时在终端按 `Ctrl+C`。
+
+|入口|地址|用途|
+|---|---|---|
+|课程首页|http://127.0.0.1:5173/|课程介绍、学习准备和作者信息|
+|互动课堂|http://127.0.0.1:5173/learn.html|阅读、实验、练习、讲评、脑图与笔记|
+|项目实验台|http://127.0.0.1:5173/lab.html|逐步完成工单分诊等项目练习|
+|Mock API 健康检查|http://127.0.0.1:8787/api/health|查看本地服务状态|
+
+**只运行课程网页**也可以执行：
+
+```bash
+npm run dev:web
+```
+
+它提供首页与课堂；需要项目实验台的 API 时，使用前面的 `npm run dev`。
+
+<details>
+<summary>Windows：使用仓库提供的 PowerShell 启动脚本</summary>
+
+在仓库根目录执行：
+
+```powershell
 powershell -NoProfile -File scripts/run.ps1 install
 powershell -NoProfile -File scripts/run.ps1 dev
-~~~
+```
 
-浏览器打开 http://127.0.0.1:5173 查看首页；课堂在 /learn.html，原工单实验台在 /lab.html，API在127.0.0.1:8787。若已使用Node 24，直接npm install、npm run dev即可。
+脚本优先使用系统 Node 24；若本机已有 Codex 捆绑的 Node 24，可为当前进程选择它。脚本不会下载 Node 或更改系统配置；找不到合适版本时，请先安装 Node.js 24。已使用系统 Node 24、但 PowerShell 阻止 npm.ps1 时，可使用 `npm.cmd ci` 和 `npm.cmd run dev`。
 
-~~~powershell
-powershell -NoProfile -File scripts/run.ps1 doctor
-powershell -NoProfile -File scripts/run.ps1 check
-powershell -NoProfile -File scripts/run.ps1 practice:stage1
-~~~
+</details>
 
-- check：TypeScript、骨架测试、前端构建，初始应通过。
-- practice:stage1：11条公开的作业验收，初始应失败；流式和真实模型另行检查。
-- doctor：环境与验证范围，不给学习者打分。
-- .env.example：真实接入练习预留字段；骨架不读取这些字段，也不发模型API请求。
+### 3. 选做：真实组件实操与工程检查
 
-## 课程与老师
+以下 Python 环境只在做对应实操或运行完整检查时准备。Windows：
 
-[阶段路线](course/roadmap.md) · [AI协作与考试制度](course/learning-contract.md) · [进度模板](learning/progress.example.json) · [回到新聊天继续学习](course/continue-with-teacher.md)
+```powershell
+py -3.12 -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r examples/tutorial-requirements.txt
+```
 
-你的老师会根据诊断、当前提交和实际表现调整速度。你可以跳过已经用证据证明掌握的内容；每阶段仍需要作业评阅和变式考试。AI使用范围会与个人掌握程度分别记录。
+macOS / Linux：
 
-## 岗位依据
+```bash
+python3.12 -m venv .venv
+.venv/bin/python -m pip install -r examples/tutorial-requirements.txt
+```
 
-[岗位能力与学习路线](docs/career/ai-agent-skills.md) · [20个岗位初筛来源](docs/career/beijing-jobs.md)
+之后可在仓库根目录执行：
 
-这些是公开信息初筛，部分来自索引或转载，并非20份完整JD。来源材料中的建议不能当作招聘方硬要求。具体能力抽取与证据限制保留在文档内。
+```bash
+# 检查环境与验证范围
+npm run doctor
 
-## 工程范围
+# 运行一份本地 MCP 实操示例
+npm run tutorial -- S3-L01
 
-默认离线Mock；没有真实模型验证、后端生产运行、部署或岗位录用结论。仓库不含作业答案和提前固定的正式考卷。所有任务均使用样例数据。
+# 类型、教学代码格式、自动测试、教材同步与生产构建
+npm run check
 
-## 架构与开放许可
+# 第一阶段公开作业验收：需要你先实现作业
+npm run practice:stage1
+```
 
-[请求主线](course/maps/architecture-request.md) · [知识管道](course/maps/architecture-knowledge.md) · [质量交付闭环](course/maps/architecture-quality.md) · [Agent循环脑图](course/maps/S2-L02.svg)。图可在网页内查看、关联跳课并下载SVG与Markdown。
+`practice:stage1` 的初始实现有意留空，练习失败时按契约逐项实现。`check` 验证工程与教材，不自动评定个人阶段成绩。默认使用 Mock，无需 Key；真实模型接入在后续课程中单独配置与验证，凭证只放本地服务端。
 
-软件代码MIT；原创讲义、练习和脑图CC BY 4.0。混合文件与第三方范围见[LICENSING.md](LICENSING.md)、[NOTICE](NOTICE.md)。[贡献指南](CONTRIBUTING.md) · [安全问题](SECURITY.md)。个人进度、作答和成绩保存在本地私有目录，公共仓库只提供空模板。
+修改教材后，先运行 `npm run classroom:build` 同步生成文件，再运行 `npm run check`。仅生成可部署静态产物时使用 `npm run build`，输出到 `dist/`；项目 API 需另配相应运行环境。
+
+## 项目与考核怎么进行？
+
+最终目标是一套「研发知识与工单 Agent 工作台」：React 界面发起请求，应用校验身份与输入，按任务选择固定工作流或 Agent，通过有权限的知识与工具完成处理，再保存任务状态、引用、评测和执行记录。
+
+仓库已经提供前端、HTTP 入口、Mock、故障情境和公开示例；`server/learning/` 中的核心练习由学习者逐步实现。网页实验主要帮助理解机制，真实数据库、协议互通、模型效果与部署需要提交对应实测证据。
+
+每阶段按「学习 → 项目增量 → 提交具体 commit → 评阅 → 新变式考试 → 反馈」推进。网站自动评分公开选择题；开放题和正式考试由你选择的老师或 AI 教学助手另行评阅。本人概念答辩、项目证据与变式排错共同决定是否通过。
+
+- [起点诊断](course/diagnostic.md) · [第一阶段计划](course/stage-01/plan.md) · [项目契约](course/stage-01/assignment.md)
+- [AI 协作与评分规则](course/learning-contract.md) · [考试蓝图](assessments/stage-01/exam-blueprint.md) · [交卷模板](submissions/stage-01/README.md)
+- [换一个聊天继续学习](course/continue-with-teacher.md) · [求职作品与面试训练](docs/career/job-readiness.md)
+
+建议为阅读与项目预留约 90–150 小时，按实际掌握推进；已有能力可提交证据加快评阅，不要求按固定天数等待。正式试题在真实交卷后生成，公开参考答案可提前用于学习。
+
+## 仓库导航
+
+```text
+course/
+  beginners/          入门讲义、最小代码与练习
+  tutorials/          完整进阶教程、代码与阅读拆解
+  teacher/            全部公开题的老师讲评源文件
+  stage-01…08/        生成讲义、练习、答案及阶段项目要求
+  maps/               脑图和架构图的 SVG / Markdown
+classroom/            单文件互动课堂模板、样式与运行器
+public/learn.html     生成的可离线使用课堂
+public/brand/         网站 Logo 矢量源
+src/                  React 首页与项目实验台
+server/learning/      学习者需要实现的核心练习
+examples/             网页实验配套代码与本地实操
+assessments/          公开练习和阶段考试蓝图
+submissions/          交卷模板
+scripts/              教材构建、环境检查等工具
+```
+
+课程源文件与生成文件的关系见 [维护说明](classroom/README.md)。新增或修改课程时，请同步脑图、讲评和验证范围，保留学习者现有题号与记录。
+
+## 作者与参与方式
+
+由 **[Xeehho](https://github.com/Xeehho)** 发起维护：一名有 4 年前端经验、持续使用 AI Coding 并探索 AI 应用工程的开发者。项目将学习与开发过程整理成公开的讲义、实验和验收路径，并在 AI 辅助下持续完善。
+
+如果这套课程帮助你读懂了某个概念、排查了一次故障，欢迎 **[给项目点个 Star](https://github.com/Xeehho/agent-engineering-lab)**。也欢迎提交具体的术语疑问、错误案例、教学改进或 PR；参与方式见 [贡献指南](CONTRIBUTING.md)。
+
+岗位材料见 [岗位能力与学习路线](docs/career/ai-agent-skills.md)、[北京岗位初筛来源](docs/career/beijing-jobs.md)。这些材料保留采集来源与限制，实际求职时请重新核对当前 JD。
+
+## 开放许可
+
+- **代码与原创 UI 图形：MIT**，见 [LICENSE](LICENSE)。
+- **原创讲义、练习、讲评与脑图：CC BY 4.0**，允许分享、修改及商业使用，需保留署名、许可链接并说明修改。
+
+混合产物和第三方范围见 [LICENSING.md](LICENSING.md) 与 [NOTICE](NOTICE.md)。个人作答、进度和成绩保存在浏览器或本地私有目录，公共仓库只提供空模板。[报告安全问题](SECURITY.md)。

@@ -105,9 +105,9 @@ const overviewData = {
   })),
 };
 await emit("src/generated/course-overview.ts", "// Generated from course/curriculum.mjs. Run npm run classroom:build.\nexport const courseOverview = " + JSON.stringify(overviewData, null, 2) + " as const;\n");
-const [template, css, app, core, knowledgeMap,mitLicense,ccLicense] = await Promise.all([
+const [template, css, app, core, knowledgeMap,mitLicense,ccLicense,brandSvg] = await Promise.all([
   read("classroom/index.template.html"), read("classroom/classroom.css"), read("classroom/app.js"),
-  read("classroom/core.mjs"), read("course/knowledge-map.md"),read("LICENSE"),read("LICENSES/CC-BY-4.0.txt"),
+  read("classroom/core.mjs"), read("course/knowledge-map.md"),read("LICENSE"),read("LICENSES/CC-BY-4.0.txt"),read("public/brand/logo.svg"),
 ]);
 const catalog = [];
 for (const item of lessons) {
@@ -149,13 +149,14 @@ if (/<\/script/i.test(javascript)) throw new Error("Inline script contains an un
 const overview = renderMarkdown(knowledgeMap.slice(knowledgeMap.indexOf("## ")), "course/knowledge-map.md")
   .replaceAll('id="section-', 'id="map-section-');
 const html = template.replace("/*__CSS__*/", () => css)
+  .replaceAll("__BRAND_DATA__", () => "data:image/svg+xml;base64," + Buffer.from(brandSvg.replaceAll("\r\n", "\n")).toString("base64"))
   .replace("/*__JS__*/", () => javascript)
   .replace("__LECTURE__", () => catalog[0].lectureHtml)
   .replace("__NOTES__", () => catalog[0].notesHtml)
   .replace("__TOC__", () => catalog[0].tocHtml)
   .replace("__SIDEBAR__", () => stageNav).replace("__OVERVIEW__", () => overview)
   .replace("__LICENSE__",()=>'<p>Agent Engineering Lab — Xeehho。程序与可执行代码：MIT；原创课程、练习、脑图和架构说明：CC BY 4.0。改编请保留署名、许可链接并说明修改。第三方资料、商标与头像不在此授权范围内。</p><p><a href="https://github.com/Xeehho/agent-engineering-lab/blob/main/LICENSING.md" target="_blank" rel="noopener noreferrer">详细许可范围</a></p><details><summary>MIT License 全文</summary><pre>'+escapeHtml(mitLicense)+'</pre></details><details><summary>CC BY 4.0 全文</summary><pre>'+escapeHtml(ccLicense)+'</pre></details>');
-if (/__(LECTURE|NOTES|TOC|SIDEBAR|OVERVIEW|CORE|CONTENT|CSS|JS)__/.test(html)) throw new Error("Unresolved classroom template marker");
+if (/__(LECTURE|NOTES|TOC|SIDEBAR|OVERVIEW|CORE|CONTENT|CSS|JS|BRAND_DATA)__/.test(html)) throw new Error("Unresolved classroom template marker");
 await emit("public/learn.html", html);
 console.log((checking ? "Verified" : "Generated") + " " + lessons.length + " lessons / " + stages.length +
   " stages, " + generated.size + " companion files; standalone HTML " + Buffer.byteLength(html) + " bytes.");

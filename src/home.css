@@ -31,8 +31,7 @@ button, a, input, summary { outline-offset: 5px; }
 .home-brand { display: inline-flex; align-items: center; gap: 11px; font-size: 16px; font-weight: 650; letter-spacing: -.4px; line-height: 1.3; white-space: nowrap; }
 .home-brand b { color: var(--home-green); }
 .home-brand small { display: block; font-size: 9px; font-weight: 400; letter-spacing: 1.6px; color: var(--home-muted); margin-top: 5px; }
-.home-brand-mark { background: var(--home-green); color: #fff; width: 37px; height: 37px; border-radius: 10px; text-align: center; font: bold 33px/33px Georgia, serif; position: relative; }
-.home-brand-mark > span { position: absolute; font: 16px/1 sans-serif; top: 4px; right: 3px; }
+.home-brand-mark { display: block; flex-shrink: 0; width: 37px; height: 37px; }
 .home-navigation { display: flex; gap: 28px; font-size: 12px; color: #6c7f70; }
 .home-navigation a:hover { color: var(--home-green); }
 .home-button { display: inline-flex; justify-content: center; align-items: center; gap: 12px; border: 1px solid #d1ddd0; border-radius: 7px; padding: 12px 19px; background: #fff; color: var(--home-ink); font-size: 13px; font-weight: 600; line-height: 1.5; transition: background .18s, border-color .18s, transform .18s; }
@@ -285,8 +284,7 @@ button, a, input, summary { outline-offset: 5px; }
   .home-header-inner { width: calc(100% - 32px); min-height: 66px; gap: 11px; }
   .home-brand { font-size: 12px; gap: 8px; letter-spacing: -.3px; }
   .home-brand small { font-size: 7px; letter-spacing: .6px; }
-  .home-brand-mark { width: 30px; height: 30px; border-radius: 8px; font-size: 27px; line-height: 27px; }
-  .home-brand-mark > span { font-size: 12px; top: 3px; right: 2px; }
+  .home-brand-mark { width: 30px; height: 30px; }
   .home-star { font-size: 0; width: 34px; height: 34px; padding: 8px; gap: 0; }
   .home-star > span { display: none; }
   .home-star .icon { width: 16px; height: 16px; }

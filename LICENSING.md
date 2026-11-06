@@ -2,6 +2,8 @@
 
 Copyright © 2026 Xeehho and contributors.
 
+网站原创UI标识及其图标导出（public/brand/logo.svg、public/favicon.ico、public/apple-touch-icon.png）随软件按MIT提供；作者头像、个人身份与第三方标识仍适用下方的范围说明。
+
 本项目采用两种许可，按实际内容区分：
 
 - **软件代码使用 [MIT](LICENSE)**：src/、server/、api/、classroom/中的程序和样式、构建脚本、测试、配置、可运行示例，以及讲义中的可执行代码块。可按MIT使用、修改和分发，保留许可与版权声明。

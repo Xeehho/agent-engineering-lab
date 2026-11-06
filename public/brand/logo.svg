@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" fill="none" role="img" aria-labelledby="logo-title">
+  <title id="logo-title">Agent Engineering Lab</title>
+  <rect width="64" height="64" rx="17" fill="#087F5B"/>
+  <path d="M40 25v23M40 36a12 12 0 1 0-24 0 12 12 0 0 0 24 0Z" stroke="#FFFFFF" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M42 14h10v10M52 14 40 26" stroke="#CDF59A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

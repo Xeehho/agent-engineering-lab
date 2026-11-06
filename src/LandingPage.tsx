@@ -19,7 +19,7 @@ export function LandingPage() {
       <header className="home-header">
         <div className="home-header-inner">
           <a className="home-brand" href="/" aria-label="Agent Engineering Lab 首页">
-            <span className="home-brand-mark" aria-hidden="true">a<span>↗</span></span>
+            <img className="home-brand-mark" src="/brand/logo.svg" alt="" width="37" height="37" />
             <span>Agent Engineering <b>Lab</b><small>从 AI Coding 到 AI 应用工程</small></span>
           </a>
           <button className="mobile-nav-toggle" type="button" aria-expanded={menuOpen} aria-controls="home-navigation" aria-label={menuOpen ? '收起导航' : '展开导航'} onClick={() => setMenuOpen(!menuOpen)}><Icon name={menuOpen ? 'close' : 'menu'} /></button>
