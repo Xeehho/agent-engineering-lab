@@ -73,7 +73,7 @@
 
 ### 怎样把知识串成一个系统？
 
-![工程架构：一次请求如何连接模型、工具、任务状态与界面](course/maps/architecture-request.svg)
+<p><img src="course/maps/architecture-request.svg" alt="工程架构：一次请求如何连接模型、工具、任务状态与界面" width="1200" /></p>
 
 在「工程架构」中选择场景并逐步推进，可以查看组件的职责、输入输出、失败边界和关联课程。在「本课脑图」中复习问题、机制与验证方式，也可以下载 SVG 和 Markdown。
 
