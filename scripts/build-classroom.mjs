@@ -143,7 +143,10 @@ const stageNav = stages.map(stage => '<details class="stage-group"' + (stage.id 
     "</b><small>" + item.id + " · " + (item.contentLevel === "detailed" ? "详细教程" : "简版待扩写") + "</small></span></button>").join("") +
   "</div></details>").join("\n");
 const safeJson = value => JSON.stringify(value).replaceAll("<", "\\u003c").replaceAll("\u2028", "\\u2028").replaceAll("\u2029", "\\u2029");
-const javascript = app.replace("// __CORE__", () => core.replace(/^export /gm, ""))
+const [studyCode, notebookCode] = await Promise.all([read("classroom/study.mjs"), read("classroom/notebook.js")]);
+const javascript = app.replace("// __CORE__", () => studyCode.replace(/^export /gm, "") + "\n" +
+  core.replace(/^import\s+[\s\S]*?from\s+["']\.\/study\.mjs["'];?\s*/m, "").replace(/^export /gm, ""))
+  .replace("// __NOTEBOOK__", () => notebookCode)
   .replace("/*__CONTENT__*/", () => safeJson({ lessons: catalog, stages,architecture:architectureViews.map(v=>({...v,svg:architectureSvg(v)})) }));
 if (/<\/script/i.test(javascript)) throw new Error("Inline script contains an unsafe closing tag");
 const overview = renderMarkdown(knowledgeMap.slice(knowledgeMap.indexOf("## ")), "course/knowledge-map.md")
@@ -156,7 +159,7 @@ const html = template.replace("/*__CSS__*/", () => css)
   .replace("__TOC__", () => catalog[0].tocHtml)
   .replace("__SIDEBAR__", () => stageNav).replace("__OVERVIEW__", () => overview)
   .replace("__LICENSE__",()=>'<p>Agent Engineering Lab — Xeehho。程序与可执行代码：MIT；原创课程、练习、脑图和架构说明：CC BY 4.0。改编请保留署名、许可链接并说明修改。第三方资料、商标与头像不在此授权范围内。</p><p><a href="https://github.com/Xeehho/agent-engineering-lab/blob/main/LICENSING.md" target="_blank" rel="noopener noreferrer">详细许可范围</a></p><details><summary>MIT License 全文</summary><pre>'+escapeHtml(mitLicense)+'</pre></details><details><summary>CC BY 4.0 全文</summary><pre>'+escapeHtml(ccLicense)+'</pre></details>');
-if (/__(LECTURE|NOTES|TOC|SIDEBAR|OVERVIEW|CORE|CONTENT|CSS|JS|BRAND_DATA)__/.test(html)) throw new Error("Unresolved classroom template marker");
+if (/__(LECTURE|NOTES|TOC|SIDEBAR|OVERVIEW|CORE|CONTENT|CSS|JS|BRAND_DATA|NOTEBOOK)__/.test(html)) throw new Error("Unresolved classroom template marker");
 await emit("public/learn.html", html);
 console.log((checking ? "Verified" : "Generated") + " " + lessons.length + " lessons / " + stages.length +
   " stages, " + generated.size + " companion files; standalone HTML " + Buffer.byteLength(html) + " bytes.");

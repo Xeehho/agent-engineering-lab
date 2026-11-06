@@ -160,7 +160,7 @@ test("multi-lesson backup isolates identical question IDs and restores migrated 
   assert.ok(exportAnswers(second, lessons[6].experiments, lessons[6].checkpoints, lessons[6].quiz).startsWith("# S2-L01"));
   const migrated = normalizeBook(first, lessons);
   assert.equal(migrated.lessons["S1-L01"].drafts.C1, first.drafts.C1);
-  assert.equal(migrated.schemaVersion, 2);
+  assert.equal(migrated.schemaVersion, 3);
   assert.equal(migrated.lessons["S2-L01"], undefined);
   assert.throws(() => normalizeBook({schemaVersion:9}, lessons));
   assert.throws(() => normalizeBook({...book,lessons:{"S2-L01":first}}, lessons));

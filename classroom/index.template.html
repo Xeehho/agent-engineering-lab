@@ -20,6 +20,7 @@
     </a>
     <div class="header-actions">
       <span class="offline-label"><i></i> 离线课堂</span>
+      <button class="button quiet" id="open-notebook" data-go="notebook">笔记本 <span id="notebook-due-badge" hidden></span></button>
       <button class="button quiet" id="export-top">导出学习记录 <span aria-hidden="true">↗</span></button>
       <a class="github-link" href="https://github.com/Xeehho/agent-engineering-lab" target="_blank" rel="noopener noreferrer">☆ Star <span aria-hidden="true">↗</span></a>
     </div>
@@ -45,6 +46,7 @@
 
   <main id="main" tabindex="-1">
     <div class="page-container">
+      <section id="storage-warning" class="storage-warning" role="status" hidden><strong>本页暂缓自动保存</strong><p id="storage-warning-message"></p><div class="record-buttons"><button class="button" id="conflict-backup">导出本页完整记录</button><button class="button" id="backup-raw-storage">下载浏览器原记录</button><button class="button" id="reload-storage">载入浏览器最新记录</button></div></section>
       <div class="breadcrumb"><span>课程</span><span aria-hidden="true">/</span><span id="stage-crumb">阶段 01</span><span aria-hidden="true">/</span><b id="lesson-crumb">第一课</b><span class="version" id="lesson-version">S1–L01</span></div>
       <div class="content-status" id="content-status">详细教程</div>
       <section class="hero" aria-labelledby="lesson-title">
@@ -75,6 +77,7 @@
           <button id="tab-mindmap" role="tab" aria-selected="false" aria-controls="panel-mindmap" data-tab="mindmap" tabindex="-1">本课脑图</button>
           <button id="tab-architecture" role="tab" aria-selected="false" aria-controls="panel-architecture" data-tab="architecture" tabindex="-1">工程架构</button>
           <button id="tab-roadmap" role="tab" aria-selected="false" aria-controls="panel-roadmap" data-tab="roadmap" tabindex="-1"><span>06</span> 知识地图</button>
+          <button id="tab-notebook" role="tab" aria-selected="false" aria-controls="panel-notebook" data-tab="notebook" tabindex="-1">笔记本与错题</button>
         </div>
       </div>
 
@@ -125,13 +128,29 @@
         <div class="panel-heading"><div><span class="eyebrow green">KEEP WHAT MATTERS</span><h2>复习时，回到这几件事。</h2><p>课程速记、个人笔记和可迁移的学习记录，放在一起。</p></div><button class="button" id="print-notes">打印速记 / 存为 PDF</button></div>
         <article class="paper notes-paper"><div class="article-body" id="notes-content">__NOTES__</div></article>
         <div class="paper personal-notes"><label for="personal-notes"><h3>我的笔记</h3><span>今天改变了哪个认识？还有什么不能解释？</span></label><textarea id="personal-notes" maxlength="20000" rows="7" placeholder="用自己的话记下来，导出时会一起带走。"></textarea></div>
-        <div class="record-tools"><div><h3>把学习记录带走</h3><p>JSON 备份包含所有课程记录，也兼容第一课旧版备份。Markdown 导出当前课作答。个人答案不上传到服务器或 GitHub。</p><p class="microcopy">file://、本地服务和不同浏览器使用不同存储；隐私模式或清理缓存可能丢失数据。建议及时导出。</p></div><div class="record-buttons"><button class="button" id="backup">备份全部课程 JSON ↓</button><label class="button file-label" for="import-file">导入 JSON ↑</label><input type="file" id="import-file" accept=".json,application/json" hidden><button class="button" id="export-notes">导出作答 Markdown ↓</button><button class="button danger" id="reset-progress">清空当前课进度</button></div></div>
+        <div class="record-tools"><div><h3>把学习记录带走</h3><p>JSON 备份包含全部课程、笔记本、实验快照和错题集，兼容旧版备份。Markdown 导出当前课作答。个人答案不上传到服务器或 GitHub。</p><p class="microcopy">file://、本地服务和不同浏览器使用不同存储；隐私模式或清理缓存可能丢失数据。建议及时导出。</p></div><div class="record-buttons"><button class="button" data-go="notebook">打开笔记本与错题 →</button><button class="button" id="backup">备份全部课程 JSON ↓</button><label class="button file-label" for="import-file">导入 JSON ↑</label><input type="file" id="import-file" accept=".json,application/json" hidden><button class="button" id="export-notes">导出作答 Markdown ↓</button><button class="button danger" id="reset-progress">清空当前课进度</button></div></div>
         <details class="paste-import"><summary>也可以粘贴 JSON 导入</summary><label for="import-text">粘贴备份内容（仅本机处理）</label><textarea id="import-text" rows="5" maxlength="10000000" placeholder="粘贴单课旧版或全课程 JSON 备份"></textarea><button id="import-text-button" class="button">校验并导入</button></details>
+      </section>
+      <section id="panel-notebook" class="tab-panel" role="tabpanel" aria-labelledby="tab-notebook" tabindex="0" hidden>
+        <div class="panel-heading"><div><span class="eyebrow green">YOUR LEARNING NOTEBOOK</span><h2>把薄弱点留下来，回头有处可找。</h2><p>跨阶段查找知识点、实验观察与错题。全部在当前浏览器保存，可导出迁移。</p></div><button class="button primary" id="new-notebook-note">新建知识点笔记 ＋</button></div>
+        <div id="notebook-stats" class="notebook-stats" aria-label="全部课程笔记统计"></div>
+        <div class="notebook-views" aria-label="笔记分类"><button class="button" data-notebook-kind="notes" aria-pressed="true">知识点笔记</button><button class="button" data-notebook-kind="raw" aria-pressed="false">原始记录</button><button class="button" data-notebook-kind="mistakes" aria-pressed="false">错题集</button><button class="button" data-notebook-kind="all" aria-pressed="false">到期回顾</button></div>
+        <div class="paper notebook-filters">
+          <label>查找知识点或标签<input type="search" id="notebook-query" placeholder="如 typeof、工具预算、引用…"></label>
+          <label>学习阶段<select id="notebook-stage"><option value="">全部阶段</option></select></label>
+          <label>课程<select id="notebook-lesson"><option value="">全部课程</option></select></label>
+          <label>内容模块<select id="notebook-source"><option value="">全部模块</option></select></label>
+          <label>复习状态<select id="notebook-status"><option value="all">全部状态</option><option value="weak">薄弱点 / 待订正</option><option value="reviewed">已回顾 / 已订正</option><option value="due">已到回顾日期</option></select></label>
+        </div>
+        <div class="record-buttons notebook-tools"><button class="button" id="notebook-current">仅看本课</button><button class="button" id="notebook-clear">清除筛选</button><button class="button" id="export-notebook">导出当前筛选 Markdown ↓</button><button class="button" id="backup-notebook">备份全部记录 JSON ↓</button><button class="button" id="notebook-import">导入 / 恢复记录 ↑</button><button class="button" data-go="notes">查看本课速记 →</button></div>
+        <p class="microcopy" id="notebook-results-label" role="status"></p><div id="notebook-results" class="notebook-results"></div>
+        <details class="paper notebook-help"><summary>笔记、原始记录和错题怎么配合？</summary><ul><li>讲义知识点、实验和题目旁可直接记笔记，关联来源与保存时快照。</li><li>旧版个人笔记、实验预测和观察保留在“原始记录”，可继续修改原记录或整理成独立笔记。</li><li>选择题提交后自动收集错题；改选或后来答对不会删除历史。开放题、故意观察失败的实验只由你手动标为薄弱点。</li><li>错题先补充订正说明，再重新作答；选对且写了订正才标“已订正”。仍不清楚的笔记可延后一天再看，已解释清楚的安排三天后回顾，日期也能自行修改。</li><li>这些是个人复习记录，不是老师评分或掌握认证。不同网址、浏览器和设备的记录不自动同步，跨环境前先导出JSON。</li></ul></details>
       </section>
       <section id="panel-mindmap" class="tab-panel" role="tabpanel" aria-labelledby="tab-mindmap" tabindex="0" hidden>
         <div class="panel-heading"><div><span class="eyebrow green">CONNECT THE IDEAS</span><h2>知道自己正在学哪一块。</h2><p>中心是本课问题，四个分支是理解与验证路径。关联课说明前置知识和后续用途。</p></div></div>
         <div id="mindmap-visual" class="diagram-scroll" tabindex="0" aria-label="本课思维导图，可横向滚动"></div>
         <div id="mindmap-tree" class="map-tree"></div>
+        <div id="mindmap-note-actions"></div>
         <div id="lesson-relations" class="lesson-relations"></div>
         <div class="record-buttons"><button id="download-mindmap" class="button">下载脑图 SVG ↓</button><button id="download-map-notes" class="button">下载脑图笔记 Markdown ↓</button><button class="button primary" data-go="architecture">放进完整工程架构 →</button></div>
       </section>
@@ -144,6 +163,7 @@
         <p class="microcopy">★ 标出本课会用到的组件。选择任一组件查看输入、输出、上下游与对应课程。</p>
         <div id="architecture-components" class="component-buttons" aria-label="选择组件查看职责"></div>
         <article id="architecture-detail" class="paper component-detail" aria-live="polite"></article>
+        <div id="architecture-note-actions"></div>
         <details class="architecture-edges"><summary>查看所有连接的文字说明</summary><ol id="architecture-edges"></ol></details>
         <div class="paper scenario"><h3>用一个具体任务沿图走一遍</h3><p class="microcopy">固定课堂场景，无模型、网络或真实业务执行。每一步只说明数据如何流动。</p><p id="scenario-step" aria-live="polite"></p><div class="record-buttons"><button id="scenario-previous" class="button">← 上一步</button><button id="scenario-next" class="button primary">下一步 →</button><button id="download-architecture" class="button">下载架构 SVG ↓</button></div></div>
       </section>
@@ -158,6 +178,15 @@
   </main>
   <div class="toast" id="toast" role="status" hidden></div>
   <dialog id="confirm-dialog" aria-labelledby="dialog-title"><h2 id="dialog-title">确认操作</h2><p id="dialog-message"></p><div class="dialog-actions"><button class="button" id="dialog-cancel">取消</button><button class="button primary" id="dialog-confirm">确认</button></div></dialog>
+  <dialog id="note-editor" class="note-editor" aria-labelledby="note-editor-heading">
+    <div class="note-editor-heading"><div><span class="eyebrow green">PERSONAL NOTE</span><h2 id="note-editor-heading">知识点笔记</h2><p id="note-editor-source"></p></div><button class="button" id="close-note-editor">完成</button></div>
+    <label for="note-title">知识点标题</label><input id="note-title" maxlength="160" placeholder="用自己的话命名这个知识点">
+    <label for="note-body">我的理解与待验证问题</label><textarea id="note-body" maxlength="12000" rows="9" placeholder="我原先以为…&#10;实验说明…&#10;正确的判断方法…&#10;下次如何验证…"></textarea>
+    <div class="note-editor-fields"><label>标签（用逗号分隔，最多6个）<input id="note-tags" maxlength="220" placeholder="类型判断, JSON, 易混淆"></label><label>复习状态<select id="note-status"><option value="note">普通笔记</option><option value="weak">标为薄弱点</option><option value="reviewed">已回顾</option></select></label><label>下次回顾日期<input type="date" id="note-due"></label></div>
+    <p id="note-editor-save" role="status" class="microcopy">输入会自动保存到本机。</p>
+    <details id="note-context"><summary>关联记录快照（创建笔记时）</summary><pre id="note-context-content"></pre></details>
+    <div class="record-buttons"><button class="button" id="note-open-source">回到知识点 →</button><button class="button" id="export-single-note">导出本条 Markdown ↓</button><button class="button" id="note-backup-all">备份全部记录 JSON ↓</button><button class="button danger" id="delete-note">删除这条笔记</button></div>
+  </dialog>
   <noscript><div class="noscript">JavaScript 已关闭：你仍可阅读当前讲义；实验、答题与进度保存需要启用 JavaScript。</div></noscript>
   <script>/*__JS__*/</script>
 </body>

@@ -106,7 +106,7 @@ export function LandingPage() {
         <section className="faq-section home-container home-section" id="faq" aria-labelledby="faq-title"><div><p className="home-eyebrow">A FEW THINGS TO KNOW</p><h2 id="faq-title">开始之前，<br />你可能还想知道。</h2></div><div className="faq-list">{faqs.map(item=><details key={item.question}><summary>{item.question}<Icon name="chevron" /></summary><p>{item.answer.replace('{experiments}', String(stats.experiments))}</p></details>)}</div></section>
         <section className="closing-section home-container"><span className="home-eyebrow">YOUR NEXT STEP</span><h2>从一个问题开始，<br />慢慢建立完整的判断。</h2><p>第一课：一次模型请求，怎样才算成功？</p><a className="home-button primary" href={firstLesson}>进入互动课堂 <Icon name="arrow" /></a></section>
       </main>
-      <footer className="home-footer home-container"><div><b>Agent Engineering Lab</b><p>自主判断 · 可验证交付</p></div><nav aria-label="页脚导航"><a href={firstLesson}>互动课堂</a><a href="/lab.html">项目实验台</a><a href={developer.github} target="_blank" rel="noopener noreferrer">Xeehho <span aria-hidden="true">↗</span></a><a href={developer.repository} target="_blank" rel="noopener noreferrer">GitHub <Icon name="github" /></a></nav><span>代码 MIT · 课程 CC BY 4.0</span></footer>
+      <footer className="home-footer home-container"><div><b>Agent Engineering Lab</b><p>自主判断 · 可验证交付</p></div><nav aria-label="页脚导航"><a href={firstLesson}>互动课堂</a><a href="/learn.html#S1-L01/notebook">笔记本与错题</a><a href="/lab.html">项目实验台</a><a href={developer.github} target="_blank" rel="noopener noreferrer">Xeehho <span aria-hidden="true">↗</span></a><a href={developer.repository} target="_blank" rel="noopener noreferrer">GitHub <Icon name="github" /></a></nav><span>代码 MIT · 课程 CC BY 4.0</span></footer>
     </div>
   );
 }

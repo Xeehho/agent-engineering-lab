@@ -14,7 +14,7 @@
     "dev:api": "node --watch server/index.ts",
     "dev:web": "vite --host 127.0.0.1",
     "typecheck": "tsc --noEmit",
-    "test": "node --test tests/foundation.test.ts tests/classroom.test.mjs tests/tutorials.test.mjs",
+    "test": "node --test tests/foundation.test.ts tests/classroom.test.mjs tests/study.test.mjs tests/tutorials.test.mjs",
     "test:tutorials": "node --test tests/tutorials.test.mjs",
     "practice:stage1": "node --test assessments/stage-01/practice.test.ts",
     "build": "npm run classroom:build && vite build",

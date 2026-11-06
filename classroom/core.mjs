@@ -1,9 +1,10 @@
-export const tabs = ["lecture", "lab", "practice", "quiz", "notes", "mindmap", "architecture", "roadmap"];
+import { emptyStudyState, normalizeStudyState, collectStudyRecords, exportStudyMarkdown } from "./study.mjs";
+export const tabs = ["lecture", "lab", "practice", "quiz", "notes", "mindmap", "architecture", "roadmap", "notebook"];
 export const requiredItems = items => items.filter(item=>item.level!=="advanced");
 export function emptyState(course = "S1-L01") {
   return { schemaVersion: 1, course, tab: "lecture", read: false,
     drafts: {}, codes: {}, predictions: {}, observations: {}, ran: [],
-    answers: {}, submitted: false, personalNotes: "" };
+    answers: {}, submitted: false, personalNotes: "", ...emptyStudyState() };
 }
 export function normalizeState(value, experiments, checkpoints, quiz, course = "S1-L01") {
   if (!value || value.schemaVersion !== 1 || value.course !== course)
@@ -31,6 +32,7 @@ export function normalizeState(value, experiments, checkpoints, quiz, course = "
   }
   state.submitted = state.submitted && requiredItems(quiz).every(item => Object.hasOwn(state.answers, item.id));
   if (typeof value.personalNotes === "string") state.personalNotes = value.personalNotes.slice(0, 20000);
+  Object.assign(state, normalizeStudyState({ ...value, answers: state.answers }, { experiments, checkpoints, quiz }, state.submitted));
   return state;
 }
 export function gradeQuiz(answers, quiz) {
@@ -67,11 +69,14 @@ export function exportAnswers(state, experiments, checkpoints, quiz) {
     lines.push("", "最近一次自测：" + grade.correct + "/" + grade.total + "，不计入正式成绩。");
   } else lines.push("", "尚未提交自测。");
   lines.push("", "## 我的笔记", "", state.personalNotes || "（未填写）", "");
+  const records = collectStudyRecords({ lessons: { [state.course]: state } },
+    [{ id: state.course, stage: state.course.split("-")[0], title: state.course, experiments }]);
+  lines.push(exportStudyMarkdown(records, "本课笔记本、原始记录与错题"));
   return lines.join("\n");
 }
 
 export function emptyBook(catalog) {
-  return { schemaVersion: 2, course: "agent-engineering-lab",
+  return { schemaVersion: 3, course: "agent-engineering-lab",
     currentLesson: catalog[0].id, lessons: {} };
 }
 export function normalizeBook(value, catalog) {
@@ -84,8 +89,10 @@ export function normalizeBook(value, catalog) {
     book.lessons[item.id] = normalizeState(value, item.experiments, item.checkpoints, item.quiz, item.id);
     return book;
   }
-  if (!value || value.schemaVersion !== 2 || value.course !== book.course || !value.lessons || typeof value.lessons !== "object")
+  if (!value || ![2, 3].includes(value.schemaVersion) || value.course !== book.course || !value.lessons || typeof value.lessons !== "object" || Array.isArray(value.lessons))
     throw new Error("不是有效的课程备份。");
+  if (Object.keys(value.lessons).some(id => !catalog.some(item => item.id === id)))
+    throw new Error("备份中有当前教材无法识别的课程，请保留原备份。");
   if (catalog.some(item => item.id === value.currentLesson)) book.currentLesson = value.currentLesson;
   for (const item of catalog) {
     if (!Object.hasOwn(value.lessons, item.id)) continue;

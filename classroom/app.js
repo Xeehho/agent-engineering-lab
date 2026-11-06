@@ -16,6 +16,8 @@
   }
   let state = emptyState();
   let storageAvailable = true;
+  let storageWriteBlocked = false;
+  let lastStoredValue = null;
   let toastTimer;
   const activeWorkers = new Map();
   let architecture = material.architecture[0];
@@ -57,6 +59,8 @@
     byId("inline-mindmap").replaceChildren(textElement("p",map.question,"map-root"),mapTree(map));
     byId("mindmap-visual").innerHTML=map.svg;
     byId("mindmap-tree").replaceChildren(textElement("p",map.question,"map-root"),mapTree(map));
+    byId("mindmap-note-actions").replaceChildren();
+    addStudySourceActions(byId("mindmap-note-actions"), { type: "mindmap", id: "", label: map.question });
     const relations=byId("lesson-relations");relations.replaceChildren();
     for(const [title,ids,fallback] of [["开始前，先能解释",map.prerequisites,"能阅读JavaScript函数、对象、数组和if判断即可；第一次出现的AI概念会在讲义中解释。"],["学完后，会用在",map.next,"回到毕业项目，用阶段交卷与新变式答辩验证掌握。"]]) {
       const block=textElement("section");block.append(textElement("h3",title));
@@ -87,6 +91,8 @@
     const outgoing=architecture.edges.filter(edge=>edge[0]===id).map(edge=>architecture.nodes.find(n=>n.id===edge[1]).title+"（"+edge[2]+"）");
     detail.append(textElement("p","上游："+(incoming.join("；")||"此视角的起点")),textElement("p","下游："+(outgoing.join("；")||"此视角的出口")),textElement("h4","对应课程"));
     lessonButtons(catalog.filter(item=>item.mindmap.components.includes(id)).map(item=>item.id),detail);
+    byId("architecture-note-actions").replaceChildren();
+    addStudySourceActions(byId("architecture-note-actions"), { type: "architecture", id: architecture.id + ":" + id, label: architecture.title + " · " + node.title });
   }
   function renderScenario() {
     const [id,text]=architecture.steps[scenarioIndex];
@@ -141,22 +147,50 @@
     }
   });
   try {
-    const saved = localStorage.getItem(storageKey) || localStorage.getItem("agent-engineering-lab:classroom:S1-L01:v1");
+    lastStoredValue = localStorage.getItem(storageKey);
+    const saved = lastStoredValue || localStorage.getItem("agent-engineering-lab:classroom:S1-L01:v1");
     if (saved) book = normalizeBook(JSON.parse(saved), catalog);
   } catch {
     storageAvailable = false;
-    toast("本机记录不可读取。仍可学习，请及时导出备份。");
+    blockStorageWrites("浏览器原记录无法读取。本页继续暂存，但不会覆盖原记录；可下载原始记录后再恢复。");
+  }
+  function blockStorageWrites(message) {
+    storageWriteBlocked = true;
+    storageAvailable = false;
+    byId("storage-warning").hidden = false;
+    byId("storage-warning-message").textContent = message;
+    toast("自动保存已暂停，请保留本页记录并查看保存提示。");
   }
   function persist() {
     book.lessons[current.id] = state;
     book.currentLesson = current.id;
-    try {
-      localStorage.setItem(storageKey, JSON.stringify(book));
-      storageAvailable = true;
-    } catch { storageAvailable = false; }
+    if (!storageWriteBlocked) {
+      try {
+        if (localStorage.getItem(storageKey) !== lastStoredValue) {
+          blockStorageWrites("另一页面已更新课程记录。本页保留暂存内容，先导出本页，再决定是否载入浏览器最新版本，避免互相覆盖。");
+        } else {
+          const serialized = JSON.stringify(book);
+          localStorage.setItem(storageKey, serialized);
+          lastStoredValue = serialized;
+          storageAvailable = true;
+          byId("storage-warning").hidden = true;
+        }
+      } catch {
+        storageAvailable = false;
+        byId("storage-warning").hidden = false;
+        byId("storage-warning-message").textContent = "浏览器存储不可用或空间不足。本页内容仍在内存里，请先导出完整记录；清理自己的条目或恢复存储后再试。";
+      }
+    }
     byId("save-status").textContent = storageAvailable ? "已保存到本机" : "无法自动保存，请导出备份";
     updateProgress();
+    updateNotebookBadge();
+    return storageAvailable;
   }
+  window.addEventListener("storage", event => {
+    if (event.key === storageKey || event.key === null) {
+      if (event.newValue !== lastStoredValue) blockStorageWrites("另一页面修改或清除了保存记录。本页暂存不会覆盖它；请先导出本页，再载入最新版本。");
+    }
+  });
   function updateProgress() {
     const progress = summarizeProgress(state, experiments, checkpoints, quiz);
     byId("progress-label").textContent = progress.completed + " / 4";
@@ -176,6 +210,7 @@
   function selectTab(name, focus = false) {
     if (!tabs.includes(name)) name = "lecture";
     state.tab = name;
+    if (name === "notebook") renderNotebook();
     for (const tab of tabs) {
       byId("tab-" + tab).setAttribute("aria-selected", String(tab === name));
       byId("tab-" + tab).tabIndex = tab === name ? 0 : -1;
@@ -231,6 +266,7 @@
     byId("notes-content").innerHTML = current.notesHtml;
     byId("teacher-overview").innerHTML = current.teacherOverviewHtml;
     byId("teacher-overview").parentElement.open = false;
+    decorateStudyHeadings();
     renderLearningMaps();
     byId("lecture-toc").innerHTML = '<span class="eyebrow">本课目录</span>' + current.tocHtml;
     byId("mission-title").textContent = "本课网页任务";
@@ -339,6 +375,7 @@
     byId("experiments").replaceChildren();
     for (const item of experiments) {
       const card = textElement("article", undefined, "experiment");
+      card.id = "experiment-card-" + item.id;
       card.append(textElement("span", item.label, "eyebrow green"), textElement("h3", item.title),
         textElement("p", item.intro));
       if (item.challenge) card.append(textElement("p","这次只改一件事：" + item.challenge,"browser-challenge"));
@@ -375,7 +412,9 @@
       const runStatus = textElement("span", state.ran.includes(item.id) ? "上次已运行" : "Ctrl / ⌘ + Enter", "run-state");
       runStatus.id = "run-state-" + item.id;
       toolbar.append(run, reset, runStatus);
-      const output = textElement("pre", "等待运行。先写预测，再点击运行。", "output");
+      const lastRun = state.runs[item.id];
+      const output = textElement("pre", lastRun ? "上次运行记录（" + new Date(lastRun.at).toLocaleString("zh-CN") + "）：\n" + lastRun.output : "等待运行。先写预测，再点击运行。", "output");
+      if (lastRun && lastRun.status !== "passed") output.classList.add("error");
       output.id = "output-" + item.id; output.setAttribute("role", "log");
       output.setAttribute("aria-label", item.title + " 运行输出"); output.setAttribute("aria-live", "polite");
       shell.append(header, editor, toolbar, textElement("div", "CONSOLE / 浏览器实际运行", "output-label"), output);
@@ -385,6 +424,7 @@
       textareaField(card, "observe-" + item.id, "观察与证据边界", state.observations[item.id],
         "实际输出是什么？与预测有什么不同？哪些事情仍未被证明？", 6000,
         value => { state.observations[item.id] = value; });
+      addStudySourceActions(card, { type: "experiment", id: item.id, label: item.title });
       if (item.level === "advanced") {
         const advanced = textElement("details",undefined,"advanced-experiment");
         advanced.append(textElement("summary","进阶实验："+item.title),card);
@@ -400,15 +440,18 @@
     output.textContent = ""; output.classList.remove("error");
     button.disabled = true; status.textContent = "运行中…";
     let worker, blobUrl, timer, finished = false, lineCount = 0;
-    const finish = (message, failure = false, completed = false) => {
+    const finish = (message, failure = false, completed = false, runStatus) => {
       if (finished) return;
       finished = true; clearTimeout(timer); worker?.terminate();
       if (blobUrl) URL.revokeObjectURL(blobUrl);
       activeWorkers.delete(item.id);
       button.disabled = false; status.textContent = message;
       output.classList.toggle("error", failure);
-      if (completed && !state.ran.includes(item.id)) { state.ran.push(item.id); persist(); }
+      if (completed && !state.ran.includes(item.id)) state.ran.push(item.id);
       if (!output.textContent) output.textContent = completed ? "执行结束（没有 console 输出）。" : message;
+      state.runs[item.id] = { code: code.slice(0, 20000), output: output.textContent.slice(0, 8000),
+        status: runStatus || (completed ? "passed" : failure ? "error" : "stopped"), at: Date.now() };
+      persist();
     };
     try {
       blobUrl = URL.createObjectURL(new Blob(["(" + classroomWorker.toString() + ")()"], { type: "text/javascript" }));
@@ -416,7 +459,7 @@
       activeWorkers.set(item.id, () => finish("已停止"));
       timer = setTimeout(() => {
         output.textContent += "\n超过 3 秒，已终止实验。检查循环或未完成的等待。";
-        finish("运行超时", true);
+        finish("运行超时", true, false, "timeout");
       }, 3000);
       worker.onmessage = event => {
         const message = event.data;
@@ -445,6 +488,7 @@
     byId("checkpoints").replaceChildren();
     for (const item of checkpoints) {
       const card = textElement("article", undefined, "checkpoint");
+      card.id = "checkpoint-card-" + item.id;
       const meta = textElement("div", undefined, "question-meta");
       meta.append(textElement("span", item.id), textElement("span", item.badge, "tag"));
       card.append(meta, textElement("h3", item.title), textElement("p", item.text));
@@ -466,6 +510,7 @@
       // Only authored, escaped build-time teaching HTML goes here, never drafts.
       explanation.innerHTML = item.solutionHtml;
       reference.append(explanation);card.append(reference);
+      addStudySourceActions(card, { type: "checkpoint", id: item.id, label: item.title });
       if(item.level==="advanced") {
         const optional=textElement("details",undefined,"advanced-experiment");
         optional.append(textElement("summary","进阶选做："+item.title),card);byId("checkpoints").append(optional);
@@ -476,6 +521,7 @@
     byId("quiz-questions").replaceChildren();
     quiz.forEach((item, index) => {
       const fieldset = textElement("fieldset", undefined, "quiz-question");
+      fieldset.id = "quiz-question-" + item.id;
       const legend = textElement("legend");
       legend.append(textElement("span", "0" + (index + 1)), document.createTextNode(item.question));
       fieldset.append(legend);
@@ -488,7 +534,7 @@
         input.addEventListener("change", () => {
           state.answers[item.id] = optionIndex;
           // Invalidate the old result until the learner explicitly submits the new attempt.
-          if(item.level!=="advanced") state.submitted = false;
+          state.submitted = false;
           renderQuizResults(); persist();
         });
         label.append(input, textElement("span", String.fromCharCode(65 + optionIndex) + ".", "option-letter"),
@@ -498,6 +544,7 @@
       const explanation = textElement("div", undefined, "quiz-explanation");
       explanation.id = "explanation-" + item.id; explanation.hidden = true;
       fieldset.append(options, explanation);
+      addStudySourceActions(fieldset, { type: "quiz", id: item.id, label: item.question });
       if(item.level==="advanced") {
         const optional=textElement("details",undefined,"advanced-experiment");
         optional.append(textElement("summary","进阶选做题："+item.id),fieldset);byId("quiz-questions").append(optional);
@@ -537,7 +584,10 @@
       toast("还有 " + (grade.total - grade.answered) + " 道入门题未选择，请先完成。");
       document.querySelector('input[name="' + unanswered.id + '"]').focus(); return;
     }
-    state.submitted = true; renderQuizResults(); persist();
+    try { recordQuizSubmission(state, quiz); }
+    catch (error) { toast(error.message); return; }
+    renderQuizResults(); persist();
+    if (state.mistakes.length) byId("quiz-result").append(textElement("p", "错题已保留在笔记本，可写订正并重新复习；后来答对也不会删除原记录。"));
     byId("quiz-result").scrollIntoView({ block: "center", behavior: "auto" });
   });
 
@@ -589,13 +639,15 @@
   async function importBackup(text) {
     if (new Blob([text]).size > 10000000) throw new Error("备份过大，上限 10 MB。");
     const imported = normalizeBook(JSON.parse(text), catalog);
-    if (!await askConfirmation("导入学习记录？", "将以备份替换当前浏览器的课程记录。建议先备份；第一课旧版文件也可导入，分数不作为老师认证。")) return;
+    if (!await askConfirmation("导入学习记录？", "将以备份替换全部课程、笔记本、实验快照和错题集，包括当前浏览器已保存的版本。请先备份；旧版文件兼容，分数不作为老师认证。")) return;
+    lastStoredValue = localStorage.getItem(storageKey);
+    storageWriteBlocked = false;
     stopWorkers(); book = imported;
     // Do not write the pre-import active lesson back into the imported book.
     current = null; state = emptyState(imported.currentLesson);
     selectLesson(imported.currentLesson);
     byId("import-text").value = "";
-    toast("课程记录已导入；运行输出需重新执行。");
+    toast("课程记录已导入；已有实验快照一并恢复，旧版没有的输出需要重新执行。");
   }
   byId("import-file").addEventListener("change", async event => {
     const file = event.target.files[0]; event.target.value = "";
@@ -610,9 +662,10 @@
     catch (error) { toast("导入失败：" + error.message); }
   });
   byId("reset-progress").addEventListener("click", async () => {
-    if (!await askConfirmation("清空当前课记录？", "仅清空 " + current.id + " 在当前浏览器的答案、代码修改、笔记与活动记录，其他课保留。请先备份。")) return;
+    if (!await askConfirmation("清空当前课记录？", "仅清空 " + current.id + " 的答案、代码修改、实验快照、笔记和错题，其他课保留。请先备份。")) return;
     stopWorkers(); state = emptyState(current.id); restoreControls(); toast("当前课记录已清空。");
   });
+  // __NOTEBOOK__
   window.addEventListener("pagehide", stopWorkers);
   const [requestedLesson, requestedTab] = location.hash.slice(1).split("/");
   const startId = catalog.some(item => item.id === requestedLesson) ? requestedLesson : book.currentLesson;
