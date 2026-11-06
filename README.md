@@ -243,6 +243,8 @@ scripts/              教材构建、环境检查等工具
 
 如果这套课程帮助你读懂了某个概念、排查了一次故障，欢迎 **[给项目点个 Star](https://github.com/Xeehho/agent-engineering-lab)**。也欢迎提交具体的术语疑问、错误案例、教学改进或 PR；参与方式见 [贡献指南](CONTRIBUTING.md)。
 
+想分享项目，可以取用[无滚动条截图、竖版分享图与发布文案](docs/promotion/README.md)，包含X/Twitter短文和串文、抖音图文说明与口播稿。
+
 岗位材料见 [岗位能力与学习路线](docs/career/ai-agent-skills.md)、[北京岗位初筛来源](docs/career/beijing-jobs.md)。这些材料保留采集来源与限制，实际求职时请重新核对当前 JD。
 
 ## 开放许可
