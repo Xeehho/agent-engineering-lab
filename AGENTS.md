@@ -22,7 +22,7 @@
 
 课程开发不等待学习者完成上一课。八阶段资料可以提前开放，掌握与考试仍按真实提交评定。入门主线源在course/beginners/（讲义、code/、assessment.mjs），完整进阶源在course/tutorials/，旧网页实验在course/browser-demos/。脑图在course/knowledge-graphs.mjs，总架构在course/architecture.mjs。修改后运行teaching:format、classroom:build同步Markdown、示例和HTML，不手改生成文件。保留旧记录迁移与按课隔离，不能覆盖学习者答案。
 
-遵循course/TEACHING.md沉淀讲解、补讲与通用纠错。个人答案与成绩不写入通用教材。项目所有者已明确授权公开本仓库，并选定代码MIT、教学内容CC BY 4.0；范围见LICENSING.md。资料更新不提前标记个人已掌握。
+遵循course/TEACHING.md沉淀讲解、补讲与通用纠错。course/teacher/维护全部公开题的参考答案与老师讲评；修改题目语义时同步复核讲评，构建器只校验覆盖与同步，不自动判断教学质量。个人答案与成绩不写入通用教材。项目所有者已明确授权公开本仓库，并选定代码MIT、教学内容CC BY 4.0；范围见LICENSING.md。资料更新不提前标记个人已掌握。
 
 ## 工程命令
 

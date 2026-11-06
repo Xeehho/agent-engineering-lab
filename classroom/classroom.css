@@ -57,6 +57,15 @@ main{padding-top:84px;margin-left:254px;outline:none}.page-container{max-width:1
 .advanced-reading>summary,.advanced-experiment>summary{cursor:pointer;padding:16px;color:var(--green);font-size:13px;font-weight:600}
 .advanced-reading>.article-body{padding:4px 18px 20px}
 .advanced-experiment>.experiment{margin-bottom:0;border:0;border-top:1px solid var(--line)}
+.teacher-answer,.teacher-route{border:1px solid #d6e4d7;border-radius:8px;margin-top:20px;background:#f6faf3}
+.teacher-answer>summary,.teacher-route>summary{padding:15px 18px;color:var(--green);cursor:pointer;font-size:13px;font-weight:600;line-height:1.8}
+.teacher-answer>.article-body,.teacher-route>.article-body{padding:0 20px 20px;font-size:14px;line-height:1.95}
+.teacher-answer h3{font-size:15px;margin:20px 0 10px}.teacher-answer ul{padding-left:22px}
+.teacher-tools{display:flex;align-items:center;justify-content:space-between;gap:20px;margin:18px 0 30px}
+.teacher-tools p{font-size:12px;line-height:1.9;color:var(--muted);margin:0}
+.teacher-quiz-detail{border-top:1px solid #cbdcc9;padding-top:15px;margin-top:15px}
+.teacher-quiz-detail>.article-body{font-size:13px;line-height:1.95;color:var(--ink)}
+@media(max-width:650px){.teacher-tools{display:block}.teacher-tools .button{margin-top:12px}.teacher-answer>.article-body,.teacher-route>.article-body{padding:0 15px 16px}.teacher-answer>summary,.teacher-route>summary{padding:13px 15px}}
 .lesson-orientation{padding:20px;background:#f2f7ef;border-left:3px solid var(--green);margin-bottom:24px;font-size:13px;line-height:1.9}
 .lesson-orientation>p{color:var(--muted);margin:10px 0}
 .prerequisite-links .button{font-size:10px;padding:5px 9px;margin:3px}

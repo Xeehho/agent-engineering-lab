@@ -4,10 +4,10 @@ export function courseMaterials(lessons, stages) {
     "# 课堂资料目录", "",
     lessons.length + " 课、" + stages.length + " 阶段。详细教程 " + lessons.filter(item=>item.contentLevel==="detailed").length + " 课，简版 " + lessons.filter(item=>item.contentLevel==="brief").length + " 课。网站内直接阅读、实验、作答和自测，无需启动项目；材料状态与学习者掌握/考试分开。", "",
     "[互动课堂](../public/learn.html) · [知识地图](knowledge-map.md) · [阶段路线](roadmap.md) · [求职证据](../docs/career/job-readiness.md)", "",
-    "## 课程目录", "", "|课号|主题|材料状态|讲义|速记|随堂题|公开自测|", "|---|---|---|---|---|---|---|",
+    "## 课程目录", "", "|课号|主题|材料状态|讲义|速记|随堂题|公开自测|老师讲评|", "|---|---|---|---|---|---|---|---|",
     ...lessons.map(item => "|" + item.id + "|" + item.title + "|" + (item.contentLevel==="detailed"?"详细教程":"简版待扩写") + "|[阅读](" + item.lecturePath.replace(/^course\//,"") +
       ")|[速记](" + item.notesPath.replace(/^course\//,"") + ")|[作答](" + item.checkpointPath.replace(/^course\//,"") +
-      ")|[自测](stage-" + item.stage + "/exercises/" + item.id + "-self-check.md)|"),
+      ")|[自测](stage-" + item.stage + "/exercises/" + item.id + "-self-check.md)|[答案与解析](stage-"+item.stage+"/answers/"+item.id+".md)|"),
     "", "## 项目与考核", "",
     ...stages.map(stage => "- [" + stage.id + " " + stage.title + "](stage-" + stage.id + "/plan.md)： " + stage.deliverable),
     "", "网页实验源码在 course/browser-demos/，任务和边界在 browser-guidance.mjs；生成副本见 examples/course/。网站内即可完成核心学习。真实 Python、SQLite、MCP 等选做实操在 examples/tutorials/；完整作品与真实系统考核另交证据。", "",
@@ -58,9 +58,11 @@ export function courseMaterials(lessons, stages) {
         "## 本课行动", "", item.project, "", "## 参考资料", "", sources, ""].join("\n"));
     }
     files.set(item.checkpointPath, ["# " + item.id + " 随堂练习", "",
-      "先完成F1–F3入门题，再选做完整机制题。每题写结论、依据与补查证据。个人答案不自动进入通用教材。", "", checkpoints, ""].join("\n"));
+      "先完成F1–F3入门题，再选做完整机制题。每题写结论、依据与补查证据。个人答案不自动进入通用教材。", "", checkpoints, "",
+      "[本课参考答案与老师讲评](../answers/"+item.id+".md)：先思考再对照，查看不计掌握。", ""].join("\n"));
     files.set("course/stage-" + item.stage + "/exercises/" + item.id + "-self-check.md",
-      ["# " + item.id + " 公开自测与解析", "", "这是公开练习，不是正式考试。HTML 默认在提交后显示解析；此文件公开保留课程内容。", "", quiz, ""].join("\n"));
+      ["# " + item.id + " 公开自测与解析", "", "这是公开练习，不是正式考试。HTML 默认在提交后显示解析；此文件公开保留课程内容。", "",
+      "[逐题老师讲评与完整答案](../answers/"+item.id+".md)", "", quiz, ""].join("\n"));
     files.set("examples/course/" + item.id + ".mjs",
       "// " + item.id + " local teaching demo. No model API calls; not a complete homework solution.\n" +
       "import assert from \"node:assert/strict\";\n" +

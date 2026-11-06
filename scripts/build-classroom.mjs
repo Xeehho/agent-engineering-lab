@@ -9,6 +9,7 @@ import { loadTutorial } from "./load-tutorial.mjs";
 import { lessonMaps } from "../course/knowledge-graphs.mjs";
 import { architectureViews } from "../course/architecture.mjs";
 import { mindmapSvg, architectureSvg } from "../classroom/diagrams.mjs";
+import { loadTeacher } from "./load-teacher.mjs";
 
 const root = fileURLToPath(new URL("../", import.meta.url));
 const read = path => readFile(resolve(root, path), "utf8");
@@ -16,6 +17,12 @@ const generated = courseMaterials(lessons, stages);
 const practicalFiles = new Map();
 const foundationLectures = new Map();
 const advancedLectures = new Map();
+const teacherNotes = new Map();
+for (const lesson of lessons) {
+  const teacher = await loadTeacher(lesson);
+  teacherNotes.set(lesson.id,teacher);
+  generated.set('course/stage-'+lesson.stage+'/answers/'+lesson.id+'.md',teacher.markdown);
+}
 for (const item of lessons.filter(item => item.tutorial)) {
   const detailed = await loadTutorial(item.tutorial, item.id);
   const reference = item.sources.map(source=>"- ["+source[0]+"]("+source[1]+")").join("\n");
@@ -114,6 +121,10 @@ for (const item of lessons) {
     .map((match,index) => ({level:match[1].length,title:match[2],index}))
     .filter(heading => heading.level === 2);
   catalog.push({ ...item,
+    checkpoints:teacherNotes.get(item.id).checkpoints,
+    quiz:teacherNotes.get(item.id).quiz,
+    teacherOverviewHtml:teacherNotes.get(item.id).overviewHtml,
+    teacherMarkdown:teacherNotes.get(item.id).markdown,
     mindmap:{...lessonMaps[item.id],svg:mindmapSvg(item.id,item.title,lessonMaps[item.id]),markdown:generated.get('course/maps/'+item.id+'.md')},
     practicalFiles: practicalFiles.get(item.id) || [],
     lectureHtml: renderMarkdown(lectureBody, item.lecturePath),

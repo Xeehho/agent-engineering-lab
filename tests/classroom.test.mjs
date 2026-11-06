@@ -10,6 +10,7 @@ import { renderMarkdown } from "../classroom/markdown.mjs";
 import { lessons, stages } from "../course/curriculum.mjs";
 import { lessonMaps } from "../course/knowledge-graphs.mjs";
 import { architectureViews,components } from "../course/architecture.mjs";
+import { loadTeacher, parseTeacher } from "../scripts/load-teacher.mjs";
 
 test("self-test grades actual choices and does not award unanswered points", () => {
   assert.equal(gradeQuiz({}, quiz).correct, 0);
@@ -186,6 +187,38 @@ test("each beginner lesson documents the actual output of its minimal program",a
     const actual=await runDemo(lesson.experiments.find(e=>e.id==='start').code);
     assert.equal(actual,expected,lesson.id+' beginner stdout');
   }
+});
+
+test("teacher notes cover every public question and export its actual prompt and current choices",async()=>{
+  let open=0,choices=0;
+  const html=await readFile(new URL('../public/learn.html',import.meta.url),'utf8');
+  const compiled=JSON.parse(html.match(/const material = (.+);\n  const catalog/)[1]).lessons;
+  for(const lesson of lessons) {
+    const teacher=await loadTeacher(lesson);
+    open+=teacher.checkpoints.length;choices+=teacher.quiz.length;
+    assert.deepEqual(teacher.checkpoints.map(q=>q.id),lesson.checkpoints.map(q=>q.id));
+    assert.deepEqual(teacher.quiz.map(q=>q.id),lesson.quiz.map(q=>q.id));
+    for(const q of [...lesson.checkpoints,...lesson.quiz]) {
+      assert.ok(teacher.markdown.includes(q.question||q.text),lesson.id+'/'+q.id+' prompt');
+      if(q.options) assert.ok(teacher.markdown.includes('参考选择：'+String.fromCharCode(65+q.answer)+'. '+q.options[q.answer]));
+      if(q.code) assert.ok(teacher.markdown.includes(q.code));
+    }
+    const built=compiled.find(l=>l.id===lesson.id);
+    assert.equal(built.teacherMarkdown,teacher.markdown);
+    assert.equal(built.teacherOverviewHtml,teacher.overviewHtml);
+    assert.deepEqual(built.checkpoints,teacher.checkpoints);
+    assert.deepEqual(built.quiz,teacher.quiz);
+    assert.equal(await readFile(new URL('../course/stage-'+lesson.stage+'/answers/'+lesson.id+'.md',import.meta.url),'utf8'),teacher.markdown);
+  }
+  assert.equal(open,188);assert.equal(choices,158);
+});
+
+test("teacher source rejects new unanswered questions, duplicate IDs and orphan sections",async()=>{
+  const lesson=lessons.find(l=>l.id==='S2-L02');
+  const source=await readFile(new URL('../course/teacher/S2-L02.md',import.meta.url),'utf8');
+  assert.throws(()=>parseTeacher(source,{...lesson,checkpoints:[...lesson.checkpoints,{id:'F4'}]}),/Missing teacher answer.*F4/);
+  assert.throws(()=>parseTeacher(source+'\n## F1\n重复内容',lesson),/duplicate teacher section/);
+  assert.throws(()=>parseTeacher(source+'\n## X1\n未知内容',lesson),/Unknown/);
 });
 
 test("browser assertion failures and rejection mismatches stop the exercise",async () => {

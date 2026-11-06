@@ -6,39 +6,39 @@
 
 ## 课程目录
 
-|课号|主题|材料状态|讲义|速记|随堂题|公开自测|
-|---|---|---|---|---|---|---|
-|S1-L01|一次模型请求怎样才算成功|详细教程|[阅读](stage-01/lessons/01-success-contracts.md)|[速记](stage-01/notes/01-quick-reference.md)|[作答](stage-01/exercises/01-checkpoint.md)|[自测](stage-01/exercises/S1-L01-self-check.md)|
-|S1-L02|超时与取消：请求结束了吗？|详细教程|[阅读](stage-01/lessons/S1-L02.md)|[速记](stage-01/notes/S1-L02.md)|[作答](stage-01/exercises/S1-L02.md)|[自测](stage-01/exercises/S1-L02-self-check.md)|
-|S1-L03|流式事件与 React 状态|详细教程|[阅读](stage-01/lessons/S1-L03.md)|[速记](stage-01/notes/S1-L03.md)|[作答](stage-01/exercises/S1-L03.md)|[自测](stage-01/exercises/S1-L03-self-check.md)|
-|S1-L04|验证证据与第一阶段交卷|详细教程|[阅读](stage-01/lessons/S1-L04.md)|[速记](stage-01/notes/S1-L04.md)|[作答](stage-01/exercises/S1-L04.md)|[自测](stage-01/exercises/S1-L04-self-check.md)|
-|S1-L05|模型基础：Token、上下文与推理边界|详细教程|[阅读](stage-01/lessons/S1-L05.md)|[速记](stage-01/notes/S1-L05.md)|[作答](stage-01/exercises/S1-L05.md)|[自测](stage-01/exercises/S1-L05-self-check.md)|
-|S1-L06|Python 后端桥接：读懂服务边界|详细教程|[阅读](stage-01/lessons/S1-L06.md)|[速记](stage-01/notes/S1-L06.md)|[作答](stage-01/exercises/S1-L06.md)|[自测](stage-01/exercises/S1-L06-self-check.md)|
-|S2-L01|工具调用：模型提议，应用执行|详细教程|[阅读](stage-02/lessons/S2-L01.md)|[速记](stage-02/notes/S2-L01.md)|[作答](stage-02/exercises/S2-L01.md)|[自测](stage-02/exercises/S2-L01-self-check.md)|
-|S2-L02|有限 Agent 循环与预算|详细教程|[阅读](stage-02/lessons/S2-L02.md)|[速记](stage-02/notes/S2-L02.md)|[作答](stage-02/exercises/S2-L02.md)|[自测](stage-02/exercises/S2-L02-self-check.md)|
-|S2-L03|副作用、幂等与提示注入|详细教程|[阅读](stage-02/lessons/S2-L03.md)|[速记](stage-02/notes/S2-L03.md)|[作答](stage-02/exercises/S2-L03.md)|[自测](stage-02/exercises/S2-L03-self-check.md)|
-|S2-L04|Prompt 与上下文工程|详细教程|[阅读](stage-02/lessons/S2-L04.md)|[速记](stage-02/notes/S2-L04.md)|[作答](stage-02/exercises/S2-L04.md)|[自测](stage-02/exercises/S2-L04-self-check.md)|
-|S3-L01|MCP 的边界：Host、Client、Server|详细教程|[阅读](stage-03/lessons/S3-L01.md)|[速记](stage-03/notes/S3-L01.md)|[作答](stage-03/exercises/S3-L01.md)|[自测](stage-03/exercises/S3-L01-self-check.md)|
-|S3-L02|MCP 发现、传输与错误|详细教程|[阅读](stage-03/lessons/S3-L02.md)|[速记](stage-03/notes/S3-L02.md)|[作答](stage-03/exercises/S3-L02.md)|[自测](stage-03/exercises/S3-L02-self-check.md)|
-|S3-L03|MCP 权限与服务信任|详细教程|[阅读](stage-03/lessons/S3-L03.md)|[速记](stage-03/notes/S3-L03.md)|[作答](stage-03/exercises/S3-L03.md)|[自测](stage-03/exercises/S3-L03-self-check.md)|
-|S4-L01|任务状态与持久化|详细教程|[阅读](stage-04/lessons/S4-L01.md)|[速记](stage-04/notes/S4-L01.md)|[作答](stage-04/exercises/S4-L01.md)|[自测](stage-04/exercises/S4-L01-self-check.md)|
-|S4-L02|队列、重试、租约与幂等|详细教程|[阅读](stage-04/lessons/S4-L02.md)|[速记](stage-04/notes/S4-L02.md)|[作答](stage-04/exercises/S4-L02.md)|[自测](stage-04/exercises/S4-L02-self-check.md)|
-|S4-L03|人工确认与前端任务工作台|详细教程|[阅读](stage-04/lessons/S4-L03.md)|[速记](stage-04/notes/S4-L03.md)|[作答](stage-04/exercises/S4-L03.md)|[自测](stage-04/exercises/S4-L03-self-check.md)|
-|S4-L04|SQL、索引与事务：存储工程基础|详细教程|[阅读](stage-04/lessons/S4-L04.md)|[速记](stage-04/notes/S4-L04.md)|[作答](stage-04/exercises/S4-L04.md)|[自测](stage-04/exercises/S4-L04-self-check.md)|
-|S5-L01|RAG 数据入口：切分、版本与权限|详细教程|[阅读](stage-05/lessons/S5-L01.md)|[速记](stage-05/notes/S5-L01.md)|[作答](stage-05/exercises/S5-L01.md)|[自测](stage-05/exercises/S5-L01-self-check.md)|
-|S5-L02|Embedding、向量与混合检索|详细教程|[阅读](stage-05/lessons/S5-L02.md)|[速记](stage-05/notes/S5-L02.md)|[作答](stage-05/exercises/S5-L02.md)|[自测](stage-05/exercises/S5-L02-self-check.md)|
-|S5-L03|重排、引用与拒答|详细教程|[阅读](stage-05/lessons/S5-L03.md)|[速记](stage-05/notes/S5-L03.md)|[作答](stage-05/exercises/S5-L03.md)|[自测](stage-05/exercises/S5-L03-self-check.md)|
-|S5-L04|RAG 评测与数据治理|详细教程|[阅读](stage-05/lessons/S5-L04.md)|[速记](stage-05/notes/S5-L04.md)|[作答](stage-05/exercises/S5-L04.md)|[自测](stage-05/exercises/S5-L04-self-check.md)|
-|S6-L01|路由与分工：先证明需要多 Agent|详细教程|[阅读](stage-06/lessons/S6-L01.md)|[速记](stage-06/notes/S6-L01.md)|[作答](stage-06/exercises/S6-L01.md)|[自测](stage-06/exercises/S6-L01-self-check.md)|
-|S6-L02|交接、证据包与冲突处理|详细教程|[阅读](stage-06/lessons/S6-L02.md)|[速记](stage-06/notes/S6-L02.md)|[作答](stage-06/exercises/S6-L02.md)|[自测](stage-06/exercises/S6-L02-self-check.md)|
-|S6-L03|协作评测：质量、延迟与成本|详细教程|[阅读](stage-06/lessons/S6-L03.md)|[速记](stage-06/notes/S6-L03.md)|[作答](stage-06/exercises/S6-L03.md)|[自测](stage-06/exercises/S6-L03-self-check.md)|
-|S7-L01|评测集、评分器与回归门槛|详细教程|[阅读](stage-07/lessons/S7-L01.md)|[速记](stage-07/notes/S7-L01.md)|[作答](stage-07/exercises/S7-L01.md)|[自测](stage-07/exercises/S7-L01-self-check.md)|
-|S7-L02|Trace、日志与费用观测|详细教程|[阅读](stage-07/lessons/S7-L02.md)|[速记](stage-07/notes/S7-L02.md)|[作答](stage-07/exercises/S7-L02.md)|[自测](stage-07/exercises/S7-L02-self-check.md)|
-|S7-L03|部署、限流、降级与运维|详细教程|[阅读](stage-07/lessons/S7-L03.md)|[速记](stage-07/notes/S7-L03.md)|[作答](stage-07/exercises/S7-L03.md)|[自测](stage-07/exercises/S7-L03-self-check.md)|
-|S7-L04|真实模型接入与可复现证据|详细教程|[阅读](stage-07/lessons/S7-L04.md)|[速记](stage-07/notes/S7-L04.md)|[作答](stage-07/exercises/S7-L04.md)|[自测](stage-07/exercises/S7-L04-self-check.md)|
-|S8-L01|毕业项目：从需求到验收|详细教程|[阅读](stage-08/lessons/S8-L01.md)|[速记](stage-08/notes/S8-L01.md)|[作答](stage-08/exercises/S8-L01.md)|[自测](stage-08/exercises/S8-L01-self-check.md)|
-|S8-L02|系统设计与陌生故障答辩|详细教程|[阅读](stage-08/lessons/S8-L02.md)|[速记](stage-08/notes/S8-L02.md)|[作答](stage-08/exercises/S8-L02.md)|[自测](stage-08/exercises/S8-L02-self-check.md)|
-|S8-L03|作品集、简历与求职演练|详细教程|[阅读](stage-08/lessons/S8-L03.md)|[速记](stage-08/notes/S8-L03.md)|[作答](stage-08/exercises/S8-L03.md)|[自测](stage-08/exercises/S8-L03-self-check.md)|
+|课号|主题|材料状态|讲义|速记|随堂题|公开自测|老师讲评|
+|---|---|---|---|---|---|---|---|
+|S1-L01|一次模型请求怎样才算成功|详细教程|[阅读](stage-01/lessons/01-success-contracts.md)|[速记](stage-01/notes/01-quick-reference.md)|[作答](stage-01/exercises/01-checkpoint.md)|[自测](stage-01/exercises/S1-L01-self-check.md)|[答案与解析](stage-01/answers/S1-L01.md)|
+|S1-L02|超时与取消：请求结束了吗？|详细教程|[阅读](stage-01/lessons/S1-L02.md)|[速记](stage-01/notes/S1-L02.md)|[作答](stage-01/exercises/S1-L02.md)|[自测](stage-01/exercises/S1-L02-self-check.md)|[答案与解析](stage-01/answers/S1-L02.md)|
+|S1-L03|流式事件与 React 状态|详细教程|[阅读](stage-01/lessons/S1-L03.md)|[速记](stage-01/notes/S1-L03.md)|[作答](stage-01/exercises/S1-L03.md)|[自测](stage-01/exercises/S1-L03-self-check.md)|[答案与解析](stage-01/answers/S1-L03.md)|
+|S1-L04|验证证据与第一阶段交卷|详细教程|[阅读](stage-01/lessons/S1-L04.md)|[速记](stage-01/notes/S1-L04.md)|[作答](stage-01/exercises/S1-L04.md)|[自测](stage-01/exercises/S1-L04-self-check.md)|[答案与解析](stage-01/answers/S1-L04.md)|
+|S1-L05|模型基础：Token、上下文与推理边界|详细教程|[阅读](stage-01/lessons/S1-L05.md)|[速记](stage-01/notes/S1-L05.md)|[作答](stage-01/exercises/S1-L05.md)|[自测](stage-01/exercises/S1-L05-self-check.md)|[答案与解析](stage-01/answers/S1-L05.md)|
+|S1-L06|Python 后端桥接：读懂服务边界|详细教程|[阅读](stage-01/lessons/S1-L06.md)|[速记](stage-01/notes/S1-L06.md)|[作答](stage-01/exercises/S1-L06.md)|[自测](stage-01/exercises/S1-L06-self-check.md)|[答案与解析](stage-01/answers/S1-L06.md)|
+|S2-L01|工具调用：模型提议，应用执行|详细教程|[阅读](stage-02/lessons/S2-L01.md)|[速记](stage-02/notes/S2-L01.md)|[作答](stage-02/exercises/S2-L01.md)|[自测](stage-02/exercises/S2-L01-self-check.md)|[答案与解析](stage-02/answers/S2-L01.md)|
+|S2-L02|有限 Agent 循环与预算|详细教程|[阅读](stage-02/lessons/S2-L02.md)|[速记](stage-02/notes/S2-L02.md)|[作答](stage-02/exercises/S2-L02.md)|[自测](stage-02/exercises/S2-L02-self-check.md)|[答案与解析](stage-02/answers/S2-L02.md)|
+|S2-L03|副作用、幂等与提示注入|详细教程|[阅读](stage-02/lessons/S2-L03.md)|[速记](stage-02/notes/S2-L03.md)|[作答](stage-02/exercises/S2-L03.md)|[自测](stage-02/exercises/S2-L03-self-check.md)|[答案与解析](stage-02/answers/S2-L03.md)|
+|S2-L04|Prompt 与上下文工程|详细教程|[阅读](stage-02/lessons/S2-L04.md)|[速记](stage-02/notes/S2-L04.md)|[作答](stage-02/exercises/S2-L04.md)|[自测](stage-02/exercises/S2-L04-self-check.md)|[答案与解析](stage-02/answers/S2-L04.md)|
+|S3-L01|MCP 的边界：Host、Client、Server|详细教程|[阅读](stage-03/lessons/S3-L01.md)|[速记](stage-03/notes/S3-L01.md)|[作答](stage-03/exercises/S3-L01.md)|[自测](stage-03/exercises/S3-L01-self-check.md)|[答案与解析](stage-03/answers/S3-L01.md)|
+|S3-L02|MCP 发现、传输与错误|详细教程|[阅读](stage-03/lessons/S3-L02.md)|[速记](stage-03/notes/S3-L02.md)|[作答](stage-03/exercises/S3-L02.md)|[自测](stage-03/exercises/S3-L02-self-check.md)|[答案与解析](stage-03/answers/S3-L02.md)|
+|S3-L03|MCP 权限与服务信任|详细教程|[阅读](stage-03/lessons/S3-L03.md)|[速记](stage-03/notes/S3-L03.md)|[作答](stage-03/exercises/S3-L03.md)|[自测](stage-03/exercises/S3-L03-self-check.md)|[答案与解析](stage-03/answers/S3-L03.md)|
+|S4-L01|任务状态与持久化|详细教程|[阅读](stage-04/lessons/S4-L01.md)|[速记](stage-04/notes/S4-L01.md)|[作答](stage-04/exercises/S4-L01.md)|[自测](stage-04/exercises/S4-L01-self-check.md)|[答案与解析](stage-04/answers/S4-L01.md)|
+|S4-L02|队列、重试、租约与幂等|详细教程|[阅读](stage-04/lessons/S4-L02.md)|[速记](stage-04/notes/S4-L02.md)|[作答](stage-04/exercises/S4-L02.md)|[自测](stage-04/exercises/S4-L02-self-check.md)|[答案与解析](stage-04/answers/S4-L02.md)|
+|S4-L03|人工确认与前端任务工作台|详细教程|[阅读](stage-04/lessons/S4-L03.md)|[速记](stage-04/notes/S4-L03.md)|[作答](stage-04/exercises/S4-L03.md)|[自测](stage-04/exercises/S4-L03-self-check.md)|[答案与解析](stage-04/answers/S4-L03.md)|
+|S4-L04|SQL、索引与事务：存储工程基础|详细教程|[阅读](stage-04/lessons/S4-L04.md)|[速记](stage-04/notes/S4-L04.md)|[作答](stage-04/exercises/S4-L04.md)|[自测](stage-04/exercises/S4-L04-self-check.md)|[答案与解析](stage-04/answers/S4-L04.md)|
+|S5-L01|RAG 数据入口：切分、版本与权限|详细教程|[阅读](stage-05/lessons/S5-L01.md)|[速记](stage-05/notes/S5-L01.md)|[作答](stage-05/exercises/S5-L01.md)|[自测](stage-05/exercises/S5-L01-self-check.md)|[答案与解析](stage-05/answers/S5-L01.md)|
+|S5-L02|Embedding、向量与混合检索|详细教程|[阅读](stage-05/lessons/S5-L02.md)|[速记](stage-05/notes/S5-L02.md)|[作答](stage-05/exercises/S5-L02.md)|[自测](stage-05/exercises/S5-L02-self-check.md)|[答案与解析](stage-05/answers/S5-L02.md)|
+|S5-L03|重排、引用与拒答|详细教程|[阅读](stage-05/lessons/S5-L03.md)|[速记](stage-05/notes/S5-L03.md)|[作答](stage-05/exercises/S5-L03.md)|[自测](stage-05/exercises/S5-L03-self-check.md)|[答案与解析](stage-05/answers/S5-L03.md)|
+|S5-L04|RAG 评测与数据治理|详细教程|[阅读](stage-05/lessons/S5-L04.md)|[速记](stage-05/notes/S5-L04.md)|[作答](stage-05/exercises/S5-L04.md)|[自测](stage-05/exercises/S5-L04-self-check.md)|[答案与解析](stage-05/answers/S5-L04.md)|
+|S6-L01|路由与分工：先证明需要多 Agent|详细教程|[阅读](stage-06/lessons/S6-L01.md)|[速记](stage-06/notes/S6-L01.md)|[作答](stage-06/exercises/S6-L01.md)|[自测](stage-06/exercises/S6-L01-self-check.md)|[答案与解析](stage-06/answers/S6-L01.md)|
+|S6-L02|交接、证据包与冲突处理|详细教程|[阅读](stage-06/lessons/S6-L02.md)|[速记](stage-06/notes/S6-L02.md)|[作答](stage-06/exercises/S6-L02.md)|[自测](stage-06/exercises/S6-L02-self-check.md)|[答案与解析](stage-06/answers/S6-L02.md)|
+|S6-L03|协作评测：质量、延迟与成本|详细教程|[阅读](stage-06/lessons/S6-L03.md)|[速记](stage-06/notes/S6-L03.md)|[作答](stage-06/exercises/S6-L03.md)|[自测](stage-06/exercises/S6-L03-self-check.md)|[答案与解析](stage-06/answers/S6-L03.md)|
+|S7-L01|评测集、评分器与回归门槛|详细教程|[阅读](stage-07/lessons/S7-L01.md)|[速记](stage-07/notes/S7-L01.md)|[作答](stage-07/exercises/S7-L01.md)|[自测](stage-07/exercises/S7-L01-self-check.md)|[答案与解析](stage-07/answers/S7-L01.md)|
+|S7-L02|Trace、日志与费用观测|详细教程|[阅读](stage-07/lessons/S7-L02.md)|[速记](stage-07/notes/S7-L02.md)|[作答](stage-07/exercises/S7-L02.md)|[自测](stage-07/exercises/S7-L02-self-check.md)|[答案与解析](stage-07/answers/S7-L02.md)|
+|S7-L03|部署、限流、降级与运维|详细教程|[阅读](stage-07/lessons/S7-L03.md)|[速记](stage-07/notes/S7-L03.md)|[作答](stage-07/exercises/S7-L03.md)|[自测](stage-07/exercises/S7-L03-self-check.md)|[答案与解析](stage-07/answers/S7-L03.md)|
+|S7-L04|真实模型接入与可复现证据|详细教程|[阅读](stage-07/lessons/S7-L04.md)|[速记](stage-07/notes/S7-L04.md)|[作答](stage-07/exercises/S7-L04.md)|[自测](stage-07/exercises/S7-L04-self-check.md)|[答案与解析](stage-07/answers/S7-L04.md)|
+|S8-L01|毕业项目：从需求到验收|详细教程|[阅读](stage-08/lessons/S8-L01.md)|[速记](stage-08/notes/S8-L01.md)|[作答](stage-08/exercises/S8-L01.md)|[自测](stage-08/exercises/S8-L01-self-check.md)|[答案与解析](stage-08/answers/S8-L01.md)|
+|S8-L02|系统设计与陌生故障答辩|详细教程|[阅读](stage-08/lessons/S8-L02.md)|[速记](stage-08/notes/S8-L02.md)|[作答](stage-08/exercises/S8-L02.md)|[自测](stage-08/exercises/S8-L02-self-check.md)|[答案与解析](stage-08/answers/S8-L02.md)|
+|S8-L03|作品集、简历与求职演练|详细教程|[阅读](stage-08/lessons/S8-L03.md)|[速记](stage-08/notes/S8-L03.md)|[作答](stage-08/exercises/S8-L03.md)|[自测](stage-08/exercises/S8-L03-self-check.md)|[答案与解析](stage-08/answers/S8-L03.md)|
 
 ## 项目与考核
 

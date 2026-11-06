@@ -9,6 +9,8 @@
 选做实操：Node.js 24 下执行 npm ci，再运行 npm run tutorial -- S3-L01。Python 课需 .venv 与 examples/tutorial-requirements.txt。教材源在 course/tutorials/，代码在 code/，阅读拆解在 walkthrough/；网页实验源在 course/browser-demos/。构建统一同步讲义、脚本与单页课堂。个人作业和考试状态保持真实提交记录。
 本仓库的Mock不会理解工单内容。绿色CI只证明骨架正常，不能证明模型效果、作业完成或考试通过。
 
+31课配套[老师讲评与参考答案](course/teacher/README.md)：188道开放题逐题解释参考回答、推导/反例和自查，158道公开选择题补充判断依据。网页“随堂练习”可展开每题讲评并下载本课完整Markdown；查看答案不代填作答、不自动认证掌握。
+
 ## 从这里开始
 
 **[课程首页](https://agent-engineering-lab.vercel.app/)**：直接在线查看课程体系、学习成果、前置条件与准备自查；有开发者 Xeehho 的介绍及 GitHub Star 入口。[项目实验台](https://agent-engineering-lab.vercel.app/lab.html)与课堂各有独立入口。

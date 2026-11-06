@@ -122,6 +122,7 @@
   byId("scenario-next").addEventListener("click",()=>{if(scenarioIndex<architecture.steps.length-1){scenarioIndex+=1;renderScenario();}});
   byId("download-mindmap").addEventListener("click",()=>download(current.id+"-脑图.svg",current.mindmap.svg,"image/svg+xml;charset=utf-8"));
   byId("download-map-notes").addEventListener("click",()=>download(current.id+"-脑图笔记.md",current.mindmap.markdown,"text/markdown;charset=utf-8"));
+  byId("download-teacher-notes").addEventListener("click",()=>download(current.id+"-老师讲评.md",current.teacherMarkdown,"text/markdown;charset=utf-8"));
   byId("download-architecture").addEventListener("click",()=>download("architecture-"+architecture.id+".svg",architecture.svg,"image/svg+xml;charset=utf-8"));
   document.addEventListener("click", async event => {
     const button = event.target.closest?.(".copy-code");
@@ -228,6 +229,8 @@
     byId("advanced-lecture").open = false;
     byId("advanced-lecture-content").innerHTML = current.advancedLectureHtml || "";
     byId("notes-content").innerHTML = current.notesHtml;
+    byId("teacher-overview").innerHTML = current.teacherOverviewHtml;
+    byId("teacher-overview").parentElement.open = false;
     renderLearningMaps();
     byId("lecture-toc").innerHTML = '<span class="eyebrow">本课目录</span>' + current.tocHtml;
     byId("mission-title").textContent = "本课网页任务";
@@ -457,6 +460,12 @@
       answer.value = state.drafts[item.id] || "";
       answer.addEventListener("input", () => { state.drafts[item.id] = answer.value; persist(); });
       card.append(caption, answer);
+      const reference = textElement("details", undefined, "teacher-answer");
+      reference.append(textElement("summary","参考答案与老师讲评（建议先思考）"));
+      const explanation = textElement("div", undefined, "article-body");
+      // Only authored, escaped build-time teaching HTML goes here, never drafts.
+      explanation.innerHTML = item.solutionHtml;
+      reference.append(explanation);card.append(reference);
       if(item.level==="advanced") {
         const optional=textElement("details",undefined,"advanced-experiment");
         optional.append(textElement("summary","进阶选做："+item.title),card);byId("checkpoints").append(optional);
@@ -486,7 +495,7 @@
           textElement("span", option));
         options.append(label);
       });
-      const explanation = textElement("p", undefined, "quiz-explanation");
+      const explanation = textElement("div", undefined, "quiz-explanation");
       explanation.id = "explanation-" + item.id; explanation.hidden = true;
       fieldset.append(options, explanation);
       if(item.level==="advanced") {
@@ -505,8 +514,12 @@
       if (explanation.hidden) continue;
       const correct = state.answers[item.id] === item.answer;
       explanation.classList.toggle("incorrect", !correct);
-      explanation.textContent = (correct ? "回答正确。" : "再想一想。") + "参考选择：" +
-        String.fromCharCode(65 + item.answer) + "。" + item.explanation;
+      explanation.replaceChildren(textElement("p",(correct ? "回答正确。" : "再想一想。") + "参考选择：" +
+        String.fromCharCode(65 + item.answer) + "。" + item.explanation));
+      const walkthrough=textElement("div",undefined,"teacher-quiz-detail");
+      walkthrough.append(textElement("strong","老师讲评："));
+      const body=textElement("div",undefined,"article-body");
+      body.innerHTML=item.solutionHtml;walkthrough.append(body);explanation.append(walkthrough);
     }
     if (state.submitted) {
       byId("quiz-result").replaceChildren(
